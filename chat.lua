@@ -87,4 +87,3 @@ SendButton.MouseButton1Click:Connect(function()
     -- Send the modified message to Roblox chat
     game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(modifiedMsg, "All")
 end)
-
