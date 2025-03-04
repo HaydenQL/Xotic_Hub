@@ -1,27 +1,46 @@
--- Simple Chat Bypass UI Script
+-- Chat Bypass UI with Menu Selection
 
 -- Create UI elements
 local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
+local MainFrame = Instance.new("Frame")
+local TabFrame = Instance.new("Frame")
+local ChatBypassButton = Instance.new("TextButton")
+local ContentFrame = Instance.new("Frame")
 local TextBox = Instance.new("TextBox")
 local SendButton = Instance.new("TextButton")
 
 -- Set up the GUI
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-Frame.Size = UDim2.new(0, 400, 0, 200)
-Frame.Position = UDim2.new(0.5, -200, 0.5, -100)
-Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Frame.Parent = ScreenGui
 
-TextBox.Size = UDim2.new(0, 350, 0, 50)
-TextBox.Position = UDim2.new(0.5, -175, 0, 20)
+MainFrame.Size = UDim2.new(0, 450, 0, 250)
+MainFrame.Position = UDim2.new(0.5, -225, 0.5, -125)
+MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+MainFrame.Parent = ScreenGui
+
+TabFrame.Size = UDim2.new(0, 150, 1, 0)
+TabFrame.Position = UDim2.new(0, 0, 0, 0)
+TabFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TabFrame.Parent = MainFrame
+
+ChatBypassButton.Size = UDim2.new(1, -10, 0, 50)
+ChatBypassButton.Position = UDim2.new(0, 5, 0, 10)
+ChatBypassButton.Text = "Chat Bypass"
+ChatBypassButton.Parent = TabFrame
+
+ContentFrame.Size = UDim2.new(1, -150, 1, 0)
+ContentFrame.Position = UDim2.new(0, 150, 0, 0)
+ContentFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ContentFrame.Parent = MainFrame
+
+TextBox.Size = UDim2.new(0, 280, 0, 50)
+TextBox.Position = UDim2.new(0.5, -140, 0.3, 0)
 TextBox.PlaceholderText = "Type your message here..."
-TextBox.Parent = Frame
+TextBox.Parent = ContentFrame
 
 SendButton.Size = UDim2.new(0, 150, 0, 50)
-SendButton.Position = UDim2.new(0.5, -75, 0, 100)
+SendButton.Position = UDim2.new(0.5, -75, 0.6, 0)
 SendButton.Text = "Send"
-SendButton.Parent = Frame
+SendButton.Parent = ContentFrame
 
 -- Function to replace letters with bypass characters
 local function bypassText(msg)
