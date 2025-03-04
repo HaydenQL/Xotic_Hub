@@ -84,6 +84,13 @@ SendButton.MouseButton1Click:Connect(function()
     local msg = TextBox.Text
     local modifiedMsg = bypassText(msg)
 
-    -- Send the modified message to Roblox chat
-    game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(modifiedMsg, "All")
+    -- Check if chat event exists
+    local chatEvent = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):FindFirstChild("SayMessageRequest")
+    if chatEvent then
+        -- Send the modified message to Roblox chat
+        print("Sending message: ", modifiedMsg)  -- Debugging: Check the message being sent
+        chatEvent:FireServer(modifiedMsg, "All")
+    else
+        print("Chat event not found!")  -- Debugging: If event doesn't exist
+    end
 end)
