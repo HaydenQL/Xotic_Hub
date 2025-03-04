@@ -1,3 +1,5 @@
+-- Simple Chat Bypass UI Script
+
 -- Create UI elements
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
@@ -23,60 +25,20 @@ SendButton.Parent = Frame
 
 -- Function to replace letters with bypass characters
 local function bypassText(msg)
-    msg = msg:gsub("a", "aۘॱ")
-    msg = msg:gsub("b", "bۘॱ")
-    msg = msg:gsub("c", "cۘॱ")
-    msg = msg:gsub("d", "dۘॱ")
-    msg = msg:gsub("e", "eۘॱ")
-    msg = msg:gsub("f", "fۘॱ")
-    msg = msg:gsub("g", "gۘॱ")
-    msg = msg:gsub("h", "hۘॱ")
-    msg = msg:gsub("i", "iۘॱ")
-    msg = msg:gsub("j", "jۘॱ")
-    msg = msg:gsub("k", "kۘॱ")
-    msg = msg:gsub("l", "lۘॱ")
-    msg = msg:gsub("m", "mۘॱ")
-    msg = msg:gsub("n", "nۘॱ")
-    msg = msg:gsub("o", "oۘॱ")
-    msg = msg:gsub("p", "pۘॱ")
-    msg = msg:gsub("q", "qۘॱ")
-    msg = msg:gsub("r", "rۘॱ")
-    msg = msg:gsub("s", "sۘॱ")
-    msg = msg:gsub("t", "tۘॱ")
-    msg = msg:gsub("u", "uۘॱ")
-    msg = msg:gsub("v", "vۘॱ")
-    msg = msg:gsub("w", "wۘॱ")
-    msg = msg:gsub("x", "xۘॱ")
-    msg = msg:gsub("y", "yۘॱ")
-    msg = msg:gsub("z", "zۘॱ")
-    msg = msg:gsub("A", "Aۘॱ")
-    msg = msg:gsub("B", "Bۘॱ")
-    msg = msg:gsub("C", "Cۘॱ")
-    msg = msg:gsub("D", "Dۘॱ")
-    msg = msg:gsub("E", "Eۘॱ")
-    msg = msg:gsub("F", "Fۘॱ")
-    msg = msg:gsub("G", "Gۘॱ")
-    msg = msg:gsub("H", "Hۘॱ")
-    msg = msg:gsub("I", "Iۘॱ")
-    msg = msg:gsub("J", "Jۘॱ")
-    msg = msg:gsub("K", "Kۘॱ")
-    msg = msg:gsub("L", "Lۘॱ")
-    msg = msg:gsub("M", "Mۘॱ")
-    msg = msg:gsub("N", "Nۘॱ")
-    msg = msg:gsub("O", "Oۘॱ")
-    msg = msg:gsub("P", "Pۘॱ")
-    msg = msg:gsub("Q", "Qۘॱ")
-    msg = msg:gsub("R", "Rۘॱ")
-    msg = msg:gsub("S", "Sۘॱ")
-    msg = msg:gsub("T", "Tۘॱ")
-    msg = msg:gsub("U", "Uۘॱ")
-    msg = msg:gsub("V", "Vۘॱ")
-    msg = msg:gsub("W", "Wۘॱ")
-    msg = msg:gsub("X", "Xۘॱ")
-    msg = msg:gsub("Y", "Yۘॱ")
-    msg = msg:gsub("Z", "Zۘॱ")
-    msg = msg:gsub(" ", "  ") -- Double space trick
-    return msg
+    local substitutions = {
+        a = "aۘॱ", b = "bۘॱ", c = "cۘॱ", d = "dۘॱ", e = "eۘॱ",
+        f = "fۘॱ", g = "gۘॱ", h = "hۘॱ", i = "iۘॱ", j = "jۘॱ",
+        k = "kۘॱ", l = "lۘॱ", m = "mۘॱ", n = "nۘॱ", o = "oۘॱ",
+        p = "pۘॱ", q = "qۘॱ", r = "rۘॱ", s = "sۘॱ", t = "tۘॱ",
+        u = "uۘॱ", v = "vۘॱ", w = "wۘॱ", x = "xۘॱ", y = "yۘॱ",
+        z = "zۘॱ", A = "Aۘॱ", B = "Bۘॱ", C = "Cۘॱ", D = "Dۘॱ",
+        E = "Eۘॱ", F = "Fۘॱ", G = "Gۘॱ", H = "Hۘॱ", I = "Iۘॱ",
+        J = "Jۘॱ", K = "Kۘॱ", L = "Lۘॱ", M = "Mۘॱ", N = "Nۘॱ",
+        O = "Oۘॱ", P = "Pۘॱ", Q = "Qۘॱ", R = "Rۘॱ", S = "Sۘॱ",
+        T = "Tۘॱ", U = "Uۘॱ", V = "Vۘॱ", W = "Wۘॱ", X = "Xۘॱ",
+        Y = "Yۘॱ", Z = "Zۘॱ", [" "] = "  " -- Double space trick
+    }
+    return msg:gsub(".", substitutions)
 end
 
 -- Send the bypassed text to chat when button is clicked
@@ -84,13 +46,11 @@ SendButton.MouseButton1Click:Connect(function()
     local msg = TextBox.Text
     local modifiedMsg = bypassText(msg)
 
-    -- Check if chat event exists
+    -- Send the modified message to Roblox chat
     local chatEvent = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):FindFirstChild("SayMessageRequest")
     if chatEvent then
-        -- Send the modified message to Roblox chat
-        print("Sending message: ", modifiedMsg)  -- Debugging: Check the message being sent
         chatEvent:FireServer(modifiedMsg, "All")
     else
-        print("Chat event not found!")  -- Debugging: If event doesn't exist
+        warn("Chat event not found!")
     end
 end)
