@@ -353,6 +353,7 @@ VoiceChatFrame.CanvasSize = UDim2.new(0, 0, 0, 500)
 VoiceChatFrame.ScrollBarThickness = 4
 VoiceChatFrame.BackgroundTransparency = 1
 VoiceChatFrame.Parent = contentFrame
+VoiceChatFrame.Visible = false
 makeRounded(VoiceChatFrame, 10)
 
 local vcLayout = Instance.new("UIListLayout")
