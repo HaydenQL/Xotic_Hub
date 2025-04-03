@@ -1,9 +1,12 @@
 -- 👑 HaydenSigma24's Sigma Hub GUI v0.01 Beta (Resizable & Minimizable)
 
--- Remove existing GUI if already running
-if game.CoreGui:FindFirstChild("SigmaHub") then
-    game.CoreGui.SigmaHub:Destroy()
+-- Remove existing GUI (fully safe)
+for _, gui in pairs(game.CoreGui:GetChildren()) do
+	if gui.Name == "SigmaHub" then
+		gui:Destroy()
+	end
 end
+
 
 
 local UIS = game:GetService("UserInputService")
