@@ -1,17 +1,29 @@
--- Only gives the sword to "xxerray_kingxx"
+-- Firebrand Sword Injector (Public AssetID: 125013769)
+-- Meant to run through a client-side executor
+
+local InsertService = game:GetService("InsertService")
 local Players = game:GetService("Players")
-local ServerStorage = game:GetService("ServerStorage")
 
 local player = Players.LocalPlayer
-if player.Name ~= "xxerray_kingxx" then return end
 
-repeat wait() until player.Character
+if not player or player.Name ~= "xxerray_kingxx" then
+    warn("[🔥 XENO-MOCK] Access denied.")
+    return
+end
 
-local sword = ServerStorage:FindFirstChild("Firebrand")
-if sword then
-	local clone = sword:Clone()
-	clone.Parent = player.Backpack
-	print("[GAME] ✅ Sword given to you.")
+-- Load the tool
+local success, model = pcall(function()
+    return InsertService:LoadAsset(125013769) -- Firebrand Sword
+end)
+
+if success and model then
+    local tool = model:FindFirstChildWhichIsA("Tool")
+    if tool then
+        tool.Parent = player.Backpack
+        print("[🔥 XENO-MOCK] Firebrand sword injected into backpack.")
+    else
+        warn("[XENO-MOCK] Tool not found in model.")
+    end
 else
-	warn("[GAME] ❌ Firebrand sword not found in ServerStorage.")
+    warn("[XENO-MOCK] Asset failed to load. Game might block InsertService.")
 end
