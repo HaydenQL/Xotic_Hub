@@ -206,8 +206,103 @@ comingSoonLabel.TextSize = 14
 comingSoonLabel.TextXAlignment = Enum.TextXAlignment.Left
 comingSoonLabel.Parent = HomeFrame
 
--- Other Tabs (Player, Visual, VoiceChat, Settings, Credits)
+-- Player Tab Content
 local PlayerFrame = createTabFrame("Player", "Player Tab")
+
+-- WalkSpeed Slider
+local walkSpeedLabel = Instance.new("TextLabel")
+walkSpeedLabel.Size = UDim2.new(1, -40, 0, 30)
+walkSpeedLabel.Position = UDim2.new(0, 20, 0, 50)
+walkSpeedLabel.BackgroundTransparency = 1
+walkSpeedLabel.Text = "Walk Speed: 16"
+walkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+walkSpeedLabel.Font = Enum.Font.Gotham
+walkSpeedLabel.TextSize = 14
+walkSpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+walkSpeedLabel.Parent = PlayerFrame
+
+local walkSpeedSlider = Instance.new("Slider")
+walkSpeedSlider.Size = UDim2.new(1, -40, 0, 20)
+walkSpeedSlider.Position = UDim2.new(0, 20, 0, 80)
+walkSpeedSlider.MinValue = 0
+walkSpeedSlider.MaxValue = 100
+walkSpeedSlider.Value = LocalPlayer.Character.Humanoid.WalkSpeed
+walkSpeedSlider.Parent = PlayerFrame
+
+walkSpeedSlider.Changed:Connect(function()
+	LocalPlayer.Character.Humanoid.WalkSpeed = walkSpeedSlider.Value
+	walkSpeedLabel.Text = "Walk Speed: " .. math.floor(walkSpeedSlider.Value)
+end)
+
+-- JumpHeight Slider
+local jumpHeightLabel = Instance.new("TextLabel")
+jumpHeightLabel.Size = UDim2.new(1, -40, 0, 30)
+jumpHeightLabel.Position = UDim2.new(0, 20, 0, 110)
+jumpHeightLabel.BackgroundTransparency = 1
+jumpHeightLabel.Text = "Jump Height: 50"
+jumpHeightLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+jumpHeightLabel.Font = Enum.Font.Gotham
+jumpHeightLabel.TextSize = 14
+jumpHeightLabel.TextXAlignment = Enum.TextXAlignment.Left
+jumpHeightLabel.Parent = PlayerFrame
+
+local jumpHeightSlider = Instance.new("Slider")
+jumpHeightSlider.Size = UDim2.new(1, -40, 0, 20)
+jumpHeightSlider.Position = UDim2.new(0, 20, 0, 140)
+jumpHeightSlider.MinValue = 0
+jumpHeightSlider.MaxValue = 200
+jumpHeightSlider.Value = LocalPlayer.Character.Humanoid.JumpHeight
+jumpHeightSlider.Parent = PlayerFrame
+
+jumpHeightSlider.Changed:Connect(function()
+	LocalPlayer.Character.Humanoid.JumpHeight = jumpHeightSlider.Value
+	jumpHeightLabel.Text = "Jump Height: " .. math.floor(jumpHeightSlider.Value)
+end)
+
+-- Gravity Slider
+local gravityLabel = Instance.new("TextLabel")
+gravityLabel.Size = UDim2.new(1, -40, 0, 30)
+gravityLabel.Position = UDim2.new(0, 20, 0, 170)
+gravityLabel.BackgroundTransparency = 1
+gravityLabel.Text = "Gravity: 196.2"
+gravityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+gravityLabel.Font = Enum.Font.Gotham
+gravityLabel.TextSize = 14
+gravityLabel.TextXAlignment = Enum.TextXAlignment.Left
+gravityLabel.Parent = PlayerFrame
+
+local gravitySlider = Instance.new("Slider")
+gravitySlider.Size = UDim2.new(1, -40, 0, 20)
+gravitySlider.Position = UDim2.new(0, 20, 0, 200)
+gravitySlider.MinValue = 0
+gravitySlider.MaxValue = 500
+gravitySlider.Value = workspace.Gravity
+gravitySlider.Parent = PlayerFrame
+
+gravitySlider.Changed:Connect(function()
+	workspace.Gravity = gravitySlider.Value
+	gravityLabel.Text = "Gravity: " .. math.floor(gravitySlider.Value)
+end)
+
+-- Reset Button for WalkSpeed, JumpHeight, and Gravity
+local resetBtn = Instance.new("TextButton")
+resetBtn.Size = UDim2.new(0, 180, 0, 35)
+resetBtn.Position = UDim2.new(0, 20, 0, 240)
+resetBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+resetBtn.Text = "Reset to Default"
+resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+resetBtn.Font = Enum.Font.Gotham
+resetBtn.TextSize = 14
+resetBtn.Parent = PlayerFrame
+makeRounded(resetBtn, 6)
+
+resetBtn.MouseButton1Click:Connect(function()
+	walkSpeedSlider.Value = 16
+	jumpHeightSlider.Value = 50
+	gravitySlider.Value = 196.2
+end)
+
+-- Other Tabs (Visual, VoiceChat, Settings, Credits)
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
 local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
