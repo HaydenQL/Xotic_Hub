@@ -457,68 +457,10 @@ end)
 
 
 
--- 🎨 Visual Tab (Scrollable)
+--Tabs gui each
+local VisualFrame = createTabFrame("Visual", "Visual Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
-
-local VisualFrame = Instance.new("ScrollingFrame")
-VisualFrame.Name = "VisualFrame"
-VisualFrame.Size = UDim2.new(1, 0, 1, 0)
-VisualFrame.CanvasSize = UDim2.new(0, 0, 0, 400)
-VisualFrame.ScrollBarThickness = 4
-VisualFrame.BackgroundTransparency = 1
-VisualFrame.Visible = false
-VisualFrame.Parent = contentFrame
-makeRounded(VisualFrame, 10)
-
-
-local visualLayout = Instance.new("UIListLayout")
-visualLayout.Padding = UDim.new(0, 5)
-visualLayout.SortOrder = Enum.SortOrder.LayoutOrder
-visualLayout.Parent = VisualFrame
-
-local visualPadding = Instance.new("UIPadding")
-visualPadding.PaddingTop = UDim.new(0, 10)
-visualPadding.PaddingLeft = UDim.new(0, 20)
-visualPadding.Parent = VisualFrame
-
--- Title
-local visualTitle = Instance.new("TextLabel")
-visualTitle.Size = UDim2.new(1, -20, 0, 30)
-visualTitle.BackgroundTransparency = 1
-visualTitle.Text = "Visual Tab"
-visualTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-visualTitle.Font = Enum.Font.GothamBold
-visualTitle.TextSize = 16
-visualTitle.TextXAlignment = Enum.TextXAlignment.Left
-visualTitle.LayoutOrder = 0
-visualTitle.Parent = VisualFrame
-
--- 🧍 Lineform Toggle Button
-local lineFormBtn = Instance.new("TextButton")
-lineFormBtn.Size = UDim2.new(0, 200, 0, 30)
-lineFormBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-lineFormBtn.Text = "🧍 Lineform: OFF"
-lineFormBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-lineFormBtn.Font = Enum.Font.Gotham
-lineFormBtn.TextSize = 14
-lineFormBtn.LayoutOrder = 1
-lineFormBtn.Parent = VisualFrame
-makeRounded(lineFormBtn, 6)
-
--- Toggle State
-local lineFormOn = false
-
--- Get RemoteEvent
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local lineEvent = ReplicatedStorage:WaitForChild("LineformEvent")
-
-lineFormBtn.MouseButton1Click:Connect(function()
-	lineFormOn = not lineFormOn
-	lineFormBtn.Text = lineFormOn and "🧍 Lineform: ON" or "🧍 Lineform: OFF"
-	lineEvent:FireServer(lineFormOn)
-end)
-
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
