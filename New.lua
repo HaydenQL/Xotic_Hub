@@ -208,6 +208,41 @@ comingSoonLabel.Parent = HomeFrame
 
 -- Other Tabs (Player, Visual, VoiceChat, Settings, Credits)
 local PlayerFrame = createTabFrame("Player", "Player Tab")
+
+-- WalkSpeed Slider
+local walkSpeedLabel = Instance.new("TextLabel")
+walkSpeedLabel.Size = UDim2.new(0, 200, 0, 20)
+walkSpeedLabel.Position = UDim2.new(0, 20, 0, 50)
+walkSpeedLabel.BackgroundTransparency = 1
+walkSpeedLabel.Text = "WalkSpeed: 16"
+walkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+walkSpeedLabel.Font = Enum.Font.Gotham
+walkSpeedLabel.TextSize = 14
+walkSpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+walkSpeedLabel.Parent = PlayerFrame
+
+local walkSpeedSlider = Instance.new("TextButton")
+walkSpeedSlider.Size = UDim2.new(0, 200, 0, 30)
+walkSpeedSlider.Position = UDim2.new(0, 20, 0, 80)
+walkSpeedSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+walkSpeedSlider.Text = "Click to Increase (Max: 100)"
+walkSpeedSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
+walkSpeedSlider.Font = Enum.Font.Gotham
+walkSpeedSlider.TextSize = 14
+walkSpeedSlider.Parent = PlayerFrame
+makeRounded(walkSpeedSlider, 6)
+
+local currentSpeed = 16
+
+walkSpeedSlider.MouseButton1Click:Connect(function()
+	currentSpeed = currentSpeed + 4
+	if currentSpeed > 100 then
+		currentSpeed = 16
+	end
+	LocalPlayer.Character.Humanoid.WalkSpeed = currentSpeed
+	walkSpeedLabel.Text = "WalkSpeed: " .. tostring(currentSpeed)
+end)
+
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
 local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
@@ -301,3 +336,30 @@ LocalPlayer.Chatted:Connect(function(msg)
 		AdminFrame.Visible = true
 	end
 end)
+
+-- 🔘 Minimize button functionality
+local isMinimized = false
+minBtn.MouseButton1Click:Connect(function()
+	isMinimized = not isMinimized
+	for _, child in pairs(mainFrame:GetChildren()) do
+		if child ~= topBar then
+			child.Visible = not isMinimized
+		end
+	end
+end)
+
+-- ❌ Close button functionality
+closeBtn.MouseButton1Click:Connect(function()
+	ScreenGui.Enabled = false
+end)
+
+-- 🎹 Toggle GUI with "K" key
+local guiToggled = true
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+	if input.KeyCode == Enum.KeyCode.K then
+		guiToggled = not guiToggled
+		ScreenGui.Enabled = guiToggled
+	end
+end)
+
