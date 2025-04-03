@@ -1,4 +1,4 @@
--- Remove existing GUI
+-- Remove existing GUI a
 for _, gui in pairs(game.CoreGui:GetChildren()) do
 	if gui.Name == "SigmaHub" then gui:Destroy() end
 end
@@ -77,14 +77,17 @@ closeBtn.TextColor3 = Color3.fromRGB(200, 50, 50)
 closeBtn.Font = Enum.Font.GothamBold
 closeBtn.Parent = topBar
 
-local tabFrame = Instance.new("Frame")
+local tabFrame = Instance.new("ScrollingFrame")
 tabFrame.Size = UDim2.new(0, 100, 1, -30)
 tabFrame.Position = UDim2.new(0, 0, 0, 30)
 tabFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+tabFrame.CanvasSize = UDim2.new(0, 0, 0, 300)
+tabFrame.ScrollBarThickness = 4
 tabFrame.Parent = mainFrame
 makeRounded(tabFrame, 10)
 
 local uiListLayout = Instance.new("UIListLayout")
+uiListLayout.Padding = UDim.new(0, 5)
 uiListLayout.Parent = tabFrame
 uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
@@ -172,10 +175,11 @@ local tabInfo = {
 
 for _, tab in ipairs(tabInfo) do
 	local button = Instance.new("TextButton")
-	button.Size = UDim2.new(1, 0, 0, 30)
+	button.Size = UDim2.new(1, -10, 0, 40)
 	button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 	button.Text = tab[1]  -- symbol only
 	button.Font = Enum.Font.Gotham
+	button.TextSize = 20
 	button.TextColor3 = Color3.fromRGB(255, 255, 255)
 	button.Name = tab[2] .. "Tab"
 	button.Parent = tabFrame
