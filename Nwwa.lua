@@ -345,21 +345,38 @@ end)
 --Tabs gui each
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
 
--- 🎙️ Voice Chat Controls (with Camera Spy & Scrollable)
+-- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
 VoiceChatFrame.Name = "VoiceChatFrame"
 VoiceChatFrame.Size = UDim2.new(1, 0, 1, 0)
-VoiceChatFrame.CanvasSize = UDim2.new(0, 0, 0, 500)
+VoiceChatFrame.CanvasSize = UDim2.new(0, 0, 0, 600)
 VoiceChatFrame.ScrollBarThickness = 4
 VoiceChatFrame.BackgroundTransparency = 1
-VoiceChatFrame.Parent = contentFrame
 VoiceChatFrame.Visible = false
+VoiceChatFrame.Parent = contentFrame
 makeRounded(VoiceChatFrame, 10)
 
 local vcLayout = Instance.new("UIListLayout")
 vcLayout.Padding = UDim.new(0, 8)
 vcLayout.SortOrder = Enum.SortOrder.LayoutOrder
 vcLayout.Parent = VoiceChatFrame
+
+local vcPadding = Instance.new("UIPadding")
+vcPadding.PaddingTop = UDim.new(0, 10)
+vcPadding.PaddingLeft = UDim.new(0, 20)
+vcPadding.Parent = VoiceChatFrame
+
+-- Title Label
+local vcTitle = Instance.new("TextLabel")
+vcTitle.Size = UDim2.new(1, -20, 0, 30)
+vcTitle.BackgroundTransparency = 1
+vcTitle.Text = "Voice Chat Tab"
+vcTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+vcTitle.Font = Enum.Font.GothamBold
+vcTitle.TextSize = 16
+vcTitle.TextXAlignment = Enum.TextXAlignment.Left
+vcTitle.LayoutOrder = 0
+vcTitle.Parent = VoiceChatFrame
 
 -- 🔓 Rejoin VC Button
 local unbanVCBtn = Instance.new("TextButton")
@@ -459,7 +476,6 @@ stopSpyCamBtn.LayoutOrder = 6
 stopSpyCamBtn.Parent = VoiceChatFrame
 makeRounded(stopSpyCamBtn, 6)
 
--- 🎯 Start camera spy
 startSpyCamBtn.MouseButton1Click:Connect(function()
 	local displayName = camSpyBox.Text:lower()
 	for _, player in pairs(game.Players:GetPlayers()) do
@@ -484,7 +500,6 @@ startSpyCamBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
--- 🔁 Return camera to self
 stopSpyCamBtn.MouseButton1Click:Connect(function()
 	if spyCamActive then
 		spyCamActive = false
@@ -496,8 +511,6 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 		print("🔁 Returned camera to self")
 	end
 end)
-
-
 
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
@@ -530,7 +543,7 @@ creditsNote.Parent = CreditsFrame
 for tabName, button in pairs(tabButtons) do
 	button.MouseButton1Click:Connect(function()
 		for _, child in ipairs(contentFrame:GetChildren()) do
-			if child:IsA("Frame") then
+			if child:IsA("Frame") or child:IsA("ScrollingFrame") then -- ✅ hides both
 				child.Visible = false
 			end
 		end
@@ -544,6 +557,7 @@ for tabName, button in pairs(tabButtons) do
 		end
 	end)
 end
+
 
 -- 🔐 Admin Panel (hidden unless !admin is typed)
 local AdminFrame = Instance.new("Frame")
