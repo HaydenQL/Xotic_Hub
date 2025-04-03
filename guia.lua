@@ -88,3 +88,6 @@ end
 
 -- Initial message
 _G.XenoLog("🟢 Logger ready. Use _G.XenoLog('message') to write here.")
+_G.XenoLog("✅ Hello, king. This line wraps and auto-sizes properly now.")
+_G.XenoLog("This is a long message that should wrap onto the next line without any issues. You can paste remotes or any text here and it will scroll nicely.")
+
