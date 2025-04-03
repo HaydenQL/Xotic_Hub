@@ -304,31 +304,50 @@ LocalPlayer.CharacterAdded:Connect(function(char)
 end)
 
 
--- 🪐 Gravity Options (Placeholder Dropdown UI)
-local gravityLabel = Instance.new("TextLabel")
-gravityLabel.Size = UDim2.new(0, 200, 0, 20)
-gravityLabel.Position = UDim2.new(0, 20, 0, 200)
-gravityLabel.BackgroundTransparency = 1
-gravityLabel.Text = "Gravity Preset: (Coming Soon)"
-gravityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-gravityLabel.Font = Enum.Font.Gotham
-gravityLabel.TextSize = 14
-gravityLabel.TextXAlignment = Enum.TextXAlignment.Left
-gravityLabel.Parent = PlayerFrame
+-- ✍️ Custom Gravity Entry
+local customInput = Instance.new("TextBox")
+customInput.Size = UDim2.new(1, -10, 0, 30)
+customInput.Text = "Type Custom Gravity"
+customInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+customInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+customInput.Font = Enum.Font.Gotham
+customInput.TextSize = 14
+customInput.ClearTextOnFocus = true
+customInput.Parent = dropdownFrame
+makeRounded(customInput, 4)
 
-local gravityDropdown = Instance.new("TextButton")
-gravityDropdown.Size = UDim2.new(0, 200, 0, 30)
-gravityDropdown.Position = UDim2.new(0, 20, 0, 230)
-gravityDropdown.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-gravityDropdown.Text = "Select Gravity (☰)"
-gravityDropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
-gravityDropdown.Font = Enum.Font.Gotham
-gravityDropdown.TextSize = 14
-gravityDropdown.Parent = PlayerFrame
-makeRounded(gravityDropdown, 6)
+customInput.FocusLost:Connect(function(enterPressed)
+	if enterPressed then
+		local val = tonumber(customInput.Text)
+		if val then
+			game.Workspace.Gravity = val
+			dropdownBtn.Text = "Gravity: Custom (" .. tostring(val) .. ")"
+			dropdownFrame.Visible = false
+		else
+			customInput.Text = "Invalid Input"
+		end
+	end
+end)
 
--- You can later connect this button to a dropdown or list of gravity settings
--- like: Moon = 50, Sun = 1000, Normal = 196.2 (default), etc.
+-- 🔁 Reset Button
+local resetBtn = Instance.new("TextButton")
+resetBtn.Size = UDim2.new(1, -10, 0, 30)
+resetBtn.Text = "Reset to Default (Earth)"
+resetBtn.BackgroundColor3 = Color3.fromRGB(70, 30, 30)
+resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+resetBtn.Font = Enum.Font.GothamBold
+resetBtn.TextSize = 14
+resetBtn.Parent = dropdownFrame
+makeRounded(resetBtn, 4)
+
+resetBtn.MouseButton1Click:Connect(function()
+	game.Workspace.Gravity = 196.2
+	dropdownBtn.Text = "Gravity: 🌍 Earth"
+	dropdownFrame.Visible = false
+end)
+
+updateDropdownSize()
+
 
 
 
