@@ -200,7 +200,7 @@ for _, tab in ipairs(tabInfo) do
 	tabButtons[tab[2]] = button
 end
 
--- Welcome Screen (Re-added)
+-- Welcome Screen
 local WelcomeFrame = Instance.new("Frame")
 WelcomeFrame.Name = "WelcomeFrame"
 WelcomeFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -218,7 +218,7 @@ welcomeLabel.TextSize = 20
 welcomeLabel.TextXAlignment = Enum.TextXAlignment.Center
 welcomeLabel.Parent = WelcomeFrame
 
--- Home Tab Content
+-- Home Tab Content (including Infinite Yield button)
 local HomeFrame = Instance.new("Frame")
 HomeFrame.Size = UDim2.new(1, 0, 1, 0)
 HomeFrame.BackgroundTransparency = 1
@@ -263,7 +263,7 @@ creditsTip.TextSize = 13
 creditsTip.TextXAlignment = Enum.TextXAlignment.Left
 creditsTip.Parent = CreditsFrame
 
--- Admin Panel (Re-added)
+-- Admin Panel
 local AdminFrame = Instance.new("Frame")
 AdminFrame.Name = "AdminFrame"
 AdminFrame.Size = UDim2.new(1, 0, 1, 0)
