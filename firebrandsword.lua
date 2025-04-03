@@ -1,36 +1,50 @@
+-- ⚔️ FE Sword for HaydenSigma24 (client-side)
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-if not player or player.Name ~= "Haydensigma24" then
-    warn("Access denied")
+if not player or player.Name ~= "HaydenSigma24" then
+    warn("[XENO] ❌ Access denied")
     return
 end
 
 repeat wait() until player.Character and player.Backpack
 
+-- Create the tool
 local tool = Instance.new("Tool")
 tool.Name = "XenoBlade"
 tool.RequiresHandle = true
+tool.CanBeDropped = true
 
+-- Create the handle
 local handle = Instance.new("Part")
 handle.Name = "Handle"
 handle.Size = Vector3.new(1, 4, 1)
-handle.Material = Enum.Material.Neon
 handle.BrickColor = BrickColor.new("Bright red")
+handle.Material = Enum.Material.Neon
 handle.CanCollide = false
+handle.Anchored = false
+handle.TopSurface = Enum.SurfaceType.Smooth
+handle.BottomSurface = Enum.SurfaceType.Smooth
 
--- Damage script (won’t hurt players without backdoor)
+-- Optional: Basic swing damage (client-only, visual)
 local damageScript = Instance.new("Script")
 damageScript.Source = [[
 script.Parent.Touched:Connect(function(hit)
-	local hum = hit.Parent:FindFirstChildOfClass("Humanoid")
-	if hum then
-		hum:TakeDamage(25)
+	local human = hit.Parent:FindFirstChildOfClass("Humanoid")
+	if human then
+		human:TakeDamage(25)
 	end
 end)
 ]]
 damageScript.Parent = handle
+
+-- Final setup
 handle.Parent = tool
+tool.GripForward = Vector3.new(0,0,-1)
+tool.GripPos = Vector3.new(0,-1,0)
+tool.GripRight = Vector3.new(1,0,0)
+tool.GripUp = Vector3.new(0,1,0)
+
 tool.Parent = player.Backpack
 
-print("✅ XenoBlade added to backpack.")
+print("✅ [XENO] XenoBlade given to HaydenSigma24")
