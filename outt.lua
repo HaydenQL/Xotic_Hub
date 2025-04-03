@@ -1,17 +1,14 @@
-repeat wait() until _G.XenoLog
+local ids = {
+    2788229376, -- Adonis
+    2030473490, -- Kohl's Admin
+    5951389993, -- HD Admin (vulnerable)
+    926280790,  -- Test
+    4925462889, -- IceHub
+}
 
-_G.XenoLog("🔍 Starting require() scan... (IDs 1–1000000)")
-local found = 0
-
-for i = 1, 1000000 do
+for _, id in ipairs(ids) do
 	pcall(function()
-		local result = require(i)
-		if typeof(result) == "table" or typeof(result) == "function" then
-			found += 1
-			_G.XenoLog("✅ Possible backdoor module: ID = " .. i)
-		end
+		local bd = require(id)
+		_G.XenoLog("✅ Test require success: " .. id)
 	end)
-	wait()
 end
-
-_G.XenoLog("✅ Scan complete. Found " .. found .. " usable module(s).")
