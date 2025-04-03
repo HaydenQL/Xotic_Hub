@@ -12,6 +12,12 @@ ScreenGui.Name = "SigmaHub"
 ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
 
+local function makeRounded(obj, radius)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, radius)
+    corner.Parent = obj
+end
+
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
 mainFrame.Size = UDim2.new(0, 450, 0, 280)
@@ -21,11 +27,13 @@ mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
 mainFrame.Draggable = true
 mainFrame.Parent = ScreenGui
+makeRounded(mainFrame, 12)
 
 local topBar = Instance.new("Frame")
 topBar.Size = UDim2.new(1, 0, 0, 30)
 topBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 topBar.Parent = mainFrame
+makeRounded(topBar, 8)
 
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -180, 1, 0)
@@ -69,13 +77,17 @@ closeBtn.TextColor3 = Color3.fromRGB(200, 50, 50)
 closeBtn.Font = Enum.Font.GothamBold
 closeBtn.Parent = topBar
 
-local tabFrame = Instance.new("Frame")
+local tabFrame = Instance.new("ScrollingFrame")
 tabFrame.Size = UDim2.new(0, 100, 1, -30)
 tabFrame.Position = UDim2.new(0, 0, 0, 30)
 tabFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+tabFrame.CanvasSize = UDim2.new(0, 0, 0, 300)
+tabFrame.ScrollBarThickness = 4
 tabFrame.Parent = mainFrame
+makeRounded(tabFrame, 10)
 
 local uiListLayout = Instance.new("UIListLayout")
+uiListLayout.Padding = UDim.new(0, 5)
 uiListLayout.Parent = tabFrame
 uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
@@ -85,6 +97,7 @@ contentFrame.Size = UDim2.new(1, -100, 1, -30)
 contentFrame.Position = UDim2.new(0, 100, 0, 30)
 contentFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 contentFrame.Parent = mainFrame
+makeRounded(contentFrame, 10)
 
 local versionLabel = Instance.new("TextLabel")
 versionLabel.Size = UDim2.new(0, 150, 0, 20)
@@ -116,6 +129,7 @@ resizeCorner.BackgroundColor3 = Color3.fromRGB(100,100,100)
 resizeCorner.BorderSizePixel = 0
 resizeCorner.Text = ""
 resizeCorner.Parent = mainFrame
+makeRounded(resizeCorner, 4)
 
 local resizing = false
 local lastMousePos
@@ -149,94 +163,101 @@ UIS.InputBegan:Connect(function(key, gpe)
 	end
 end)
 
--- Add Local Tab
-local localTab = Instance.new("TextButton")
-localTab.Size = UDim2.new(1, 0, 0, 30)
-localTab.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-localTab.Text = "Local"
-localTab.Font = Enum.Font.Gotham
-localTab.TextColor3 = Color3.fromRGB(255, 255, 255)
-localTab.Parent = tabFrame
+-- Create tab buttons with symbols
+local tabInfo = {
+	{"🏠", "Home"},
+	{"🧍", "Player"},
+	{"🎨", "Visual"},
+	{"🎙️", "VoiceChat"},
+	{"⚙️", "Settings"},
+	{"📜", "Credits"},
+}
 
--- Ride Button
-local rideBtn = Instance.new("TextButton")
-rideBtn.Size = UDim2.new(0, 180, 0, 30)
-rideBtn.Position = UDim2.new(0, 10, 0, 10)
-rideBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-rideBtn.Text = "🚗 Ride Player"
-rideBtn.Font = Enum.Font.Gotham
-rideBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-rideBtn.Parent = contentFrame
-rideBtn.Visible = false
+local tabButtons = {}
 
-localTab.MouseButton1Click:Connect(function()
-	for _, child in pairs(contentFrame:GetChildren()) do
-		if child:IsA("TextButton") then
-			child.Visible = false
-		end
-	end
-	rideBtn.Visible = true
+for _, tab in ipairs(tabInfo) do
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(1, -10, 0, 40)
+	button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	button.Text = tab[1]  -- symbol only
+	button.Font = Enum.Font.Gotham
+	button.TextSize = 20
+	button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	button.Name = tab[2] .. "Tab"
+	button.Parent = tabFrame
+	makeRounded(button, 6)
+	tabButtons[tab[2]] = button
+end
+
+-- Welcome Screen
+local welcomeFrame = Instance.new("Frame")
+welcomeFrame.Name = "welcomeFrame"
+welcomeFrame.Size = UDim2.new(1, 0, 1, 0)
+welcomeFrame.BackgroundTransparency = 1
+welcomeFrame.Visible = true
+welcomeFrame.Parent = contentFrame
+
+local welcomeLabel = Instance.new("TextLabel")
+welcomeLabel.Size = UDim2.new(1, 0, 0, 50)
+welcomeLabel.Position = UDim2.new(0, 0, 0.4, 0)
+welcomeLabel.BackgroundTransparency = 1
+welcomeLabel.Text = "Welcome to Sigma Hub"
+welcomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+welcomeLabel.Font = Enum.Font.GothamBold
+welcomeLabel.TextSize = 20
+welcomeLabel.TextXAlignment = Enum.TextXAlignment.Center
+welcomeLabel.Parent = welcomeFrame
+
+-- Home Tab Content
+local homeFrame = Instance.new("Frame")
+homeFrame.Size = UDim2.new(1, 0, 1, 0)
+homeFrame.BackgroundTransparency = 1
+homeFrame.Visible = false
+homeFrame.Parent = contentFrame
+
+local infYieldBtn = Instance.new("TextButton")
+infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
+infYieldBtn.Position = UDim2.new(0, 20, 0, 20)
+infYieldBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+infYieldBtn.Text = "Launch Infinite Yield"
+infYieldBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+infYieldBtn.Font = Enum.Font.Gotham
+infYieldBtn.TextSize = 14
+infYieldBtn.Parent = homeFrame
+makeRounded(infYieldBtn, 6)
+
+infYieldBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 end)
 
-rideBtn.MouseButton1Click:Connect(function()
-	local dropdown = Instance.new("ScrollingFrame")
-	dropdown.Size = UDim2.new(0, 200, 0, 150)
-	dropdown.Position = UDim2.new(0, 10, 0, 50)
-	dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-	dropdown.ScrollBarThickness = 5
-	dropdown.CanvasSize = UDim2.new(0, 0, 0, #Players:GetPlayers() * 35)
-	dropdown.Parent = contentFrame
-	dropdown.Name = "PlayerDropdown"
+local comingSoonLabel = Instance.new("TextLabel")
+comingSoonLabel.Size = UDim2.new(1, -40, 0, 30)
+comingSoonLabel.Position = UDim2.new(0, 20, 0, 70)
+comingSoonLabel.BackgroundTransparency = 1
+comingSoonLabel.Text = "Reanimations coming in the future."
+comingSoonLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+comingSoonLabel.Font = Enum.Font.Gotham
+comingSoonLabel.TextSize = 14
+comingSoonLabel.TextXAlignment = Enum.TextXAlignment.Left
+comingSoonLabel.Parent = homeFrame
 
-	local layout = Instance.new("UIListLayout")
-	layout.Parent = dropdown
-
-	for _, p in ipairs(Players:GetPlayers()) do
-		if p ~= LocalPlayer then
-			local btn = Instance.new("TextButton")
-			btn.Size = UDim2.new(1, -10, 0, 30)
-			btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-			btn.Text = p.DisplayName .. " (" .. p.Name .. ")"
-			btn.Font = Enum.Font.Gotham
-			btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-			btn.Parent = dropdown
-
-			btn.MouseButton1Click:Connect(function()
-				dropdown:Destroy()
-				local char = p.Character
-				if char and char:FindFirstChild("HumanoidRootPart") then
-					local seat = Instance.new("Seat", workspace)
-					seat.Anchored = false
-					seat.CanCollide = false
-					seat.Transparency = 0.7
-					seat.Size = Vector3.new(2, 0.4, 2)
-					seat.CFrame = char.HumanoidRootPart.CFrame * CFrame.new(0, 1.5, 0)
-
-					local weld = Instance.new("WeldConstraint", seat)
-					weld.Part0 = seat
-					weld.Part1 = char.HumanoidRootPart
-
-					wait(0.1)
-					local myChar = LocalPlayer.Character
-					myChar:MoveTo(seat.Position + Vector3.new(0, 1, 0))
-					wait(0.1)
-					myChar.Humanoid.Sit = true
-					seat:Sit(myChar.Humanoid)
-
-					local attach = Instance.new("WeldConstraint")
-					attach.Part0 = myChar:FindFirstChild("HumanoidRootPart")
-					attach.Part1 = seat
-					attach.Parent = seat
-
-					local conn
-					conn = myChar.Humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
-						if not myChar.Humanoid.Sit then
-							seat:Destroy()
-							conn:Disconnect()
-						end
-					end)
-				end
-			end)
+-- Tab switching behavior
+for tabName, button in pairs(tabButtons) do
+	button.MouseButton1Click:Connect(function()
+		for _, child in ipairs(contentFrame:GetChildren()) do
+			if child:IsA("Frame") then
+				child.Visible = false
+			end
 		end
-	end
-end)
+		local tabFrameName = tabName:lower() .. "Frame"
+		local target = contentFrame:FindFirstChild(tabFrameName)
+		if target then
+			-- Hide welcome on tab switch
+			local welcome = contentFrame:FindFirstChild("welcomeFrame")
+			if welcome then
+				welcome.Visible = false
+			end
+			target.Visible = true
+		end
+	end)
+end
