@@ -1,37 +1,57 @@
--- [🔍 Remote Scanner GUI for Xeno FE]
+-- 🔐 Server-Side Backdoor Sword Giver
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
 
--- Setup GUI
-local gui = Instance.new("ScreenGui", game.CoreGui)
-gui.Name = "RemoteScanner_" .. math.random(1000,9999)
+local remote = ReplicatedStorage:WaitForChild("GiveSwordRemote")
 
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 400, 0, 300)
-frame.Position = UDim2.new(0.5, -200, 0.5, -150)
-frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-frame.BorderSizePixel = 0
+-- Sword builder function
+local function createSword()
+	local sword = Instance.new("Tool")
+	sword.Name = "XenoBlade"
+	sword.RequiresHandle = true
+	sword.CanBeDropped = true
 
-local textBox = Instance.new("TextLabel", frame)
-textBox.Size = UDim2.new(1, 0, 1, 0)
-textBox.TextWrapped = true
-textBox.TextScaled = true
-textBox.TextColor3 = Color3.fromRGB(0, 255, 0)
-textBox.BackgroundTransparency = 1
-textBox.Font = Enum.Font.Code
-textBox.Text = "🔍 Scanning for RemoteEvents..."
+	local handle = Instance.new("Part")
+	handle.Name = "Handle"
+	handle.Size = Vector3.new(1, 4, 1)
+	handle.BrickColor = BrickColor.new("Bright red")
+	handle.Material = Enum.Material.Neon
+	handle.CanCollide = false
+	handle.TopSurface = Enum.SurfaceType.Smooth
+	handle.BottomSurface = Enum.SurfaceType.Smooth
+	handle.Parent = sword
 
--- Scan Remotes
-local remotes = {}
-
-for _, obj in pairs(getgc(true)) do
-	if typeof(obj) == "Instance" and obj:IsA("RemoteEvent") then
-		table.insert(remotes, obj:GetFullName())
+	local dmgScript = Instance.new("Script")
+	dmgScript.Source = [[
+script.Parent.Touched:Connect(function(hit)
+	local hum = hit.Parent:FindFirstChildOfClass("Humanoid")
+	if hum and hum.Health > 0 then
+		hum:TakeDamage(25)
 	end
+end)
+]]
+	dmgScript.Parent = handle
+
+	return sword
 end
 
-if #remotes == 0 then
-	textBox.Text = "❌ No RemoteEvents found."
-else
-	textBox.Text = "✅ Found Remotes:\n\n" .. table.concat(remotes, "\n")
-end
+-- Only allow trusted users
+local allowedUsers = {
+	HaydenSigma24 = true,
+	wundle_weet = true
+}
+
+-- On remote fired
+remote.OnServerEvent:Connect(function(player, targetName)
+	if not allowedUsers[player.Name] then
+		warn("Blocked unauthorized sword request by", player.Name)
+		return
+	end
+
+	local target = Players:FindFirstChild(targetName)
+	if target and target:FindFirstChild("Backpack") then
+		local sword = createSword()
+		sword.Parent = target.Backpack
+		print("✅ Sword given to", target.Name)
+	end
+end)
