@@ -261,3 +261,92 @@ for tabName, button in pairs(tabButtons) do
 		end
 	end)
 end
+
+-- Credits Tab Content
+local CreditsFrame = Instance.new("Frame")
+CreditsFrame.Name = "CreditsFrame"
+CreditsFrame.Size = UDim2.new(1, 0, 1, 0)
+CreditsFrame.BackgroundTransparency = 1
+CreditsFrame.Visible = false
+CreditsFrame.Parent = contentFrame
+
+local creditsTitle = Instance.new("TextLabel")
+creditsTitle.Size = UDim2.new(1, 0, 0, 40)
+creditsTitle.Position = UDim2.new(0, 0, 0, 0)
+creditsTitle.BackgroundTransparency = 1
+creditsTitle.Text = "📜 Credits"
+creditsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+creditsTitle.Font = Enum.Font.GothamBold
+creditsTitle.TextSize = 18
+creditsTitle.Parent = CreditsFrame
+
+local creditsText = Instance.new("TextLabel")
+creditsText.Size = UDim2.new(1, -40, 0, 40)
+creditsText.Position = UDim2.new(0, 20, 0, 40)
+creditsText.BackgroundTransparency = 1
+creditsText.Text = "Made by SigmaHub Dev Team"
+creditsText.TextColor3 = Color3.fromRGB(200, 200, 200)
+creditsText.Font = Enum.Font.Gotham
+creditsText.TextSize = 14
+creditsText.TextWrapped = true
+creditsText.TextXAlignment = Enum.TextXAlignment.Left
+creditsText.Parent = CreditsFrame
+
+local creditsNote = Instance.new("TextLabel")
+creditsNote.Size = UDim2.new(1, -40, 0, 40)
+creditsNote.Position = UDim2.new(0, 20, 0, 80)
+creditsNote.BackgroundTransparency = 1
+creditsNote.Text = "💬 Type '!admin' in chat to unlock the admin panel."
+creditsNote.TextColor3 = Color3.fromRGB(200, 200, 200)
+creditsNote.Font = Enum.Font.Gotham
+creditsNote.TextSize = 14
+creditsNote.TextWrapped = true
+creditsNote.TextXAlignment = Enum.TextXAlignment.Left
+creditsNote.Parent = CreditsFrame
+
+-- Admin Panel (Hidden Frame)
+local AdminFrame = Instance.new("Frame")
+AdminFrame.Name = "AdminFrame"
+AdminFrame.Size = UDim2.new(1, 0, 1, 0)
+AdminFrame.BackgroundTransparency = 0
+AdminFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+AdminFrame.Visible = false
+AdminFrame.Parent = contentFrame
+makeRounded(AdminFrame, 10)
+
+local adminTitle = Instance.new("TextLabel")
+adminTitle.Size = UDim2.new(1, 0, 0, 40)
+adminTitle.Position = UDim2.new(0, 0, 0, 0)
+adminTitle.BackgroundTransparency = 1
+adminTitle.Text = "🔧 Admin Panel"
+adminTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+adminTitle.Font = Enum.Font.GothamBold
+adminTitle.TextSize = 18
+adminTitle.Parent = AdminFrame
+
+local adminLabel = Instance.new("TextLabel")
+adminLabel.Size = UDim2.new(1, -40, 0, 30)
+adminLabel.Position = UDim2.new(0, 20, 0, 50)
+adminLabel.BackgroundTransparency = 1
+adminLabel.Text = "Admin tools will go here soon..."
+adminLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+adminLabel.Font = Enum.Font.Gotham
+adminLabel.TextSize = 14
+adminLabel.TextXAlignment = Enum.TextXAlignment.Left
+adminLabel.Parent = AdminFrame
+
+-- Chat command to open AdminFrame
+LocalPlayer.Chatted:Connect(function(msg)
+	if msg:lower() == "!admin" then
+		for _, child in ipairs(contentFrame:GetChildren()) do
+			if child:IsA("Frame") then
+				child.Visible = false
+			end
+		end
+		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
+		if welcome then
+			welcome.Visible = false
+		end
+		AdminFrame.Visible = true
+	end
+end)
