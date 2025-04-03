@@ -566,15 +566,21 @@ unbanVCBtn.Parent = VoiceChatFrame
 makeRounded(unbanVCBtn, 6)
 
 unbanVCBtn.MouseButton1Click:Connect(function()
-	local success, result = pcall(function()
-		game:GetService("VoiceChatService"):JoinVoice()
+	task.defer(function()
+		local VCS = game:GetService("VoiceChatService")
+
+		local success, result = pcall(function()
+			VCS:JoinVoice()
+		end)
+
+		if success then
+			print("✅ Rejoin VC attempt sent.")
+		else
+			warn("❌ VC rejoin failed:", result)
+		end
 	end)
-	if success then
-		print("✅ Attempted to rejoin VC.")
-	else
-		warn("❌ Failed to rejoin VC:", result)
-	end
 end)
+
 
 -- 🔴 Disconnect VC Button
 local disconnectVCBtn = Instance.new("TextButton")
