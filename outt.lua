@@ -1,28 +1,28 @@
 repeat wait() until _G.XenoLog
-_G.XenoLog("🔍 Testing known backdoor module IDs...")
-
-local ids = {
-    2788229376, -- Adonis
-    2030473490, -- Kohl's Admin
-    5951389993, -- HD Admin
-    926280790,  -- Blank/Test
-    4925462889, -- IceHub
-}
+_G.XenoLog("🔍 Starting require() scan from 1 to 10,000...")
 
 local found = 0
+local total = 10000
 
-for _, id in ipairs(ids) do
+for i = 1, total do
 	pcall(function()
-		local result = require(id)
+		local result = require(i)
 		if typeof(result) == "table" or typeof(result) == "function" then
 			found += 1
-			_G.XenoLog("✅ Found usable module: ID = " .. id)
+			_G.XenoLog("✅ Found usable module ID: " .. i)
 		end
 	end)
+
+	-- Progress every 500 iterations
+	if i % 500 == 0 then
+		_G.XenoLog("🔄 Scanned " .. i .. " / " .. total)
+	end
+
+	wait()
 end
 
 if found == 0 then
-	_G.XenoLog("❌ No known backdoor modules found.")
+	_G.XenoLog("❌ No usable backdoor modules found after scanning " .. total .. " IDs.")
 else
-	_G.XenoLog("✅ Total usable backdoors found: " .. found)
+	_G.XenoLog("✅ Scan complete. Total usable modules found: " .. found)
 end
