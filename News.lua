@@ -452,14 +452,32 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 	end
 end)
 
-local resizing = false
-local startSize, startMousePos
+-- Resize corner handle
+local resizeCorner = Instance.new("TextButton")
+resizeCorner.Size = UDim2.new(0, 15, 0, 15)
+resizeCorner.Position = UDim2.new(1, -15, 1, -15)
+resizeCorner.BackgroundColor3 = Color3.fromRGB(100,100,100)
+resizeCorner.BorderSizePixel = 0
+resizeCorner.Text = ""
+resizeCorner.Parent = mainFrame
 
-resizeGrip.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		resizing = true
-		startMousePos = UIS:GetMouseLocation()
-		startSize = mainFrame.Size
+local resizing = false
+local lastMousePos
+local lastFrameSize
+
+resizeCorner.MouseButton1Down:Connect(function()
+	resizing = true
+	lastMousePos = UIS:GetMouseLocation()
+	lastFrameSize = mainFrame.Size
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = UIS:GetMouseLocation() - lastMousePos
+		mainFrame.Size = UDim2.new(
+			0, math.max(300, lastFrameSize.X.Offset + delta.X),
+			0, math.max(150, lastFrameSize.Y.Offset + delta.Y)
+		)
 	end
 end)
 
@@ -468,15 +486,4 @@ UIS.InputEnded:Connect(function(input)
 		resizing = false
 	end
 end)
-
-UIS.InputChanged:Connect(function(input)
-	if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
-		local currentMouse = UIS:GetMouseLocation()
-		local delta = currentMouse - startMousePos
-		local newWidth = math.clamp(startSize.X.Offset + delta.X, 300, 800)
-		local newHeight = math.clamp(startSize.Y.Offset + delta.Y, 200, 600)
-		mainFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
-	end
-end)
-
 
