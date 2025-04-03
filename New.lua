@@ -182,7 +182,7 @@ local tabInfo = {
 	{"⚙️", "Settings"},
 	{"📜", "Credits"},
 	{"🧪", "RemoteTest"},
-	{"📓", "Notes"},
+
 
 }
 
@@ -434,91 +434,5 @@ for tabName, button in pairs(tabButtons) do
 		end
 	end)
 end
--- Notes Tab
-local NotesFrame = Instance.new("Frame")
-NotesFrame.Name = "NotesFrame"
-NotesFrame.Size = UDim2.new(1, 0, 1, 0)
-NotesFrame.BackgroundTransparency = 1
-NotesFrame.Visible = false
-NotesFrame.Parent = contentFrame
-
-local notesTitle = Instance.new("TextLabel")
-notesTitle.Size = UDim2.new(1, 0, 0, 30)
-notesTitle.Position = UDim2.new(0, 10, 0, 10)
-notesTitle.BackgroundTransparency = 1
-notesTitle.Text = "📓 Sigma Hub Notes & Remote Guide"
-notesTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-notesTitle.Font = Enum.Font.GothamBold
-notesTitle.TextSize = 16
-notesTitle.TextXAlignment = Enum.TextXAlignment.Left
-notesTitle.Parent = NotesFrame
-
--- Notes Tab
-local NotesFrame = Instance.new("Frame")
-NotesFrame.Name = "NotesFrame"
-NotesFrame.Size = UDim2.new(1, 0, 1, 0)
-NotesFrame.BackgroundTransparency = 1
-NotesFrame.Visible = false
-NotesFrame.Parent = contentFrame
-
-local notesTitle = Instance.new("TextLabel")
-notesTitle.Size = UDim2.new(1, 0, 0, 30)
-notesTitle.Position = UDim2.new(0, 10, 0, 10)
-notesTitle.BackgroundTransparency = 1
-notesTitle.Text = "📓 Sigma Hub Notes & Remote Guide"
-notesTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-notesTitle.Font = Enum.Font.GothamBold
-notesTitle.TextSize = 16
-notesTitle.TextXAlignment = Enum.TextXAlignment.Left
-notesTitle.Parent = NotesFrame
-
-local notesBox = Instance.new("TextBox")
-notesBox.Size = UDim2.new(1, -20, 0, 180)
-notesBox.Position = UDim2.new(0, 10, 0, 50)
-notesBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-notesBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-notesBox.TextSize = 14
-notesBox.Font = Enum.Font.Code
-notesBox.TextWrapped = true
-notesBox.TextXAlignment = Enum.TextXAlignment.Left
-notesBox.TextYAlignment = Enum.TextYAlignment.Top
-notesBox.ClearTextOnFocus = false
-notesBox.TextEditable = true
-notesBox.MultiLine = true
-notesBox.Text = [[-- 🔍 Find All RemoteEvents
-for _, v in pairs(game:GetDescendants()) do
-    if v:IsA("RemoteEvent") then
-        print("RemoteEvent found: " .. v:GetFullName())
-    end
-end
-
--- 💡 Useful RemoteEvent Targets
--- RagdollEvent: Usually affects yourself, rarely others
--- ToggleInvisibility: Test with true/false and maybe target
--- DeleteInventory: Removes your tools (test on others)
--- ToolEvent: May give or manage tools
--- VEffect / VipAnimation: Try with no args to see effect
--- SubmitTextEvent / UpdateBoothText: May edit public signs
-]]
-
-makeRounded(notesBox, 8)
-notesBox.Parent = NotesFrame
-
-local copyBtn = Instance.new("TextButton")
-copyBtn.Size = UDim2.new(0, 150, 0, 30)
-copyBtn.Position = UDim2.new(0, 10, 0, 240)
-copyBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 100)
-copyBtn.Text = "📋 Copy to Clipboard"
-copyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-copyBtn.Font = Enum.Font.GothamBold
-copyBtn.TextSize = 14
-makeRounded(copyBtn, 6)
-copyBtn.Parent = NotesFrame
-
-copyBtn.MouseButton1Click:Connect(function()
-	if setclipboard then
-		setclipboard(notesBox.Text)
-	end
-end)
 
 
