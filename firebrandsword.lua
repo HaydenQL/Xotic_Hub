@@ -1,41 +1,36 @@
--- ⚔️ Fully custom sword for xxerray_kingxx
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-if not player or player.Name ~= "xxerray_kingxx" then return end
+if not player or player.Name ~= "xxerray_kingxx" then
+    warn("Access denied")
+    return
+end
 
--- Create the sword
-local sword = Instance.new("Tool")
-sword.Name = "FE Sword"
-sword.RequiresHandle = true
-sword.CanBeDropped = true
+repeat wait() until player.Character and player.Backpack
 
--- Create Handle
+local tool = Instance.new("Tool")
+tool.Name = "XenoBlade"
+tool.RequiresHandle = true
+
 local handle = Instance.new("Part")
 handle.Name = "Handle"
 handle.Size = Vector3.new(1, 4, 1)
-handle.Color = Color3.fromRGB(255, 50, 50)
-handle.Material = Enum.Material.ForceField
-handle.TopSurface = Enum.SurfaceType.Smooth
-handle.BottomSurface = Enum.SurfaceType.Smooth
+handle.Material = Enum.Material.Neon
+handle.BrickColor = BrickColor.new("Bright red")
 handle.CanCollide = false
 
--- Add touch damage (client-side, visual only unless FE bypassed)
-local scriptDamage = Instance.new("Script")
-scriptDamage.Source = [[
+-- Damage script (won’t hurt players without backdoor)
+local damageScript = Instance.new("Script")
+damageScript.Source = [[
 script.Parent.Touched:Connect(function(hit)
-	local human = hit.Parent:FindFirstChild("Humanoid")
-	if human then
-		human:TakeDamage(10)
+	local hum = hit.Parent:FindFirstChildOfClass("Humanoid")
+	if hum then
+		hum:TakeDamage(25)
 	end
 end)
 ]]
-scriptDamage.Parent = handle
+damageScript.Parent = handle
+handle.Parent = tool
+tool.Parent = player.Backpack
 
--- Add handle to sword
-handle.Parent = sword
-
--- Parent sword to player
-sword.Parent = player.Backpack
-
-print("✅ [FE] Sword created for", player.Name)
+print("✅ XenoBlade added to backpack.")
