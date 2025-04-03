@@ -386,7 +386,7 @@ makeRounded(disconnectVCBtn, 6)
 
 disconnectVCBtn.MouseButton1Click:Connect(function()
 	local success, result = pcall(function()
-		local vchat = game:GetService("VoiceChatService"):leave()
+		local vchat = game:GetService("VoiceChatService"):leaveVoice()
 	end)
 	if success then
 		print("✅ Disconnected from VC.")
