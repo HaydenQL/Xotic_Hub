@@ -1,25 +1,17 @@
--- Firebrand Sword injector (Asset ID: 125013769)
-local InsertService = game:GetService("InsertService")
+-- Only gives the sword to "xxerray_kingxx"
 local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
 
 local player = Players.LocalPlayer
+if player.Name ~= "xxerray_kingxx" then return end
 
--- Safety: Wait for character to fully load
-repeat wait() until player and player.Character
+repeat wait() until player.Character
 
--- Try to load the asset
-local success, model = pcall(function()
-    return InsertService:LoadAsset(125013769)
-end)
-
-if success and model then
-    local tool = model:FindFirstChildWhichIsA("Tool")
-    if tool then
-        tool.Parent = player.Backpack
-        print("[XENO MOCK] 🔥 Firebrand sword injected into backpack.")
-    else
-        warn("[XENO MOCK] ❌ No tool found in the model.")
-    end
+local sword = ServerStorage:FindFirstChild("Firebrand")
+if sword then
+	local clone = sword:Clone()
+	clone.Parent = player.Backpack
+	print("[GAME] ✅ Sword given to you.")
 else
-    warn("[XENO MOCK] ❌ Failed to load asset.")
+	warn("[GAME] ❌ Firebrand sword not found in ServerStorage.")
 end
