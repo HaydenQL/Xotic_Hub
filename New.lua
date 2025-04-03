@@ -302,3 +302,20 @@ LocalPlayer.Chatted:Connect(function(msg)
 	end
 end)
 
+-- 💬 Chat Commands for Admin
+LocalPlayer.Chatted:Connect(function(msg)
+	local args = msg:split(" ")
+	local command = args[1]:lower()
+
+	-- Kick Command: !kick username
+	if command == "!kick" and args[2] then
+		local targetName = args[2]:lower()
+		for _, plr in ipairs(Players:GetPlayers()) do
+			if plr.Name:lower() == targetName or plr.DisplayName:lower() == targetName then
+				if plr ~= LocalPlayer then
+					plr:Kick("You have been kicked by REDACTED.")
+				end
+			end
+		end
+	end
+end)
