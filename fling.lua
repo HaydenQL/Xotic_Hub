@@ -1,31 +1,52 @@
--- 🌀 Fling Part Launcher (client-side)
+-- 🌀 Orbiting Fling Ball (avoids HaydenSigma24)
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 
+-- Only apply NoCollision to this specific user
+local avoidPlayerName = "HaydenSigma24"
+
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+
+-- Create the fling part
 local part = Instance.new("Part")
-part.Name = "FlingCore"
-part.Size = Vector3.new(5, 5, 5)
+part.Name = "OrbitFlinger"
 part.Shape = Enum.PartType.Ball
-part.Material = Enum.Material.Neon
+part.Size = Vector3.new(2, 2, 2)
+part.Material = Enum.Material.ForceField
 part.Color = Color3.fromRGB(255, 0, 0)
 part.Anchored = false
 part.CanCollide = true
-part.Position = player.Character.HumanoidRootPart.Position + Vector3.new(0, 10, 0)
-part.Velocity = Vector3.new(0, 0, 0)
+part.Massless = true
+part.Position = hrp.Position + Vector3.new(3, 2, 0)
 part.Parent = workspace
 
--- Weld to your character so it follows you
-local weld = Instance.new("WeldConstraint")
-weld.Part0 = player.Character.HumanoidRootPart
-weld.Part1 = part
-weld.Parent = part
+-- Prevent fling from hitting this player
+if player.Name == avoidPlayerName then
+	for _, descendant in pairs(char:GetDescendants()) do
+		if descendant:IsA("BasePart") then
+			local noCollide = Instance.new("NoCollisionConstraint")
+			noCollide.Part0 = part
+			noCollide.Part1 = descendant
+			noCollide.Parent = part
+		end
+	end
+end
 
--- Spin the part to fling people
-local bodyAngularVelocity = Instance.new("BodyAngularVelocity")
-bodyAngularVelocity.AngularVelocity = Vector3.new(0, 1000000, 0) -- Insane spin
-bodyAngularVelocity.MaxTorque = Vector3.new(9999999, 9999999, 9999999)
-bodyAngularVelocity.P = 1250
-bodyAngularVelocity.Parent = part
+-- Spin power
+local bav = Instance.new("BodyAngularVelocity")
+bav.AngularVelocity = Vector3.new(0, 999999, 0)
+bav.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+bav.P = 1250
+bav.Parent = part
 
--- Optional: make part invisible
--- part.Transparency = 1
+-- Orbit logic
+local angle = 0
+RunService.RenderStepped:Connect(function(dt)
+	if hrp and char then
+		angle += dt * 3.5 -- orbit speed
+		local offset = Vector3.new(math.cos(angle) * 4, 2, math.sin(angle) * 4)
+		part.Position = hrp.Position + offset
+	end
+end)
