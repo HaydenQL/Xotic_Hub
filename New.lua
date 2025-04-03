@@ -110,60 +110,7 @@ versionLabel.Font = Enum.Font.Gotham
 versionLabel.TextXAlignment = Enum.TextXAlignment.Left
 versionLabel.Parent = mainFrame
 
-local minimized = false
-minBtn.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	tabFrame.Visible = not minimized
-	contentFrame.Visible = not minimized
-	mainFrame.Size = minimized and UDim2.new(0, 450, 0, 30) or UDim2.new(0, 450, 0, 280)
-end)
-
-closeBtn.MouseButton1Click:Connect(function()
-	mainFrame.Visible = false
-end)
-
-local resizeCorner = Instance.new("TextButton")
-resizeCorner.Size = UDim2.new(0, 15, 0, 15)
-resizeCorner.Position = UDim2.new(1, -15, 1, -15)
-resizeCorner.BackgroundColor3 = Color3.fromRGB(100,100,100)
-resizeCorner.BorderSizePixel = 0
-resizeCorner.Text = ""
-resizeCorner.Parent = mainFrame
-makeRounded(resizeCorner, 4)
-
-local resizing = false
-local lastMousePos
-local lastFrameSize
-
-resizeCorner.MouseButton1Down:Connect(function()
-	resizing = true
-	lastMousePos = UIS:GetMouseLocation()
-	lastFrameSize = mainFrame.Size
-end)
-
-UIS.InputChanged:Connect(function(input)
-	if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
-		local delta = UIS:GetMouseLocation() - lastMousePos
-		mainFrame.Size = UDim2.new(
-			0, math.max(300, lastFrameSize.X.Offset + delta.X),
-			0, math.max(150, lastFrameSize.Y.Offset + delta.Y)
-		)
-	end
-end)
-
-UIS.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		resizing = false
-	end
-end)
-
-UIS.InputBegan:Connect(function(key, gpe)
-	if key.KeyCode == Enum.KeyCode.K and not gpe then
-		mainFrame.Visible = not mainFrame.Visible
-	end
-end)
-
--- Create tab buttons with symbols
+-- Tabs
 local tabInfo = {
 	{"🏠", "Home"},
 	{"🧍", "Player"},
@@ -179,7 +126,7 @@ for _, tab in ipairs(tabInfo) do
 	local button = Instance.new("TextButton")
 	button.Size = UDim2.new(1, -10, 0, 40)
 	button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-	button.Text = tab[1]  -- symbol only
+	button.Text = tab[1]
 	button.Font = Enum.Font.Gotham
 	button.TextSize = 20
 	button.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -190,12 +137,11 @@ for _, tab in ipairs(tabInfo) do
 end
 
 -- Welcome Screen
-local welcomeFrame = Instance.new("Frame")
-welcomeFrame.Name = "WelcomeFrame"
-welcomeFrame.Size = UDim2.new(1, 0, 1, 0)
-welcomeFrame.BackgroundTransparency = 1
-welcomeFrame.Visible = true
-welcomeFrame.Parent = contentFrame
+local WelcomeFrame = Instance.new("Frame")
+WelcomeFrame.Name = "WelcomeFrame"
+WelcomeFrame.Size = UDim2.new(1, 0, 1, 0)
+WelcomeFrame.BackgroundTransparency = 1
+WelcomeFrame.Parent = contentFrame
 
 local welcomeLabel = Instance.new("TextLabel")
 welcomeLabel.Size = UDim2.new(1, 0, 0, 50)
@@ -206,19 +152,37 @@ welcomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 welcomeLabel.Font = Enum.Font.GothamBold
 welcomeLabel.TextSize = 20
 welcomeLabel.TextXAlignment = Enum.TextXAlignment.Center
-welcomeLabel.Parent = welcomeFrame
+welcomeLabel.Parent = WelcomeFrame
 
--- Home Tab Content
-local HomeFrame = Instance.new("Frame")
-HomeFrame.Name = "HomeFrame"
-HomeFrame.Size = UDim2.new(1, 0, 1, 0)
-HomeFrame.BackgroundTransparency = 1
-HomeFrame.Visible = false
-HomeFrame.Parent = contentFrame
+-- Create a frame template function
+local function createTabFrame(name, labelText)
+	local frame = Instance.new("Frame")
+	frame.Name = name .. "Frame"
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.BackgroundTransparency = 1
+	frame.Visible = false
+	frame.Parent = contentFrame
+
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.new(1, 0, 0, 30)
+	label.Position = UDim2.new(0, 10, 0, 10)
+	label.BackgroundTransparency = 1
+	label.Text = labelText
+	label.TextColor3 = Color3.fromRGB(255, 255, 255)
+	label.Font = Enum.Font.GothamBold
+	label.TextSize = 16
+	label.TextXAlignment = Enum.TextXAlignment.Left
+	label.Parent = frame
+
+	return frame
+end
+
+-- Home Tab
+local HomeFrame = createTabFrame("Home", "Home Tab")
 
 local infYieldBtn = Instance.new("TextButton")
 infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
-infYieldBtn.Position = UDim2.new(0, 20, 0, 20)
+infYieldBtn.Position = UDim2.new(0, 20, 0, 50)
 infYieldBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 infYieldBtn.Text = "Launch Infinite Yield"
 infYieldBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -233,7 +197,7 @@ end)
 
 local comingSoonLabel = Instance.new("TextLabel")
 comingSoonLabel.Size = UDim2.new(1, -40, 0, 30)
-comingSoonLabel.Position = UDim2.new(0, 20, 0, 70)
+comingSoonLabel.Position = UDim2.new(0, 20, 0, 90)
 comingSoonLabel.BackgroundTransparency = 1
 comingSoonLabel.Text = "Reanimations coming in the future."
 comingSoonLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -242,7 +206,37 @@ comingSoonLabel.TextSize = 14
 comingSoonLabel.TextXAlignment = Enum.TextXAlignment.Left
 comingSoonLabel.Parent = HomeFrame
 
--- Tab switching behavior
+-- Other Tabs (Player, Visual, VoiceChat, Settings, Credits)
+local PlayerFrame = createTabFrame("Player", "Player Tab")
+local VisualFrame = createTabFrame("Visual", "Visual Tab")
+local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
+local SettingsFrame = createTabFrame("Settings", "Settings Tab")
+local CreditsFrame = createTabFrame("Credits", "Credits Tab")
+
+-- Add credit labels
+local creditsText = Instance.new("TextLabel")
+creditsText.Size = UDim2.new(1, -40, 0, 30)
+creditsText.Position = UDim2.new(0, 20, 0, 50)
+creditsText.BackgroundTransparency = 1
+creditsText.Text = "Made by Hayden"
+creditsText.TextColor3 = Color3.fromRGB(200, 200, 200)
+creditsText.Font = Enum.Font.Gotham
+creditsText.TextSize = 14
+creditsText.TextXAlignment = Enum.TextXAlignment.Left
+creditsText.Parent = CreditsFrame
+
+local creditsNote = Instance.new("TextLabel")
+creditsNote.Size = UDim2.new(1, -40, 0, 30)
+creditsNote.Position = UDim2.new(0, 20, 0, 80)
+creditsNote.BackgroundTransparency = 1
+creditsNote.Text = "💬 Type '!admin' in chat to unlock the admin panel."
+creditsNote.TextColor3 = Color3.fromRGB(200, 200, 200)
+creditsNote.Font = Enum.Font.Gotham
+creditsNote.TextSize = 14
+creditsNote.TextXAlignment = Enum.TextXAlignment.Left
+creditsNote.Parent = CreditsFrame
+
+-- Tab switching
 for tabName, button in pairs(tabButtons) do
 	button.MouseButton1Click:Connect(function()
 		for _, child in ipairs(contentFrame:GetChildren()) do
@@ -250,61 +244,18 @@ for tabName, button in pairs(tabButtons) do
 				child.Visible = false
 			end
 		end
-		local tabFrameName = tabName .. "Frame"
-		local target = contentFrame:FindFirstChild(tabFrameName)
-		if target then
-			local welcome = contentFrame:FindFirstChild("WelcomeFrame")
-			if welcome then
-				welcome.Visible = false
-			end
-			target.Visible = true
+		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
+		if welcome then
+			welcome.Visible = false
+		end
+		local tabFrame = contentFrame:FindFirstChild(tabName .. "Frame")
+		if tabFrame then
+			tabFrame.Visible = true
 		end
 	end)
 end
 
--- Credits Tab Content
-local CreditsFrame = Instance.new("Frame")
-CreditsFrame.Name = "CreditsFrame"
-CreditsFrame.Size = UDim2.new(1, 0, 1, 0)
-CreditsFrame.BackgroundTransparency = 1
-CreditsFrame.Visible = false
-CreditsFrame.Parent = contentFrame
-
-local creditsTitle = Instance.new("TextLabel")
-creditsTitle.Size = UDim2.new(1, 0, 0, 40)
-creditsTitle.Position = UDim2.new(0, 0, 0, 0)
-creditsTitle.BackgroundTransparency = 1
-creditsTitle.Text = "📜 Credits"
-creditsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-creditsTitle.Font = Enum.Font.GothamBold
-creditsTitle.TextSize = 18
-creditsTitle.Parent = CreditsFrame
-
-local creditsText = Instance.new("TextLabel")
-creditsText.Size = UDim2.new(1, -40, 0, 40)
-creditsText.Position = UDim2.new(0, 20, 0, 40)
-creditsText.BackgroundTransparency = 1
-creditsText.Text = "Made by SigmaHub Dev Team"
-creditsText.TextColor3 = Color3.fromRGB(200, 200, 200)
-creditsText.Font = Enum.Font.Gotham
-creditsText.TextSize = 14
-creditsText.TextWrapped = true
-creditsText.TextXAlignment = Enum.TextXAlignment.Left
-creditsText.Parent = CreditsFrame
-
-local creditsNote = Instance.new("TextLabel")
-creditsNote.Size = UDim2.new(1, -40, 0, 40)
-creditsNote.Position = UDim2.new(0, 20, 0, 80)
-creditsNote.BackgroundTransparency = 1
-creditsNote.Text = "💬 Type '!admin' in chat to unlock the admin panel."
-creditsNote.TextColor3 = Color3.fromRGB(200, 200, 200)
-creditsNote.Font = Enum.Font.Gotham
-creditsNote.TextSize = 14
-creditsNote.TextWrapped = true
-creditsNote.TextXAlignment = Enum.TextXAlignment.Left
-creditsNote.Parent = CreditsFrame
-
--- Admin Panel (Hidden Frame)
+-- 🔐 Admin Panel (hidden unless !admin is typed)
 local AdminFrame = Instance.new("Frame")
 AdminFrame.Name = "AdminFrame"
 AdminFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -324,23 +275,23 @@ adminTitle.Font = Enum.Font.GothamBold
 adminTitle.TextSize = 18
 adminTitle.Parent = AdminFrame
 
-local adminLabel = Instance.new("TextLabel")
-adminLabel.Size = UDim2.new(1, -40, 0, 30)
-adminLabel.Position = UDim2.new(0, 20, 0, 50)
-adminLabel.BackgroundTransparency = 1
-adminLabel.Text = "Admin tools will go here soon..."
-adminLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-adminLabel.Font = Enum.Font.Gotham
-adminLabel.TextSize = 14
-adminLabel.TextXAlignment = Enum.TextXAlignment.Left
-adminLabel.Parent = AdminFrame
+local adminMsg = Instance.new("TextLabel")
+adminMsg.Size = UDim2.new(1, -40, 0, 30)
+adminMsg.Position = UDim2.new(0, 20, 0, 50)
+adminMsg.BackgroundTransparency = 1
+adminMsg.Text = "Admin tools will go here soon..."
+adminMsg.TextColor3 = Color3.fromRGB(200, 200, 200)
+adminMsg.Font = Enum.Font.Gotham
+adminMsg.TextSize = 14
+adminMsg.TextXAlignment = Enum.TextXAlignment.Left
+adminMsg.Parent = AdminFrame
 
--- Chat command to open AdminFrame
+-- 💬 Listen for !admin in chat
 LocalPlayer.Chatted:Connect(function(msg)
 	if msg:lower() == "!admin" then
-		for _, child in ipairs(contentFrame:GetChildren()) do
-			if child:IsA("Frame") then
-				child.Visible = false
+		for _, frame in ipairs(contentFrame:GetChildren()) do
+			if frame:IsA("Frame") then
+				frame.Visible = false
 			end
 		end
 		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
@@ -350,3 +301,4 @@ LocalPlayer.Chatted:Connect(function(msg)
 		AdminFrame.Visible = true
 	end
 end)
+
