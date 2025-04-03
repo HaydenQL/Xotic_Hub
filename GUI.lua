@@ -1,4 +1,11 @@
 -- 👑 HaydenSigma24's Sigma Hub GUI v0.01 Beta (Resizable & Minimizable)
+
+-- Remove existing GUI if already running
+if game.CoreGui:FindFirstChild("SigmaHub") then
+    game.CoreGui.SigmaHub:Destroy()
+end
+
+
 local UIS = game:GetService("UserInputService")
 
 local ScreenGui = Instance.new("ScreenGui")
