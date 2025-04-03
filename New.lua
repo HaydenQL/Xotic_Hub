@@ -453,9 +453,27 @@ notesTitle.TextSize = 16
 notesTitle.TextXAlignment = Enum.TextXAlignment.Left
 notesTitle.Parent = NotesFrame
 
--- Create resizable and scrollable Notes textbox
+-- Create Notes Frame (for resizable notes content)
+local NotesFrame = Instance.new("Frame")
+NotesFrame.Name = "NotesFrame"
+NotesFrame.Size = UDim2.new(1, 0, 1, 0)
+NotesFrame.BackgroundTransparency = 1
+NotesFrame.Visible = false
+NotesFrame.Parent = contentFrame
+
+local notesTitle = Instance.new("TextLabel")
+notesTitle.Size = UDim2.new(1, 0, 0, 30)
+notesTitle.Position = UDim2.new(0, 10, 0, 10)
+notesTitle.BackgroundTransparency = 1
+notesTitle.Text = "📓 Sigma Hub Notes & Remote Guide"
+notesTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+notesTitle.Font = Enum.Font.GothamBold
+notesTitle.TextSize = 16
+notesTitle.TextXAlignment = Enum.TextXAlignment.Left
+notesTitle.Parent = NotesFrame
+
 local notesBox = Instance.new("TextBox")
-notesBox.Size = UDim2.new(1, -20, 0, 180)
+notesBox.Size = UDim2.new(1, -20, 1, -90) -- Resize with the window
 notesBox.Position = UDim2.new(0, 10, 0, 50)
 notesBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 notesBox.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -482,22 +500,21 @@ end
 -- VEffect / VipAnimation: Try with no args to see effect
 -- SubmitTextEvent / UpdateBoothText: May edit public signs
 ]]
-
 makeRounded(notesBox, 8)
 notesBox.Parent = NotesFrame
 
--- Make NotesBox scrollable
+-- Scrollable Notes Box
 local scrollFrame = Instance.new("ScrollingFrame")
-scrollFrame.Size = UDim2.new(1, -20, 0, 180)
+scrollFrame.Size = UDim2.new(1, -20, 1, -90)  -- Scrolls with the notes area
 scrollFrame.Position = UDim2.new(0, 10, 0, 50)
 scrollFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 scrollFrame.BorderSizePixel = 0
+scrollFrame.CanvasSize = UDim2.new(0, 0, 10, 0)  -- Make it scrollable
 scrollFrame.ScrollBarThickness = 6
-scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 200) -- Dynamic height
 scrollFrame.Parent = NotesFrame
 makeRounded(scrollFrame, 8)
 
--- Add the TextBox to the scroll frame
+-- Add the TextBox to the scrollable frame
 notesBox.Parent = scrollFrame
 
 -- Copy to Clipboard Button
@@ -517,3 +534,18 @@ copyBtn.MouseButton1Click:Connect(function()
 		setclipboard(notesBox.Text)
 	end
 end)
+
+-- Resize Notes Area with Window Size
+UIS.InputChanged:Connect(function(input)
+	if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = UIS:GetMouseLocation() - lastMousePos
+		mainFrame.Size = UDim2.new(
+			0, math.max(300, lastFrameSize.X.Offset + delta.X),
+			0, math.max(150, lastFrameSize.Y.Offset + delta.Y)
+		)
+		-- Adjust NotesBox size based on resize
+		notesBox.Size = UDim2.new(1, -20, 1, -90)
+		scrollFrame.Size = UDim2.new(1, -20, 1, -90)
+	end
+end)
+
