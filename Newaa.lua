@@ -304,75 +304,33 @@ LocalPlayer.CharacterAdded:Connect(function(char)
 end)
 
 
+-- 🪐 Gravity Options (Placeholder Dropdown UI)
+ local gravityLabel = Instance.new("TextLabel")
+ gravityLabel.Size = UDim2.new(0, 200, 0, 20)
+ gravityLabel.Position = UDim2.new(0, 20, 0, 200)
+ gravityLabel.BackgroundTransparency = 1
+ gravityLabel.Text = "Gravity Preset: (Coming Soon)"
+ gravityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ gravityLabel.Font = Enum.Font.Gotham
+ gravityLabel.TextSize = 14
+ gravityLabel.TextXAlignment = Enum.TextXAlignment.Left
+ gravityLabel.Parent = PlayerFrame
+ 
+ local gravityDropdown = Instance.new("TextButton")
+ gravityDropdown.Size = UDim2.new(0, 200, 0, 30)
+ gravityDropdown.Position = UDim2.new(0, 20, 0, 230)
+ gravityDropdown.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ gravityDropdown.Text = "Select Gravity (☰)"
+ gravityDropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
+ gravityDropdown.Font = Enum.Font.Gotham
+ gravityDropdown.TextSize = 14
+ gravityDropdown.Parent = PlayerFrame
+ makeRounded(gravityDropdown, 6)
+ 
+ -- You can later connect this button to a dropdown or list of gravity settings
+ -- like: Moon = 50, Sun = 1000, Normal = 196.2 (default), etc.
 
--- 🪐 Gravity Dropdown Menu (Working + Layer Safe)
-local dropdownFrame = Instance.new("Frame")
-dropdownFrame.Name = "GravityDropdown"
-dropdownFrame.Size = UDim2.new(0, 200, 0, 0)
-dropdownFrame.Position = UDim2.new(0, 20, 0, 265)
-dropdownFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-dropdownFrame.BorderSizePixel = 0
-dropdownFrame.Visible = false
-dropdownFrame.Active = false
-dropdownFrame.ClipsDescendants = true
-dropdownFrame.ZIndex = 1000
-dropdownFrame.Parent = PlayerFrame
-makeRounded(dropdownFrame, 6)
 
-local dropdownLayout = Instance.new("UIListLayout")
-dropdownLayout.SortOrder = Enum.SortOrder.LayoutOrder
-dropdownLayout.Padding = UDim.new(0, 2)
-dropdownLayout.Parent = dropdownFrame
-
-local gravityOptions = {
-	["🌍 Earth"] = 196.2,
-	["🌕 Moon"] = 32.0,
-	["☿ Mercury"] = 37.6,
-	["♀ Venus"] = 89.0,
-	["♂ Mars"] = 74.5,
-	["♃ Jupiter"] = 500.0,
-	["♄ Saturn"] = 300.0,
-	["♅ Uranus"] = 230.0,
-	["♆ Neptune"] = 280.0,
-	["🪐 Pluto"] = 10.0,
-	["☀ Sun"] = 1000.0,
-}
-
-local function updateDropdownSize()
-	dropdownFrame.Size = UDim2.new(0, 200, 0, (#dropdownFrame:GetChildren() - 1) * 32)
-end
-
-for name, gravity in pairs(gravityOptions) do
-	local option = Instance.new("TextButton")
-	option.Size = UDim2.new(1, -10, 0, 30)
-	option.Text = name
-	option.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	option.TextColor3 = Color3.fromRGB(255, 255, 255)
-	option.Font = Enum.Font.Gotham
-	option.TextSize = 14
-	option.ZIndex = 1001
-	option.AutoButtonColor = true
-	option.BorderSizePixel = 0
-	option.Parent = dropdownFrame
-	makeRounded(option, 4)
-
-	option.MouseButton1Click:Connect(function()
-		game.Workspace.Gravity = gravity
-		dropdownBtn.Text = "Gravity: " .. name
-		dropdownFrame.Visible = false
-		dropdownFrame.Active = false
-	end)
-end
-
-updateDropdownSize()
-
--- Toggle Dropdown visibility (Safe & Layered)
-local dropdownOpen = false
-dropdownBtn.MouseButton1Click:Connect(function()
-	dropdownOpen = not dropdownOpen
-	dropdownFrame.Visible = dropdownOpen
-	dropdownFrame.Active = dropdownOpen
-end)
 
 
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
@@ -529,4 +487,3 @@ UIS.InputEnded:Connect(function(input)
 		resizing = false
 	end
 end)
-
