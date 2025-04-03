@@ -1,4 +1,4 @@
--- Remove existing GUI a
+-- Remove existing GUI
 for _, gui in pairs(game.CoreGui:GetChildren()) do
 	if gui.Name == "SigmaHub" then gui:Destroy() end
 end
@@ -173,6 +173,8 @@ local tabInfo = {
 	{"📜", "Credits"},
 }
 
+local tabButtons = {}
+
 for _, tab in ipairs(tabInfo) do
 	local button = Instance.new("TextButton")
 	button.Size = UDim2.new(1, -10, 0, 40)
@@ -184,4 +186,54 @@ for _, tab in ipairs(tabInfo) do
 	button.Name = tab[2] .. "Tab"
 	button.Parent = tabFrame
 	makeRounded(button, 6)
+	tabButtons[tab[2]] = button
+end
+
+-- Home Tab Content
+local homeFrame = Instance.new("Frame")
+homeFrame.Size = UDim2.new(1, 0, 1, 0)
+homeFrame.BackgroundTransparency = 1
+homeFrame.Visible = true
+homeFrame.Parent = contentFrame
+
+local infYieldBtn = Instance.new("TextButton")
+infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
+infYieldBtn.Position = UDim2.new(0, 20, 0, 20)
+infYieldBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+infYieldBtn.Text = "Infinite Yield"
+infYieldBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+infYieldBtn.Font = Enum.Font.Gotham
+infYieldBtn.TextSize = 14
+infYieldBtn.Parent = homeFrame
+makeRounded(infYieldBtn, 6)
+
+infYieldBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+end)
+
+local comingSoonLabel = Instance.new("TextLabel")
+comingSoonLabel.Size = UDim2.new(1, -40, 0, 30)
+comingSoonLabel.Position = UDim2.new(0, 20, 0, 70)
+comingSoonLabel.BackgroundTransparency = 1
+comingSoonLabel.Text = "Reans coming in the future."
+comingSoonLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+comingSoonLabel.Font = Enum.Font.Gotham
+comingSoonLabel.TextSize = 14
+comingSoonLabel.TextXAlignment = Enum.TextXAlignment.Left
+comingSoonLabel.Parent = homeFrame
+
+-- Tab switching behavior
+for tabName, button in pairs(tabButtons) do
+	button.MouseButton1Click:Connect(function()
+		for _, child in ipairs(contentFrame:GetChildren()) do
+			if child:IsA("Frame") then
+				child.Visible = false
+			end
+		end
+		local tabFrameName = tabName:lower() .. "Frame"
+		local target = contentFrame:FindFirstChild(tabFrameName)
+		if target then
+			target.Visible = true
+		end
+	end)
 end
