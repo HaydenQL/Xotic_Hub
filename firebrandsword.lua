@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-if not player or player.Name ~= "xxerray_kingxx" then
+if not player or player.Name ~= "i1light1i" then
     warn("Access denied")
     return
 end
