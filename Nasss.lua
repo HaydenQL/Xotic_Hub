@@ -394,111 +394,98 @@ local VisualFrame = createTabFrame("Visual", "Visual Tab")
  	end
  end)
 
--- 🕵️ Spy Listen (with SoundService.Listener workaround)
+-- 📷 Voice Spy via Camera Redirect
 
-local spyNameLabel = Instance.new("TextLabel")
-spyNameLabel.Size = UDim2.new(0, 200, 0, 20)
-spyNameLabel.Position = UDim2.new(0, 20, 0, 145)
-spyNameLabel.BackgroundTransparency = 1
-spyNameLabel.Text = "Spy on Display Name:"
-spyNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-spyNameLabel.Font = Enum.Font.Gotham
-spyNameLabel.TextSize = 14
-spyNameLabel.TextXAlignment = Enum.TextXAlignment.Left
-spyNameLabel.Parent = VoiceChatFrame
+local cam = workspace.CurrentCamera
+local originalCamCF = cam.CFrame
+local spyCamActive = false
+local spyConnection = nil
 
-local spyNameBox = Instance.new("TextBox")
-spyNameBox.Size = UDim2.new(0, 200, 0, 30)
-spyNameBox.Position = UDim2.new(0, 20, 0, 170)
-spyNameBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-spyNameBox.Text = ""
-spyNameBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-spyNameBox.Font = Enum.Font.Gotham
-spyNameBox.TextSize = 14
-spyNameBox.ClearTextOnFocus = false
-spyNameBox.PlaceholderText = "Type their display name..."
-spyNameBox.Parent = VoiceChatFrame
-makeRounded(spyNameBox, 6)
+local camSpyNameLabel = Instance.new("TextLabel")
+camSpyNameLabel.Size = UDim2.new(0, 200, 0, 20)
+camSpyNameLabel.Position = UDim2.new(0, 20, 0, 300)
+camSpyNameLabel.BackgroundTransparency = 1
+camSpyNameLabel.Text = "Camera Spy Display Name:"
+camSpyNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+camSpyNameLabel.Font = Enum.Font.Gotham
+camSpyNameLabel.TextSize = 14
+camSpyNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+camSpyNameLabel.Parent = VoiceChatFrame
 
-local spyButton = Instance.new("TextButton")
-spyButton.Size = UDim2.new(0, 200, 0, 30)
-spyButton.Position = UDim2.new(0, 20, 0, 210)
-spyButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-spyButton.Text = "🎧 Start Spying"
-spyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-spyButton.Font = Enum.Font.Gotham
-spyButton.TextSize = 14
-spyButton.Parent = VoiceChatFrame
-makeRounded(spyButton, 6)
+local camSpyBox = Instance.new("TextBox")
+camSpyBox.Size = UDim2.new(0, 200, 0, 30)
+camSpyBox.Position = UDim2.new(0, 20, 0, 325)
+camSpyBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+camSpyBox.Text = ""
+camSpyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+camSpyBox.Font = Enum.Font.Gotham
+camSpyBox.TextSize = 14
+camSpyBox.ClearTextOnFocus = false
+camSpyBox.PlaceholderText = "Type their display name..."
+camSpyBox.Parent = VoiceChatFrame
+makeRounded(camSpyBox, 6)
 
-local stopSpyButton = Instance.new("TextButton")
-stopSpyButton.Size = UDim2.new(0, 200, 0, 30)
-stopSpyButton.Position = UDim2.new(0, 20, 0, 250)
-stopSpyButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-stopSpyButton.Text = "🔇 Stop Spying"
-stopSpyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-stopSpyButton.Font = Enum.Font.Gotham
-stopSpyButton.TextSize = 14
-stopSpyButton.Parent = VoiceChatFrame
-makeRounded(stopSpyButton, 6)
+local startSpyCamBtn = Instance.new("TextButton")
+startSpyCamBtn.Size = UDim2.new(0, 200, 0, 30)
+startSpyCamBtn.Position = UDim2.new(0, 20, 0, 365)
+startSpyCamBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+startSpyCamBtn.Text = "🎥 Start Camera Spy"
+startSpyCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+startSpyCamBtn.Font = Enum.Font.Gotham
+startSpyCamBtn.TextSize = 14
+startSpyCamBtn.Parent = VoiceChatFrame
+makeRounded(startSpyCamBtn, 6)
 
-local SoundService = game:GetService("SoundService")
-local currentSpyPart = nil
-local connection = nil
+local stopSpyCamBtn = Instance.new("TextButton")
+stopSpyCamBtn.Size = UDim2.new(0, 200, 0, 30)
+stopSpyCamBtn.Position = UDim2.new(0, 20, 0, 405)
+stopSpyCamBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+stopSpyCamBtn.Text = "🔁 Return to Self"
+stopSpyCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+stopSpyCamBtn.Font = Enum.Font.Gotham
+stopSpyCamBtn.TextSize = 14
+stopSpyCamBtn.Parent = VoiceChatFrame
+makeRounded(stopSpyCamBtn, 6)
 
--- 🧠 Start spying
-spyButton.MouseButton1Click:Connect(function()
-	local displayName = spyNameBox.Text:lower()
+-- 🎯 Start camera spy
+startSpyCamBtn.MouseButton1Click:Connect(function()
+	local displayName = camSpyBox.Text:lower()
 	for _, player in pairs(game.Players:GetPlayers()) do
 		if player ~= LocalPlayer and player.DisplayName:lower() == displayName then
-			if player.Character and player.Character:FindFirstChild("Head") then
-				local targetHead = player.Character.Head
+			local head = player.Character and player.Character:FindFirstChild("Head")
+			if head then
+				-- Save original cam position
+				originalCamCF = cam.CFrame
+				spyCamActive = true
 
-				-- Create invisible proxy part
-				local spyPart = Instance.new("Part")
-				spyPart.Size = Vector3.new(1, 1, 1)
-				spyPart.Anchored = true
-				spyPart.CanCollide = false
-				spyPart.Transparency = 1
-				spyPart.Name = "SpyListenerPart"
-				spyPart.Parent = workspace
-
-				-- Position the spy part near target's head
-				spyPart.CFrame = targetHead.CFrame + Vector3.new(1, 0, 0)
-
-				-- Attach listener to spy part
-				SoundService:SetListener(Enum.ListenerType.ObjectCFrame, spyPart)
-
-				-- Update position every frame
-				if connection then connection:Disconnect() end
-				connection = game:GetService("RunService").RenderStepped:Connect(function()
+				if spyConnection then spyConnection:Disconnect() end
+				spyConnection = game:GetService("RunService").RenderStepped:Connect(function()
 					if player.Character and player.Character:FindFirstChild("Head") then
-						spyPart.CFrame = player.Character.Head.CFrame + Vector3.new(1, 0, 0)
+						local pos = player.Character.Head.Position + Vector3.new(0, 2, 0)
+						cam.CFrame = CFrame.new(pos + Vector3.new(0, 0, 5), pos)
 					end
 				end)
 
-				currentSpyPart = spyPart
-				print("🎧 Spying on:", player.DisplayName)
+				print("🎥 Camera spy started on", player.DisplayName)
 				break
 			end
 		end
 	end
 end)
 
--- 🔇 Stop spying
-stopSpyButton.MouseButton1Click:Connect(function()
-	if currentSpyPart then
-		currentSpyPart:Destroy()
-		currentSpyPart = nil
+-- 🔁 Return camera to self
+stopSpyCamBtn.MouseButton1Click:Connect(function()
+	if spyCamActive then
+		spyCamActive = false
+		if spyConnection then
+			spyConnection:Disconnect()
+			spyConnection = nil
+		end
+		cam.CFrame = originalCamCF
+		print("🔁 Returned camera to self")
 	end
-	if connection then
-		connection:Disconnect()
-		connection = nil
-	end
-	-- Restore normal listener (camera-based)
-	SoundService:SetListener(Enum.ListenerType.Camera)
-	print("🔇 Spy stopped.")
 end)
+
 
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
