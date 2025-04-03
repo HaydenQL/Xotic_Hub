@@ -136,44 +136,6 @@ for _, tab in ipairs(tabInfo) do
 	tabButtons[tab[2]] = button
 end
 
--- Tab switching functionality
-for tabName, button in pairs(tabButtons) do
-	button.MouseButton1Click:Connect(function()
-		for _, child in ipairs(contentFrame:GetChildren()) do
-			if child:IsA("Frame") then
-				child.Visible = false
-			end
-		end
-		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
-		if welcome then
-			welcome.Visible = false
-		end
-		local tabFrame = contentFrame:FindFirstChild(tabName .. "Frame")
-		if tabFrame then
-			tabFrame.Visible = true
-		end
-	end)
-end
-
--- Minimize, Close, and K button logic
-local minimized = false
-minBtn.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	tabFrame.Visible = not minimized
-	contentFrame.Visible = not minimized
-	mainFrame.Size = minimized and UDim2.new(0, 450, 0, 30) or UDim2.new(0, 450, 0, 280)
-end)
-
-closeBtn.MouseButton1Click:Connect(function()
-	mainFrame.Visible = false
-end)
-
-UIS.InputBegan:Connect(function(key, gpe)
-	if key.KeyCode == Enum.KeyCode.K and not gpe then
-		mainFrame.Visible = not mainFrame.Visible
-	end
-end)
-
 -- Welcome Screen
 local WelcomeFrame = Instance.new("Frame")
 WelcomeFrame.Name = "WelcomeFrame"
@@ -192,55 +154,108 @@ welcomeLabel.TextSize = 20
 welcomeLabel.TextXAlignment = Enum.TextXAlignment.Center
 welcomeLabel.Parent = WelcomeFrame
 
--- Player Tab Content (Walk Speed, Jump Height, Gravity)
-local PlayerFrame = Instance.new("Frame")
-PlayerFrame.Name = "PlayerFrame"
-PlayerFrame.Size = UDim2.new(1, 0, 1, 0)
-PlayerFrame.BackgroundTransparency = 1
-PlayerFrame.Visible = false
-PlayerFrame.Parent = contentFrame
+-- Create a frame template function
+local function createTabFrame(name, labelText)
+	local frame = Instance.new("Frame")
+	frame.Name = name .. "Frame"
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.BackgroundTransparency = 1
+	frame.Visible = false
+	frame.Parent = contentFrame
 
-local walkSpeedLabel = Instance.new("TextLabel")
-walkSpeedLabel.Size = UDim2.new(1, -40, 0, 30)
-walkSpeedLabel.Position = UDim2.new(0, 20, 0, 50)
-walkSpeedLabel.BackgroundTransparency = 1
-walkSpeedLabel.Text = "Walk Speed: 16"
-walkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-walkSpeedLabel.Font = Enum.Font.Gotham
-walkSpeedLabel.TextSize = 14
-walkSpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
-walkSpeedLabel.Parent = PlayerFrame
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.new(1, 0, 0, 30)
+	label.Position = UDim2.new(0, 10, 0, 10)
+	label.BackgroundTransparency = 1
+	label.Text = labelText
+	label.TextColor3 = Color3.fromRGB(255, 255, 255)
+	label.Font = Enum.Font.GothamBold
+	label.TextSize = 16
+	label.TextXAlignment = Enum.TextXAlignment.Left
+	label.Parent = frame
 
-local walkSpeedSlider = Instance.new("Slider")
-walkSpeedSlider.Size = UDim2.new(1, -40, 0, 20)
-walkSpeedSlider.Position = UDim2.new(0, 20, 0, 80)
-walkSpeedSlider.MinValue = 0
-walkSpeedSlider.MaxValue = 100
-walkSpeedSlider.Value = LocalPlayer.Character.Humanoid.WalkSpeed
-walkSpeedSlider.Parent = PlayerFrame
+	return frame
+end
 
-walkSpeedSlider.Changed:Connect(function()
-	LocalPlayer.Character.Humanoid.WalkSpeed = walkSpeedSlider.Value
-	walkSpeedLabel.Text = "Walk Speed: " .. math.floor(walkSpeedSlider.Value)
+-- Home Tab
+local HomeFrame = createTabFrame("Home", "Home Tab")
+
+local infYieldBtn = Instance.new("TextButton")
+infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
+infYieldBtn.Position = UDim2.new(0, 20, 0, 50)
+infYieldBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+infYieldBtn.Text = "Launch Infinite Yield"
+infYieldBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+infYieldBtn.Font = Enum.Font.Gotham
+infYieldBtn.TextSize = 14
+infYieldBtn.Parent = HomeFrame
+makeRounded(infYieldBtn, 6)
+
+infYieldBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 end)
 
--- Reset Button for WalkSpeed, JumpHeight, and Gravity
-local resetBtn = Instance.new("TextButton")
-resetBtn.Size = UDim2.new(0, 180, 0, 35)
-resetBtn.Position = UDim2.new(0, 20, 0, 240)
-resetBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-resetBtn.Text = "Reset to Default"
-resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-resetBtn.Font = Enum.Font.Gotham
-resetBtn.TextSize = 14
-resetBtn.Parent = PlayerFrame
-makeRounded(resetBtn, 6)
+local comingSoonLabel = Instance.new("TextLabel")
+comingSoonLabel.Size = UDim2.new(1, -40, 0, 30)
+comingSoonLabel.Position = UDim2.new(0, 20, 0, 90)
+comingSoonLabel.BackgroundTransparency = 1
+comingSoonLabel.Text = "Reanimations coming in the future."
+comingSoonLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+comingSoonLabel.Font = Enum.Font.Gotham
+comingSoonLabel.TextSize = 14
+comingSoonLabel.TextXAlignment = Enum.TextXAlignment.Left
+comingSoonLabel.Parent = HomeFrame
 
-resetBtn.MouseButton1Click:Connect(function()
-	walkSpeedSlider.Value = 16
-end)
+-- Other Tabs (Player, Visual, VoiceChat, Settings, Credits)
+local PlayerFrame = createTabFrame("Player", "Player Tab")
+local VisualFrame = createTabFrame("Visual", "Visual Tab")
+local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
+local SettingsFrame = createTabFrame("Settings", "Settings Tab")
+local CreditsFrame = createTabFrame("Credits", "Credits Tab")
 
--- Admin Panel (hidden unless !admin is typed)
+-- Add credit labels
+local creditsText = Instance.new("TextLabel")
+creditsText.Size = UDim2.new(1, -40, 0, 30)
+creditsText.Position = UDim2.new(0, 20, 0, 50)
+creditsText.BackgroundTransparency = 1
+creditsText.Text = "Made by Hayden"
+creditsText.TextColor3 = Color3.fromRGB(200, 200, 200)
+creditsText.Font = Enum.Font.Gotham
+creditsText.TextSize = 14
+creditsText.TextXAlignment = Enum.TextXAlignment.Left
+creditsText.Parent = CreditsFrame
+
+local creditsNote = Instance.new("TextLabel")
+creditsNote.Size = UDim2.new(1, -40, 0, 30)
+creditsNote.Position = UDim2.new(0, 20, 0, 80)
+creditsNote.BackgroundTransparency = 1
+creditsNote.Text = "💬 Type '!admin' in chat to unlock the admin panel."
+creditsNote.TextColor3 = Color3.fromRGB(200, 200, 200)
+creditsNote.Font = Enum.Font.Gotham
+creditsNote.TextSize = 14
+creditsNote.TextXAlignment = Enum.TextXAlignment.Left
+creditsNote.Parent = CreditsFrame
+
+-- Tab switching
+for tabName, button in pairs(tabButtons) do
+	button.MouseButton1Click:Connect(function()
+		for _, child in ipairs(contentFrame:GetChildren()) do
+			if child:IsA("Frame") then
+				child.Visible = false
+			end
+		end
+		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
+		if welcome then
+			welcome.Visible = false
+		end
+		local tabFrame = contentFrame:FindFirstChild(tabName .. "Frame")
+		if tabFrame then
+			tabFrame.Visible = true
+		end
+	end)
+end
+
+-- 🔐 Admin Panel (hidden unless !admin is typed)
 local AdminFrame = Instance.new("Frame")
 AdminFrame.Name = "AdminFrame"
 AdminFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -271,7 +286,7 @@ adminMsg.TextSize = 14
 adminMsg.TextXAlignment = Enum.TextXAlignment.Left
 adminMsg.Parent = AdminFrame
 
--- Listen for !admin in chat
+-- 💬 Listen for !admin in chat
 LocalPlayer.Chatted:Connect(function(msg)
 	if msg:lower() == "!admin" then
 		for _, frame in ipairs(contentFrame:GetChildren()) do
