@@ -1,45 +1,60 @@
--- 🖥️ Toggleable On-Screen Logger Terminal (press RightShift)
+-- ✅ Fully Working GUI Logger (Toggle w/ RightShift)
 local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 
--- Prevent duplicates
-if CoreGui:FindFirstChild("XenoLoggerGUI") then
-    CoreGui:FindFirstChild("XenoLoggerGUI"):Destroy()
-end
+-- Cleanup old GUI
+pcall(function()
+	if CoreGui:FindFirstChild("XenoLoggerGUI") then
+		CoreGui.XenoLoggerGUI:Destroy()
+	end
+end)
 
--- GUI Elements
-local gui = Instance.new("ScreenGui", CoreGui)
+-- GUI Setup
+local gui = Instance.new("ScreenGui")
 gui.Name = "XenoLoggerGUI"
 gui.ResetOnSpawn = false
+gui.Parent = CoreGui
 
-local frame = Instance.new("Frame", gui)
+local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 500, 0, 300)
 frame.Position = UDim2.new(0.5, -250, 0.5, -150)
 frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 frame.BorderSizePixel = 0
 frame.Visible = true
+frame.Parent = gui
 
-local logBox = Instance.new("TextLabel", frame)
-logBox.Size = UDim2.new(1, -10, 1, -10)
-logBox.Position = UDim2.new(0, 5, 0, 5)
-logBox.BackgroundTransparency = 1
-logBox.TextColor3 = Color3.fromRGB(0, 255, 0)
-logBox.TextXAlignment = Enum.TextXAlignment.Left
-logBox.TextYAlignment = Enum.TextYAlignment.Top
-logBox.Font = Enum.Font.Code
-logBox.TextSize = 14
-logBox.Text = "🟢 Xeno Logger Initialized..."
-logBox.TextWrapped = true
-logBox.TextScaled = false
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1, -10, 1, -10)
+scroll.Position = UDim2.new(0, 5, 0, 5)
+scroll.BackgroundTransparency = 1
+scroll.CanvasSize = UDim2.new(0, 0, 20, 0)
+scroll.ScrollBarThickness = 8
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+scroll.Parent = frame
 
--- Toggle GUI visibility with RightShift
-UserInputService.InputBegan:Connect(function(input, processed)
-	if not processed and input.KeyCode == Enum.KeyCode.RightShift then
+local UIListLayout = Instance.new("UIListLayout", scroll)
+UIListLayout.Padding = UDim.new(0, 2)
+
+-- Toggle on RightShift
+UserInputService.InputBegan:Connect(function(input, gpe)
+	if not gpe and input.KeyCode == Enum.KeyCode.RightShift then
 		frame.Visible = not frame.Visible
 	end
 end)
 
--- Logger function
-_G.XenoLog = function(text)
-	logBox.Text = logBox.Text .. "\n" .. tostring(text)
+-- Global logger function
+_G.XenoLog = function(msg)
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.new(1, -10, 0, 20)
+	label.BackgroundTransparency = 1
+	label.Font = Enum.Font.Code
+	label.TextSize = 14
+	label.TextColor3 = Color3.fromRGB(0, 255, 0)
+	label.TextXAlignment = Enum.TextXAlignment.Left
+	label.Text = tostring(msg)
+	label.Parent = scroll
 end
+
+-- Initial message
+_G.XenoLog("🟢 Xeno Logger Initialized. Press RightShift to toggle.")
