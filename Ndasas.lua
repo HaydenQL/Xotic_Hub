@@ -506,56 +506,17 @@ lineFormBtn.LayoutOrder = 1
 lineFormBtn.Parent = VisualFrame
 makeRounded(lineFormBtn, 6)
 
--- State
+-- Toggle State
 local lineFormOn = false
-local storedCFrames = {}
+
+-- Get RemoteEvent
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local lineEvent = ReplicatedStorage:WaitForChild("LineformEvent")
 
 lineFormBtn.MouseButton1Click:Connect(function()
-	local char = LocalPlayer.Character
-	if not char then return end
-
-	local root = char:FindFirstChild("HumanoidRootPart")
-	if not root then return end
-
-	-- Define body parts to affect
-	local parts = {
-		"Head",
-		"UpperTorso",
-		"LowerTorso",
-		"LeftUpperArm",
-		"RightUpperArm",
-		"LeftUpperLeg",
-		"RightUpperLeg",
-	}
-
-	if not lineFormOn then
-		lineFormOn = true
-		lineFormBtn.Text = "🧍 Lineform: ON"
-		storedCFrames = {}
-
-		local yOffset = 3
-		for _, name in ipairs(parts) do
-			local part = char:FindFirstChild(name)
-			if part then
-				storedCFrames[part] = part.CFrame
-				part.Anchored = true
-				part.CFrame = root.CFrame * CFrame.new(0, yOffset, 0)
-				yOffset -= 1.5
-			end
-		end
-
-	else
-		lineFormOn = false
-		lineFormBtn.Text = "🧍 Lineform: OFF"
-
-		for part, oldCFrame in pairs(storedCFrames) do
-			if part then
-				part.CFrame = oldCFrame
-				part.Anchored = false
-			end
-		end
-		storedCFrames = {}
-	end
+	lineFormOn = not lineFormOn
+	lineFormBtn.Text = lineFormOn and "🧍 Lineform: ON" or "🧍 Lineform: OFF"
+	lineEvent:FireServer(lineFormOn)
 end)
 
 
