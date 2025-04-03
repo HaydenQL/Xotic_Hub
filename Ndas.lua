@@ -457,12 +457,10 @@ end)
 
 
 
---Tabs gui each
-local VisualFrame = createTabFrame("Visual", "Visual Tab")
+-- 🎨 Visual Tab (Scrollable)
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
--- 🎨 Visual Tab (Scrollable)
 local VisualFrame = Instance.new("ScrollingFrame")
 VisualFrame.Name = "VisualFrame"
 VisualFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -472,6 +470,7 @@ VisualFrame.BackgroundTransparency = 1
 VisualFrame.Visible = false
 VisualFrame.Parent = contentFrame
 makeRounded(VisualFrame, 10)
+
 
 local visualLayout = Instance.new("UIListLayout")
 visualLayout.Padding = UDim.new(0, 5)
