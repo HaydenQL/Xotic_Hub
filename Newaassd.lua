@@ -328,7 +328,63 @@ end)
  makeRounded(gravityDropdown, 6)
  
  -- You can later connect this button to a dropdown or list of gravity settings
- -- like: Moon = 50, Sun = 1000, Normal = 196.2 (default), etc.
+ -- Dropdown frame (hidden until clicked)
+local dropdownFrame = Instance.new("Frame")
+dropdownFrame.Size = UDim2.new(0, 200, 0, 0)
+dropdownFrame.Position = UDim2.new(0, 20, 0, 265)
+dropdownFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+dropdownFrame.ClipsDescendants = true
+dropdownFrame.Visible = false
+dropdownFrame.Parent = PlayerFrame
+makeRounded(dropdownFrame, 6)
+
+local dropdownLayout = Instance.new("UIListLayout")
+dropdownLayout.SortOrder = Enum.SortOrder.LayoutOrder
+dropdownLayout.Padding = UDim.new(0, 2)
+dropdownLayout.Parent = dropdownFrame
+
+local gravityOptions = {
+	["🌍 Earth"] = 196.2,
+	["🌕 Moon"] = 32.0,
+	["☿ Mercury"] = 37.6,
+	["♀ Venus"] = 89.0,
+	["♂ Mars"] = 74.5,
+	["♃ Jupiter"] = 500.0,
+	["♄ Saturn"] = 300.0,
+	["♅ Uranus"] = 230.0,
+	["♆ Neptune"] = 280.0,
+	["🪐 Pluto"] = 10.0,
+	["☀ Sun"] = 1000.0,
+}
+
+local function updateDropdownSize()
+	dropdownFrame.Size = UDim2.new(0, 200, 0, (#dropdownFrame:GetChildren() - 1) * 32)
+end
+
+for name, gravity in pairs(gravityOptions) do
+	local option = Instance.new("TextButton")
+	option.Size = UDim2.new(1, -10, 0, 30)
+	option.Text = name
+	option.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	option.TextColor3 = Color3.fromRGB(255, 255, 255)
+	option.Font = Enum.Font.Gotham
+	option.TextSize = 14
+	option.Parent = dropdownFrame
+	makeRounded(option, 4)
+
+	option.MouseButton1Click:Connect(function()
+		game.Workspace.Gravity = gravity
+		dropdownBtn.Text = "Gravity: " .. name
+		dropdownFrame.Visible = false
+	end)
+end
+
+updateDropdownSize()
+
+-- Toggle dropdown visibility
+dropdownBtn.MouseButton1Click:Connect(function()
+	dropdownFrame.Visible = not dropdownFrame.Visible
+end)
 
 
 
