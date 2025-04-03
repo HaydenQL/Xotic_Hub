@@ -1,16 +1,28 @@
 repeat wait() until _G.XenoLog
-_G.XenoLog("🧪 Testing known HD Admin module: require(5951389993)")
+_G.XenoLog("📡 Deep scanning game for remotes...")
 
-local success, result = pcall(function()
-	return require(5951389993)
-end)
-
-if success then
-	if result then
-		_G.XenoLog("✅ SUCCESS: Module returned a value (type: " .. typeof(result) .. ")")
-	else
-		_G.XenoLog("⚠️ Module loaded, but returned nil.")
+local function scan(parent)
+	for _, v in pairs(parent:GetDescendants()) do
+		if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
+			_G.XenoLog("📡 Found " .. v.ClassName .. ": " .. v:GetFullName())
+		end
 	end
-else
-	_G.XenoLog("❌ Failed to require HD Admin module: " .. tostring(result))
 end
+
+-- Scan common services
+local services = {
+	game:GetService("ReplicatedStorage"),
+	game:GetService("ReplicatedFirst"),
+	game:GetService("StarterPlayer"),
+	game:GetService("Players"),
+	game:GetService("Workspace"),
+	game:GetService("Lighting"),
+}
+
+for _, svc in ipairs(services) do
+	pcall(function()
+		scan(svc)
+	end)
+end
+
+_G.XenoLog("✅ Remote scan complete.")
