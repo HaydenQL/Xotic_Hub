@@ -304,31 +304,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
 end)
 
 
--- 🪐 Gravity Options (Placeholder Dropdown UI)
- local gravityLabel = Instance.new("TextLabel")
- gravityLabel.Size = UDim2.new(0, 200, 0, 20)
- gravityLabel.Position = UDim2.new(0, 20, 0, 200)
- gravityLabel.BackgroundTransparency = 1
- gravityLabel.Text = "Gravity Preset: (Coming Soon)"
- gravityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
- gravityLabel.Font = Enum.Font.Gotham
- gravityLabel.TextSize = 14
- gravityLabel.TextXAlignment = Enum.TextXAlignment.Left
- gravityLabel.Parent = PlayerFrame
- 
- local gravityDropdown = Instance.new("TextButton")
- gravityDropdown.Size = UDim2.new(0, 200, 0, 30)
- gravityDropdown.Position = UDim2.new(0, 20, 0, 230)
- gravityDropdown.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
- gravityDropdown.Text = "Select Gravity (☰)"
- gravityDropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
- gravityDropdown.Font = Enum.Font.Gotham
- gravityDropdown.TextSize = 14
- gravityDropdown.Parent = PlayerFrame
- makeRounded(gravityDropdown, 6)
- 
- -- You can later connect this button to a dropdown or list of gravity settings
- -- Dropdown frame (hidden until clicked)
+
 -- 🪐 Gravity Dropdown Menu (Fixed)
 local dropdownFrame = Instance.new("Frame")
 dropdownFrame.ZIndex = 5
