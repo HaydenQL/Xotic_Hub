@@ -1,8 +1,8 @@
--- ⚔️ FE Sword for HaydenSigma24 (client-side)
+-- ⚔️ FE Sword for itschiefkeefhoe (client-side)
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-if not player or player.Name ~= "HaydenSigma24" then
+if not player or player.Name ~= "itschiefkeefhoe" then
     warn("[XENO] ❌ Access denied")
     return
 end
@@ -26,7 +26,7 @@ handle.Anchored = false
 handle.TopSurface = Enum.SurfaceType.Smooth
 handle.BottomSurface = Enum.SurfaceType.Smooth
 
--- Optional: Basic swing damage (client-only, visual)
+-- Optional: Visual damage
 local damageScript = Instance.new("Script")
 damageScript.Source = [[
 script.Parent.Touched:Connect(function(hit)
@@ -38,7 +38,7 @@ end)
 ]]
 damageScript.Parent = handle
 
--- Final setup
+-- Finish tool
 handle.Parent = tool
 tool.GripForward = Vector3.new(0,0,-1)
 tool.GripPos = Vector3.new(0,-1,0)
@@ -47,4 +47,4 @@ tool.GripUp = Vector3.new(0,1,0)
 
 tool.Parent = player.Backpack
 
-print("✅ [XENO] XenoBlade given to HaydenSigma24")
+print("✅ [XENO] Sword given to itschiefkeefhoe")
