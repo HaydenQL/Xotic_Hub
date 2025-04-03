@@ -209,39 +209,46 @@ comingSoonLabel.Parent = HomeFrame
 -- Other Tabs (Player, Visual, VoiceChat, Settings, Credits)
 local PlayerFrame = createTabFrame("Player", "Player Tab")
 
--- WalkSpeed Slider
+-- WalkSpeed Input
 local walkSpeedLabel = Instance.new("TextLabel")
 walkSpeedLabel.Size = UDim2.new(0, 200, 0, 20)
 walkSpeedLabel.Position = UDim2.new(0, 20, 0, 50)
 walkSpeedLabel.BackgroundTransparency = 1
-walkSpeedLabel.Text = "WalkSpeed: 16"
+walkSpeedLabel.Text = "WalkSpeed (Max 500):"
 walkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 walkSpeedLabel.Font = Enum.Font.Gotham
 walkSpeedLabel.TextSize = 14
 walkSpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
 walkSpeedLabel.Parent = PlayerFrame
 
-local walkSpeedSlider = Instance.new("TextButton")
-walkSpeedSlider.Size = UDim2.new(0, 200, 0, 30)
-walkSpeedSlider.Position = UDim2.new(0, 20, 0, 80)
-walkSpeedSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-walkSpeedSlider.Text = "Click to Increase (Max: 100)"
-walkSpeedSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
-walkSpeedSlider.Font = Enum.Font.Gotham
-walkSpeedSlider.TextSize = 14
-walkSpeedSlider.Parent = PlayerFrame
-makeRounded(walkSpeedSlider, 6)
+local walkSpeedBox = Instance.new("TextBox")
+walkSpeedBox.Size = UDim2.new(0, 200, 0, 30)
+walkSpeedBox.Position = UDim2.new(0, 20, 0, 75)
+walkSpeedBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+walkSpeedBox.Text = "16"
+walkSpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+walkSpeedBox.Font = Enum.Font.Gotham
+walkSpeedBox.TextSize = 14
+walkSpeedBox.ClearTextOnFocus = false
+walkSpeedBox.PlaceholderText = "Enter speed"
+walkSpeedBox.TextXAlignment = Enum.TextXAlignment.Center
+walkSpeedBox.Parent = PlayerFrame
+makeRounded(walkSpeedBox, 6)
 
-local currentSpeed = 16
-
-walkSpeedSlider.MouseButton1Click:Connect(function()
-	currentSpeed = currentSpeed + 4
-	if currentSpeed > 100 then
-		currentSpeed = 16
+walkSpeedBox.FocusLost:Connect(function(enterPressed)
+	if enterPressed then
+		local num = tonumber(walkSpeedBox.Text)
+		if num and num >= 0 and num <= 500 then
+			local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+			if humanoid then
+				humanoid.WalkSpeed = num
+			end
+		else
+			walkSpeedBox.Text = "16" -- Reset if invalid input
+		end
 	end
-	LocalPlayer.Character.Humanoid.WalkSpeed = currentSpeed
-	walkSpeedLabel.Text = "WalkSpeed: " .. tostring(currentSpeed)
 end)
+
 
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
 local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
