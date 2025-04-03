@@ -178,18 +178,36 @@ local function createTabFrame(name, labelText)
 end
 
 -- Home Tab
-local HomeFrame = createTabFrame("Home", "Home Tab")
-mainFrame.ClipsDescendants = true
-contentFrame.ClipsDescendants = true
+-- 🏠 Home Tab (Scrollable)
+local HomeFrame = Instance.new("ScrollingFrame")
+HomeFrame.Name = "HomeFrame"
+HomeFrame.Size = UDim2.new(1, 0, 1, 0)
+HomeFrame.CanvasSize = UDim2.new(0, 0, 0, 300)
+HomeFrame.ScrollBarThickness = 4
+HomeFrame.BackgroundTransparency = 1
+HomeFrame.Visible = false
+HomeFrame.Parent = contentFrame
+makeRounded(HomeFrame, 10)
 
+local homeLayout = Instance.new("UIListLayout")
+homeLayout.Padding = UDim.new(0, 8)
+homeLayout.SortOrder = Enum.SortOrder.LayoutOrder
+homeLayout.Parent = HomeFrame
+
+local homePadding = Instance.new("UIPadding")
+homePadding.PaddingTop = UDim.new(0, 10)
+homePadding.PaddingLeft = UDim.new(0, 20)
+homePadding.Parent = HomeFrame
+
+-- Infinite Yield Button
 local infYieldBtn = Instance.new("TextButton")
 infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
-infYieldBtn.Position = UDim2.new(0, 20, 0, 50)
 infYieldBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 infYieldBtn.Text = "Launch Infinite Yield"
 infYieldBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 infYieldBtn.Font = Enum.Font.Gotham
 infYieldBtn.TextSize = 14
+infYieldBtn.LayoutOrder = 1
 infYieldBtn.Parent = HomeFrame
 makeRounded(infYieldBtn, 6)
 
@@ -197,37 +215,52 @@ infYieldBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 end)
 
+-- Coming Soon Label
 local comingSoonLabel = Instance.new("TextLabel")
 comingSoonLabel.Size = UDim2.new(1, -40, 0, 30)
-comingSoonLabel.Position = UDim2.new(0, 20, 0, 90)
 comingSoonLabel.BackgroundTransparency = 1
 comingSoonLabel.Text = "Reanimations coming in the future."
 comingSoonLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 comingSoonLabel.Font = Enum.Font.Gotham
 comingSoonLabel.TextSize = 14
 comingSoonLabel.TextXAlignment = Enum.TextXAlignment.Left
+comingSoonLabel.LayoutOrder = 2
 comingSoonLabel.Parent = HomeFrame
 
--- Other Tabs (Player, Visual, VoiceChat, Settings, Credits)
-local PlayerFrame = createTabFrame("Player", "Player Tab")
-mainFrame.ClipsDescendants = true
-contentFrame.ClipsDescendants = true
+-- 🧍 Player Tab (Scrollable)
+local PlayerFrame = Instance.new("ScrollingFrame")
+PlayerFrame.Name = "PlayerFrame"
+PlayerFrame.Size = UDim2.new(1, 0, 1, 0)
+PlayerFrame.CanvasSize = UDim2.new(0, 0, 0, 600)
+PlayerFrame.ScrollBarThickness = 4
+PlayerFrame.BackgroundTransparency = 1
+PlayerFrame.Visible = false
+PlayerFrame.Parent = contentFrame
+makeRounded(PlayerFrame, 10)
+
+local playerLayout = Instance.new("UIListLayout")
+playerLayout.Padding = UDim.new(0, 8)
+playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+playerLayout.Parent = PlayerFrame
+
+local playerPadding = Instance.new("UIPadding")
+playerPadding.PaddingTop = UDim.new(0, 10)
+playerPadding.PaddingLeft = UDim.new(0, 20)
+playerPadding.Parent = PlayerFrame
 
 -- WalkSpeed Input
 local walkSpeedLabel = Instance.new("TextLabel")
 walkSpeedLabel.Size = UDim2.new(0, 200, 0, 20)
-walkSpeedLabel.Position = UDim2.new(0, 20, 0, 50)
-walkSpeedLabel.BackgroundTransparency = 1
 walkSpeedLabel.Text = "WalkSpeed (Max 500):"
 walkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 walkSpeedLabel.Font = Enum.Font.Gotham
 walkSpeedLabel.TextSize = 14
 walkSpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+walkSpeedLabel.LayoutOrder = 1
 walkSpeedLabel.Parent = PlayerFrame
 
 local walkSpeedBox = Instance.new("TextBox")
 walkSpeedBox.Size = UDim2.new(0, 200, 0, 30)
-walkSpeedBox.Position = UDim2.new(0, 20, 0, 75)
 walkSpeedBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 walkSpeedBox.Text = "16"
 walkSpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -236,6 +269,7 @@ walkSpeedBox.TextSize = 14
 walkSpeedBox.ClearTextOnFocus = false
 walkSpeedBox.PlaceholderText = "Enter speed"
 walkSpeedBox.TextXAlignment = Enum.TextXAlignment.Center
+walkSpeedBox.LayoutOrder = 2
 walkSpeedBox.Parent = PlayerFrame
 makeRounded(walkSpeedBox, 6)
 
@@ -248,36 +282,34 @@ walkSpeedBox.FocusLost:Connect(function(enterPressed)
 				humanoid.WalkSpeed = num
 			end
 		else
-			walkSpeedBox.Text = "16" -- Reset if invalid input
+			walkSpeedBox.Text = "16"
 		end
 	end
 end)
 
--- 🦘 Jump Height Input (Max 500)
+-- JumpPower Input
 local jumpPowerLabel = Instance.new("TextLabel")
 jumpPowerLabel.Size = UDim2.new(0, 200, 0, 20)
-jumpPowerLabel.Position = UDim2.new(0, 20, 0, 120)
-jumpPowerLabel.BackgroundTransparency = 1
 jumpPowerLabel.Text = "JumpPower:"
 jumpPowerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 jumpPowerLabel.Font = Enum.Font.Gotham
 jumpPowerLabel.TextSize = 14
 jumpPowerLabel.TextXAlignment = Enum.TextXAlignment.Left
+jumpPowerLabel.LayoutOrder = 3
 jumpPowerLabel.Parent = PlayerFrame
 
 local jumpPowerBox = Instance.new("TextBox")
 jumpPowerBox.Size = UDim2.new(0, 200, 0, 30)
-jumpPowerBox.Position = UDim2.new(0, 20, 0, 150)
 jumpPowerBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 jumpPowerBox.Text = "50"
 jumpPowerBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 jumpPowerBox.Font = Enum.Font.Gotham
 jumpPowerBox.TextSize = 14
 jumpPowerBox.ClearTextOnFocus = false
+jumpPowerBox.LayoutOrder = 4
 jumpPowerBox.Parent = PlayerFrame
 makeRounded(jumpPowerBox, 6)
 
--- 🧠 Function to update jump power (also works after respawn)
 local function setJumpPower(amount)
 	amount = tonumber(amount)
 	if amount and amount >= 1 and amount <= 500 then
@@ -289,46 +321,41 @@ local function setJumpPower(amount)
 	end
 end
 
--- Update on enter
 jumpPowerBox.FocusLost:Connect(function(enterPressed)
 	if enterPressed then
 		setJumpPower(jumpPowerBox.Text)
 	end
 end)
 
--- Reapply when respawning
 LocalPlayer.CharacterAdded:Connect(function(char)
 	char:WaitForChild("Humanoid")
 	wait(0.2)
 	setJumpPower(jumpPowerBox.Text)
 end)
 
-
--- 🌍 Gravity Changer (0–1000)
+-- Gravity
 local gravityLabel = Instance.new("TextLabel")
 gravityLabel.Size = UDim2.new(0, 200, 0, 20)
-gravityLabel.Position = UDim2.new(0, 20, 0, 200)
-gravityLabel.BackgroundTransparency = 1
 gravityLabel.Text = "Gravity (0–10000):"
 gravityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 gravityLabel.Font = Enum.Font.Gotham
 gravityLabel.TextSize = 14
 gravityLabel.TextXAlignment = Enum.TextXAlignment.Left
+gravityLabel.LayoutOrder = 5
 gravityLabel.Parent = PlayerFrame
 
 local gravityBox = Instance.new("TextBox")
 gravityBox.Size = UDim2.new(0, 200, 0, 30)
-gravityBox.Position = UDim2.new(0, 20, 0, 230)
 gravityBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 gravityBox.Text = tostring(workspace.Gravity)
 gravityBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 gravityBox.Font = Enum.Font.Gotham
 gravityBox.TextSize = 14
 gravityBox.ClearTextOnFocus = false
+gravityBox.LayoutOrder = 6
 gravityBox.Parent = PlayerFrame
 makeRounded(gravityBox, 6)
 
--- Apply gravity function
 local function setGravity(amount)
 	amount = tonumber(amount)
 	if amount and amount >= 0 and amount <= 10000 then
@@ -342,21 +369,19 @@ gravityBox.FocusLost:Connect(function(enterPressed)
 	end
 end)
 
--- 🧭 Teleport to Display Name
+-- Teleport
 local tpLabel = Instance.new("TextLabel")
 tpLabel.Size = UDim2.new(0, 200, 0, 20)
-tpLabel.Position = UDim2.new(0, 20, 0, 270)
-tpLabel.BackgroundTransparency = 1
 tpLabel.Text = "Teleport to Display Name:"
 tpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 tpLabel.Font = Enum.Font.Gotham
 tpLabel.TextSize = 14
 tpLabel.TextXAlignment = Enum.TextXAlignment.Left
+tpLabel.LayoutOrder = 7
 tpLabel.Parent = PlayerFrame
 
 local tpBox = Instance.new("TextBox")
 tpBox.Size = UDim2.new(0, 200, 0, 30)
-tpBox.Position = UDim2.new(0, 20, 0, 295)
 tpBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 tpBox.Text = ""
 tpBox.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -364,17 +389,18 @@ tpBox.Font = Enum.Font.Gotham
 tpBox.TextSize = 14
 tpBox.ClearTextOnFocus = false
 tpBox.PlaceholderText = "Type a display name..."
+tpBox.LayoutOrder = 8
 tpBox.Parent = PlayerFrame
 makeRounded(tpBox, 6)
 
 local tpButton = Instance.new("TextButton")
 tpButton.Size = UDim2.new(0, 200, 0, 30)
-tpButton.Position = UDim2.new(0, 20, 0, 335)
 tpButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 tpButton.Text = "🚀 Teleport to Player"
 tpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 tpButton.Font = Enum.Font.Gotham
 tpButton.TextSize = 14
+tpButton.LayoutOrder = 9
 tpButton.Parent = PlayerFrame
 makeRounded(tpButton, 6)
 
