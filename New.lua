@@ -249,6 +249,69 @@ walkSpeedBox.FocusLost:Connect(function(enterPressed)
 	end
 end)
 
+-- 🦘 Jump Height Controls
+local jumpPowerLabel = Instance.new("TextLabel")
+jumpPowerLabel.Size = UDim2.new(0, 200, 0, 20)
+jumpPowerLabel.Position = UDim2.new(0, 20, 0, 120)
+jumpPowerLabel.BackgroundTransparency = 1
+jumpPowerLabel.Text = "JumpPower: 50"
+jumpPowerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+jumpPowerLabel.Font = Enum.Font.Gotham
+jumpPowerLabel.TextSize = 14
+jumpPowerLabel.TextXAlignment = Enum.TextXAlignment.Left
+jumpPowerLabel.Parent = PlayerFrame
+
+local jumpPowerBtn = Instance.new("TextButton")
+jumpPowerBtn.Size = UDim2.new(0, 200, 0, 30)
+jumpPowerBtn.Position = UDim2.new(0, 20, 0, 150)
+jumpPowerBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+jumpPowerBtn.Text = "Click to Increase (Max: 500)"
+jumpPowerBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+jumpPowerBtn.Font = Enum.Font.Gotham
+jumpPowerBtn.TextSize = 14
+jumpPowerBtn.Parent = PlayerFrame
+makeRounded(jumpPowerBtn, 6)
+
+local currentJumpPower = 50
+
+jumpPowerBtn.MouseButton1Click:Connect(function()
+	currentJumpPower = currentJumpPower + 25
+	if currentJumpPower > 500 then
+		currentJumpPower = 50
+	end
+	if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+		LocalPlayer.Character:FindFirstChildOfClass("Humanoid").JumpPower = currentJumpPower
+	end
+	jumpPowerLabel.Text = "JumpPower: " .. tostring(currentJumpPower)
+end)
+
+-- 🪐 Gravity Options (Placeholder Dropdown UI)
+local gravityLabel = Instance.new("TextLabel")
+gravityLabel.Size = UDim2.new(0, 200, 0, 20)
+gravityLabel.Position = UDim2.new(0, 20, 0, 200)
+gravityLabel.BackgroundTransparency = 1
+gravityLabel.Text = "Gravity Preset: (Coming Soon)"
+gravityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+gravityLabel.Font = Enum.Font.Gotham
+gravityLabel.TextSize = 14
+gravityLabel.TextXAlignment = Enum.TextXAlignment.Left
+gravityLabel.Parent = PlayerFrame
+
+local gravityDropdown = Instance.new("TextButton")
+gravityDropdown.Size = UDim2.new(0, 200, 0, 30)
+gravityDropdown.Position = UDim2.new(0, 20, 0, 230)
+gravityDropdown.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+gravityDropdown.Text = "Select Gravity (☰)"
+gravityDropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
+gravityDropdown.Font = Enum.Font.Gotham
+gravityDropdown.TextSize = 14
+gravityDropdown.Parent = PlayerFrame
+makeRounded(gravityDropdown, 6)
+
+-- You can later connect this button to a dropdown or list of gravity settings
+-- like: Moon = 50, Sun = 1000, Normal = 196.2 (default), etc.
+
+
 
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
 local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
@@ -369,4 +432,40 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 		ScreenGui.Enabled = guiToggled
 	end
 end)
+
+-- 🖱️ Make the mainFrame resizable with a resize grip
+local resizeGrip = Instance.new("Frame")
+resizeGrip.Size = UDim2.new(0, 20, 0, 20)
+resizeGrip.Position = UDim2.new(1, -20, 1, -20)
+resizeGrip.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+resizeGrip.BackgroundTransparency = 0.3
+resizeGrip.Parent = mainFrame
+resizeGrip.ZIndex = 10
+makeRounded(resizeGrip, 4)
+
+local resizing = false
+local startPos, startSize
+
+resizeGrip.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		resizing = true
+		startPos = UIS:GetMouseLocation()
+		startSize = mainFrame.Size
+	end
+end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		resizing = false
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local currentPos = UIS:GetMouseLocation()
+		local delta = currentPos - startPos
+		mainFrame.Size = UDim2.new(0, math.clamp(startSize.X.Offset + delta.X, 300, 800), 0, math.clamp(startSize.Y.Offset + delta.Y, 200, 600))
+	end
+end)
+
 
