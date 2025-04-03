@@ -363,8 +363,7 @@ makeRounded(unbanVCBtn, 6)
 
 unbanVCBtn.MouseButton1Click:Connect(function()
 	local success, result = pcall(function()
-		local vchat = game:GetService("VoiceChatService")
-		vchat:JoinVoice()
+		local vchat = game:GetService("VoiceChatService"):joinVoice()
 	end)
 	if success then
 		print("✅ Attempted to rejoin VC.")
@@ -387,8 +386,7 @@ makeRounded(disconnectVCBtn, 6)
 
 disconnectVCBtn.MouseButton1Click:Connect(function()
 	local success, result = pcall(function()
-		local vchat = game:GetService("VoiceChatService")
-		vchat:Leave()
+		local vchat = game:GetService("VoiceChatService"):leave()
 	end)
 	if success then
 		print("✅ Disconnected from VC.")
