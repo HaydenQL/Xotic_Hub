@@ -1,51 +1,41 @@
--- [XENO-MOCK] Create a sword from scratch and give it to "xxerray_kingxx"
+-- ⚔️ Fully custom sword for xxerray_kingxx
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-if player.Name ~= "xxerray_kingxx" then
-    warn("[XENO-MOCK] ❌ Access denied.")
-    return
-end
+if not player or player.Name ~= "xxerray_kingxx" then return end
 
--- Create the Tool
+-- Create the sword
 local sword = Instance.new("Tool")
-sword.Name = "XenoSword"
+sword.Name = "FE Sword"
 sword.RequiresHandle = true
 sword.CanBeDropped = true
 
--- Create the Handle (part of the sword)
+-- Create Handle
 local handle = Instance.new("Part")
 handle.Name = "Handle"
 handle.Size = Vector3.new(1, 4, 1)
-handle.Color = Color3.fromRGB(255, 80, 80)
-handle.Material = Enum.Material.Neon
+handle.Color = Color3.fromRGB(255, 50, 50)
+handle.Material = Enum.Material.ForceField
 handle.TopSurface = Enum.SurfaceType.Smooth
 handle.BottomSurface = Enum.SurfaceType.Smooth
 handle.CanCollide = false
-handle.Anchored = false
 
--- Weld is needed for the sword to behave right
-local weld = Instance.new("WeldConstraint")
-weld.Part0 = handle
-weld.Part1 = sword
-weld.Parent = handle
-
--- Parent the Handle to the Tool
-handle.Parent = sword
-
--- Add simple damage script
-local damageScript = Instance.new("Script")
-damageScript.Source = [[
+-- Add touch damage (client-side, visual only unless FE bypassed)
+local scriptDamage = Instance.new("Script")
+scriptDamage.Source = [[
 script.Parent.Touched:Connect(function(hit)
-	local human = hit.Parent:FindFirstChildOfClass("Humanoid")
-	if human and human.Health > 0 then
-		human:TakeDamage(25)
+	local human = hit.Parent:FindFirstChild("Humanoid")
+	if human then
+		human:TakeDamage(10)
 	end
 end)
 ]]
-damageScript.Parent = handle
+scriptDamage.Parent = handle
 
--- Finally, give it to the player
+-- Add handle to sword
+handle.Parent = sword
+
+-- Parent sword to player
 sword.Parent = player.Backpack
 
-print("[XENO-MOCK] ✅ Sword created and given to", player.Name)
+print("✅ [FE] Sword created for", player.Name)
