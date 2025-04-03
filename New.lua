@@ -1,4 +1,4 @@
--- Remove existing GUIa
+-- Remove existing GUI
 for _, gui in pairs(game.CoreGui:GetChildren()) do
 	if gui.Name == "SigmaHub" then gui:Destroy() end
 end
@@ -136,6 +136,44 @@ for _, tab in ipairs(tabInfo) do
 	tabButtons[tab[2]] = button
 end
 
+-- Tab switching functionality
+for tabName, button in pairs(tabButtons) do
+	button.MouseButton1Click:Connect(function()
+		for _, child in ipairs(contentFrame:GetChildren()) do
+			if child:IsA("Frame") then
+				child.Visible = false
+			end
+		end
+		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
+		if welcome then
+			welcome.Visible = false
+		end
+		local tabFrame = contentFrame:FindFirstChild(tabName .. "Frame")
+		if tabFrame then
+			tabFrame.Visible = true
+		end
+	end)
+end
+
+-- Minimize, Close, and K button logic
+local minimized = false
+minBtn.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	tabFrame.Visible = not minimized
+	contentFrame.Visible = not minimized
+	mainFrame.Size = minimized and UDim2.new(0, 450, 0, 30) or UDim2.new(0, 450, 0, 280)
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+	mainFrame.Visible = false
+end)
+
+UIS.InputBegan:Connect(function(key, gpe)
+	if key.KeyCode == Enum.KeyCode.K and not gpe then
+		mainFrame.Visible = not mainFrame.Visible
+	end
+end)
+
 -- Welcome Screen
 local WelcomeFrame = Instance.new("Frame")
 WelcomeFrame.Name = "WelcomeFrame"
@@ -154,62 +192,14 @@ welcomeLabel.TextSize = 20
 welcomeLabel.TextXAlignment = Enum.TextXAlignment.Center
 welcomeLabel.Parent = WelcomeFrame
 
--- Create a frame template function
-local function createTabFrame(name, labelText)
-	local frame = Instance.new("Frame")
-	frame.Name = name .. "Frame"
-	frame.Size = UDim2.new(1, 0, 1, 0)
-	frame.BackgroundTransparency = 1
-	frame.Visible = false
-	frame.Parent = contentFrame
+-- Player Tab Content (Walk Speed, Jump Height, Gravity)
+local PlayerFrame = Instance.new("Frame")
+PlayerFrame.Name = "PlayerFrame"
+PlayerFrame.Size = UDim2.new(1, 0, 1, 0)
+PlayerFrame.BackgroundTransparency = 1
+PlayerFrame.Visible = false
+PlayerFrame.Parent = contentFrame
 
-	local label = Instance.new("TextLabel")
-	label.Size = UDim2.new(1, 0, 0, 30)
-	label.Position = UDim2.new(0, 10, 0, 10)
-	label.BackgroundTransparency = 1
-	label.Text = labelText
-	label.TextColor3 = Color3.fromRGB(255, 255, 255)
-	label.Font = Enum.Font.GothamBold
-	label.TextSize = 16
-	label.TextXAlignment = Enum.TextXAlignment.Left
-	label.Parent = frame
-
-	return frame
-end
-
--- Home Tab
-local HomeFrame = createTabFrame("Home", "Home Tab")
-
-local infYieldBtn = Instance.new("TextButton")
-infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
-infYieldBtn.Position = UDim2.new(0, 20, 0, 50)
-infYieldBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-infYieldBtn.Text = "Launch Infinite Yield"
-infYieldBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-infYieldBtn.Font = Enum.Font.Gotham
-infYieldBtn.TextSize = 14
-infYieldBtn.Parent = HomeFrame
-makeRounded(infYieldBtn, 6)
-
-infYieldBtn.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
-end)
-
-local comingSoonLabel = Instance.new("TextLabel")
-comingSoonLabel.Size = UDim2.new(1, -40, 0, 30)
-comingSoonLabel.Position = UDim2.new(0, 20, 0, 90)
-comingSoonLabel.BackgroundTransparency = 1
-comingSoonLabel.Text = "Reanimations coming in the future."
-comingSoonLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-comingSoonLabel.Font = Enum.Font.Gotham
-comingSoonLabel.TextSize = 14
-comingSoonLabel.TextXAlignment = Enum.TextXAlignment.Left
-comingSoonLabel.Parent = HomeFrame
-
--- Player Tab Content
-local PlayerFrame = createTabFrame("Player", "Player Tab")
-
--- WalkSpeed Slider
 local walkSpeedLabel = Instance.new("TextLabel")
 walkSpeedLabel.Size = UDim2.new(1, -40, 0, 30)
 walkSpeedLabel.Position = UDim2.new(0, 20, 0, 50)
@@ -234,56 +224,6 @@ walkSpeedSlider.Changed:Connect(function()
 	walkSpeedLabel.Text = "Walk Speed: " .. math.floor(walkSpeedSlider.Value)
 end)
 
--- JumpHeight Slider
-local jumpHeightLabel = Instance.new("TextLabel")
-jumpHeightLabel.Size = UDim2.new(1, -40, 0, 30)
-jumpHeightLabel.Position = UDim2.new(0, 20, 0, 110)
-jumpHeightLabel.BackgroundTransparency = 1
-jumpHeightLabel.Text = "Jump Height: 50"
-jumpHeightLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-jumpHeightLabel.Font = Enum.Font.Gotham
-jumpHeightLabel.TextSize = 14
-jumpHeightLabel.TextXAlignment = Enum.TextXAlignment.Left
-jumpHeightLabel.Parent = PlayerFrame
-
-local jumpHeightSlider = Instance.new("Slider")
-jumpHeightSlider.Size = UDim2.new(1, -40, 0, 20)
-jumpHeightSlider.Position = UDim2.new(0, 20, 0, 140)
-jumpHeightSlider.MinValue = 0
-jumpHeightSlider.MaxValue = 200
-jumpHeightSlider.Value = LocalPlayer.Character.Humanoid.JumpHeight
-jumpHeightSlider.Parent = PlayerFrame
-
-jumpHeightSlider.Changed:Connect(function()
-	LocalPlayer.Character.Humanoid.JumpHeight = jumpHeightSlider.Value
-	jumpHeightLabel.Text = "Jump Height: " .. math.floor(jumpHeightSlider.Value)
-end)
-
--- Gravity Slider
-local gravityLabel = Instance.new("TextLabel")
-gravityLabel.Size = UDim2.new(1, -40, 0, 30)
-gravityLabel.Position = UDim2.new(0, 20, 0, 170)
-gravityLabel.BackgroundTransparency = 1
-gravityLabel.Text = "Gravity: 196.2"
-gravityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-gravityLabel.Font = Enum.Font.Gotham
-gravityLabel.TextSize = 14
-gravityLabel.TextXAlignment = Enum.TextXAlignment.Left
-gravityLabel.Parent = PlayerFrame
-
-local gravitySlider = Instance.new("Slider")
-gravitySlider.Size = UDim2.new(1, -40, 0, 20)
-gravitySlider.Position = UDim2.new(0, 20, 0, 200)
-gravitySlider.MinValue = 0
-gravitySlider.MaxValue = 500
-gravitySlider.Value = workspace.Gravity
-gravitySlider.Parent = PlayerFrame
-
-gravitySlider.Changed:Connect(function()
-	workspace.Gravity = gravitySlider.Value
-	gravityLabel.Text = "Gravity: " .. math.floor(gravitySlider.Value)
-end)
-
 -- Reset Button for WalkSpeed, JumpHeight, and Gravity
 local resetBtn = Instance.new("TextButton")
 resetBtn.Size = UDim2.new(0, 180, 0, 35)
@@ -298,52 +238,7 @@ makeRounded(resetBtn, 6)
 
 resetBtn.MouseButton1Click:Connect(function()
 	walkSpeedSlider.Value = 16
-	jumpHeightSlider.Value = 50
-	gravitySlider.Value = 196.2
 end)
-
--- Credits Tab Content
-local CreditsFrame = createTabFrame("Credits", "Credits Tab")
-local creditsText = Instance.new("TextLabel")
-creditsText.Size = UDim2.new(1, -40, 0, 30)
-creditsText.Position = UDim2.new(0, 20, 0, 50)
-creditsText.BackgroundTransparency = 1
-creditsText.Text = "Made by Hayden"
-creditsText.TextColor3 = Color3.fromRGB(200, 200, 200)
-creditsText.Font = Enum.Font.Gotham
-creditsText.TextSize = 14
-creditsText.TextXAlignment = Enum.TextXAlignment.Left
-creditsText.Parent = CreditsFrame
-
-local creditsNote = Instance.new("TextLabel")
-creditsNote.Size = UDim2.new(1, -40, 0, 30)
-creditsNote.Position = UDim2.new(0, 20, 0, 80)
-creditsNote.BackgroundTransparency = 1
-creditsNote.Text = "💬 Type '!admin' in chat to unlock the admin panel."
-creditsNote.TextColor3 = Color3.fromRGB(200, 200, 200)
-creditsNote.Font = Enum.Font.Gotham
-creditsNote.TextSize = 14
-creditsNote.TextXAlignment = Enum.TextXAlignment.Left
-creditsNote.Parent = CreditsFrame
-
--- Tab switching behavior
-for tabName, button in pairs(tabButtons) do
-	button.MouseButton1Click:Connect(function()
-		for _, child in ipairs(contentFrame:GetChildren()) do
-			if child:IsA("Frame") then
-				child.Visible = false
-			end
-		end
-		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
-		if welcome then
-			welcome.Visible = false
-		end
-		local tabFrame = contentFrame:FindFirstChild(tabName .. "Frame")
-		if tabFrame then
-			tabFrame.Visible = true
-		end
-	end)
-end
 
 -- Admin Panel (hidden unless !admin is typed)
 local AdminFrame = Instance.new("Frame")
@@ -376,7 +271,7 @@ adminMsg.TextSize = 14
 adminMsg.TextXAlignment = Enum.TextXAlignment.Left
 adminMsg.Parent = AdminFrame
 
--- 💬 Listen for !admin in chat
+-- Listen for !admin in chat
 LocalPlayer.Chatted:Connect(function(msg)
 	if msg:lower() == "!admin" then
 		for _, frame in ipairs(contentFrame:GetChildren()) do
