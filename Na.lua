@@ -377,7 +377,7 @@ local disconnectVCBtn = Instance.new("TextButton")
 disconnectVCBtn.Size = UDim2.new(0, 200, 0, 35)
 disconnectVCBtn.Position = UDim2.new(0, 20, 0, 95)
 disconnectVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-disconnectVCBtn.Text = "🔌 Disconnect from Voice Chat"
+disconnectVCBtn.Text = "🔴 Disconnect from Voice Chat"
 disconnectVCBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 disconnectVCBtn.Font = Enum.Font.Gotham
 disconnectVCBtn.TextSize = 14
@@ -394,6 +394,80 @@ disconnectVCBtn.MouseButton1Click:Connect(function()
 		warn("❌ Failed to disconnect from VC:", result)
 	end
 end)
+
+-- 🕵️‍♂️ Spy Listen Section
+
+local spyNameLabel = Instance.new("TextLabel")
+spyNameLabel.Size = UDim2.new(0, 200, 0, 20)
+spyNameLabel.Position = UDim2.new(0, 20, 0, 145)
+spyNameLabel.BackgroundTransparency = 1
+spyNameLabel.Text = "Spy on Display Name:"
+spyNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+spyNameLabel.Font = Enum.Font.Gotham
+spyNameLabel.TextSize = 14
+spyNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+spyNameLabel.Parent = VoiceChatFrame
+
+local spyNameBox = Instance.new("TextBox")
+spyNameBox.Size = UDim2.new(0, 200, 0, 30)
+spyNameBox.Position = UDim2.new(0, 20, 0, 170)
+spyNameBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+spyNameBox.Text = ""
+spyNameBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+spyNameBox.Font = Enum.Font.Gotham
+spyNameBox.TextSize = 14
+spyNameBox.ClearTextOnFocus = false
+spyNameBox.PlaceholderText = "Type their display name..."
+spyNameBox.Parent = VoiceChatFrame
+makeRounded(spyNameBox, 6)
+
+local spyButton = Instance.new("TextButton")
+spyButton.Size = UDim2.new(0, 200, 0, 30)
+spyButton.Position = UDim2.new(0, 20, 0, 210)
+spyButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+spyButton.Text = "🎧 Start Spying"
+spyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+spyButton.Font = Enum.Font.Gotham
+spyButton.TextSize = 14
+spyButton.Parent = VoiceChatFrame
+makeRounded(spyButton, 6)
+
+local clonedVoices = {}
+
+spyButton.MouseButton1Click:Connect(function()
+	local displayName = spyNameBox.Text:lower()
+	for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+		if player.DisplayName:lower() == displayName and player ~= LocalPlayer then
+			-- Clear old clone
+			if clonedVoices[player] then
+				clonedVoices[player]:Destroy()
+			end
+
+			-- Wait for character and voice emitter
+			local char = player.Character
+			if not char then return end
+
+			local head = char:FindFirstChild("Head")
+			if not head then return end
+
+			local voiceSound = head:FindFirstChildWhichIsA("Sound")
+			if not voiceSound then return end
+
+			-- Clone voice emitter and put it near LocalPlayer
+			local clone = voiceSound:Clone()
+			clone.Parent = LocalPlayer:WaitForChild("Head")
+			clone.Name = "[SPY] " .. player.Name
+			clone.Looped = false
+			clone:Play()
+
+			clonedVoices[player] = clone
+
+			print("🎧 Spying on:", player.DisplayName)
+			break
+		end
+	end
+end)
+
 
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
