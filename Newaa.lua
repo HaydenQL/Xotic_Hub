@@ -305,15 +305,17 @@ end)
 
 
 
--- 🪐 Gravity Dropdown Menu (Fixed)
+-- 🪐 Gravity Dropdown Menu (Working + Layer Safe)
 local dropdownFrame = Instance.new("Frame")
-dropdownFrame.ZIndex = 5
+dropdownFrame.Name = "GravityDropdown"
 dropdownFrame.Size = UDim2.new(0, 200, 0, 0)
 dropdownFrame.Position = UDim2.new(0, 20, 0, 265)
 dropdownFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-dropdownFrame.ClipsDescendants = true
+dropdownFrame.BorderSizePixel = 0
 dropdownFrame.Visible = false
-dropdownFrame.Active = false -- prevents blocking input when hidden
+dropdownFrame.Active = false
+dropdownFrame.ClipsDescendants = true
+dropdownFrame.ZIndex = 1000
 dropdownFrame.Parent = PlayerFrame
 makeRounded(dropdownFrame, 6)
 
@@ -348,8 +350,9 @@ for name, gravity in pairs(gravityOptions) do
 	option.TextColor3 = Color3.fromRGB(255, 255, 255)
 	option.Font = Enum.Font.Gotham
 	option.TextSize = 14
-	option.ZIndex = 6 -- ensures above frame
+	option.ZIndex = 1001
 	option.AutoButtonColor = true
+	option.BorderSizePixel = 0
 	option.Parent = dropdownFrame
 	makeRounded(option, 4)
 
@@ -363,15 +366,13 @@ end
 
 updateDropdownSize()
 
--- Toggle dropdown visibility (safe)
+-- Toggle Dropdown visibility (Safe & Layered)
 local dropdownOpen = false
 dropdownBtn.MouseButton1Click:Connect(function()
 	dropdownOpen = not dropdownOpen
 	dropdownFrame.Visible = dropdownOpen
 	dropdownFrame.Active = dropdownOpen
 end)
-
-
 
 
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
