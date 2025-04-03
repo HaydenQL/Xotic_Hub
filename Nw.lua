@@ -345,57 +345,68 @@ end)
 --Tabs gui each
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
 
--- 🎙️ Voice Chat Controls (working buttons)
- local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
- 
- -- Unban / Rejoin VC Button
- local unbanVCBtn = Instance.new("TextButton")
- unbanVCBtn.Size = UDim2.new(0, 200, 0, 35)
- unbanVCBtn.Position = UDim2.new(0, 20, 0, 50)
- unbanVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
- unbanVCBtn.Text = "🔓 Rejoin Voice Chat"
- unbanVCBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
- unbanVCBtn.Font = Enum.Font.Gotham
- unbanVCBtn.TextSize = 14
- unbanVCBtn.Parent = VoiceChatFrame
- makeRounded(unbanVCBtn, 6)
- 
- unbanVCBtn.MouseButton1Click:Connect(function()
- 	local success, result = pcall(function()
- 		local vchat = game:GetService("VoiceChatService"):joinVoice()
- 	end)
- 	if success then
- 		print("✅ Attempted to rejoin VC.")
- 	else
- 		warn("❌ Failed to rejoin VC:", result)
- 	end
- end)
- 
- -- Disconnect VC Button
- local disconnectVCBtn = Instance.new("TextButton")
- disconnectVCBtn.Size = UDim2.new(0, 200, 0, 35)
- disconnectVCBtn.Position = UDim2.new(0, 20, 0, 95)
- disconnectVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
- disconnectVCBtn.Text = "🔴 Disconnect from Voice Chat"
- disconnectVCBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
- disconnectVCBtn.Font = Enum.Font.Gotham
- disconnectVCBtn.TextSize = 14
- disconnectVCBtn.Parent = VoiceChatFrame
- makeRounded(disconnectVCBtn, 6)
- 
- disconnectVCBtn.MouseButton1Click:Connect(function()
- 	local success, result = pcall(function()
- 		local vchat = game:GetService("VoiceChatService"):leaveVoice()
- 	end)
- 	if success then
- 		print("✅ Disconnected from VC.")
- 	else
- 		warn("❌ Failed to disconnect from VC:", result)
- 	end
- end)
+-- 🎙️ Voice Chat Controls (with Camera Spy & Scrollable)
+local VoiceChatFrame = Instance.new("ScrollingFrame")
+VoiceChatFrame.Name = "VoiceChatFrame"
+VoiceChatFrame.Size = UDim2.new(1, 0, 1, 0)
+VoiceChatFrame.CanvasSize = UDim2.new(0, 0, 0, 500)
+VoiceChatFrame.ScrollBarThickness = 4
+VoiceChatFrame.BackgroundTransparency = 1
+VoiceChatFrame.Parent = contentFrame
+makeRounded(VoiceChatFrame, 10)
 
--- 📷 Voice Spy via Camera Redirect
+local vcLayout = Instance.new("UIListLayout")
+vcLayout.Padding = UDim.new(0, 8)
+vcLayout.SortOrder = Enum.SortOrder.LayoutOrder
+vcLayout.Parent = VoiceChatFrame
 
+-- 🔓 Rejoin VC Button
+local unbanVCBtn = Instance.new("TextButton")
+unbanVCBtn.Size = UDim2.new(0, 200, 0, 35)
+unbanVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+unbanVCBtn.Text = "🔓 Rejoin Voice Chat"
+unbanVCBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+unbanVCBtn.Font = Enum.Font.Gotham
+unbanVCBtn.TextSize = 14
+unbanVCBtn.LayoutOrder = 1
+unbanVCBtn.Parent = VoiceChatFrame
+makeRounded(unbanVCBtn, 6)
+
+unbanVCBtn.MouseButton1Click:Connect(function()
+	local success, result = pcall(function()
+		game:GetService("VoiceChatService"):JoinVoice()
+	end)
+	if success then
+		print("✅ Attempted to rejoin VC.")
+	else
+		warn("❌ Failed to rejoin VC:", result)
+	end
+end)
+
+-- 🔴 Disconnect VC Button
+local disconnectVCBtn = Instance.new("TextButton")
+disconnectVCBtn.Size = UDim2.new(0, 200, 0, 35)
+disconnectVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+disconnectVCBtn.Text = "🔴 Disconnect from Voice Chat"
+disconnectVCBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+disconnectVCBtn.Font = Enum.Font.Gotham
+disconnectVCBtn.TextSize = 14
+disconnectVCBtn.LayoutOrder = 2
+disconnectVCBtn.Parent = VoiceChatFrame
+makeRounded(disconnectVCBtn, 6)
+
+disconnectVCBtn.MouseButton1Click:Connect(function()
+	local success, result = pcall(function()
+		game:GetService("VoiceChatService"):Leave()
+	end)
+	if success then
+		print("✅ Disconnected from VC.")
+	else
+		warn("❌ Failed to disconnect from VC:", result)
+	end
+end)
+
+-- 🎥 Camera Spy
 local cam = workspace.CurrentCamera
 local originalCamCF = cam.CFrame
 local spyCamActive = false
@@ -403,18 +414,17 @@ local spyConnection = nil
 
 local camSpyNameLabel = Instance.new("TextLabel")
 camSpyNameLabel.Size = UDim2.new(0, 200, 0, 20)
-camSpyNameLabel.Position = UDim2.new(0, 20, 0, 300)
 camSpyNameLabel.BackgroundTransparency = 1
 camSpyNameLabel.Text = "Camera Spy Display Name:"
 camSpyNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 camSpyNameLabel.Font = Enum.Font.Gotham
 camSpyNameLabel.TextSize = 14
 camSpyNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+camSpyNameLabel.LayoutOrder = 3
 camSpyNameLabel.Parent = VoiceChatFrame
 
 local camSpyBox = Instance.new("TextBox")
 camSpyBox.Size = UDim2.new(0, 200, 0, 30)
-camSpyBox.Position = UDim2.new(0, 20, 0, 325)
 camSpyBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 camSpyBox.Text = ""
 camSpyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -422,28 +432,29 @@ camSpyBox.Font = Enum.Font.Gotham
 camSpyBox.TextSize = 14
 camSpyBox.ClearTextOnFocus = false
 camSpyBox.PlaceholderText = "Type their display name..."
+camSpyBox.LayoutOrder = 4
 camSpyBox.Parent = VoiceChatFrame
 makeRounded(camSpyBox, 6)
 
 local startSpyCamBtn = Instance.new("TextButton")
 startSpyCamBtn.Size = UDim2.new(0, 200, 0, 30)
-startSpyCamBtn.Position = UDim2.new(0, 20, 0, 365)
 startSpyCamBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 startSpyCamBtn.Text = "🎥 Start Camera Spy"
 startSpyCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 startSpyCamBtn.Font = Enum.Font.Gotham
 startSpyCamBtn.TextSize = 14
+startSpyCamBtn.LayoutOrder = 5
 startSpyCamBtn.Parent = VoiceChatFrame
 makeRounded(startSpyCamBtn, 6)
 
 local stopSpyCamBtn = Instance.new("TextButton")
 stopSpyCamBtn.Size = UDim2.new(0, 200, 0, 30)
-stopSpyCamBtn.Position = UDim2.new(0, 20, 0, 405)
 stopSpyCamBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 stopSpyCamBtn.Text = "🔁 Return to Self"
 stopSpyCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 stopSpyCamBtn.Font = Enum.Font.Gotham
 stopSpyCamBtn.TextSize = 14
+stopSpyCamBtn.LayoutOrder = 6
 stopSpyCamBtn.Parent = VoiceChatFrame
 makeRounded(stopSpyCamBtn, 6)
 
@@ -454,7 +465,6 @@ startSpyCamBtn.MouseButton1Click:Connect(function()
 		if player ~= LocalPlayer and player.DisplayName:lower() == displayName then
 			local head = player.Character and player.Character:FindFirstChild("Head")
 			if head then
-				-- Save original cam position
 				originalCamCF = cam.CFrame
 				spyCamActive = true
 
@@ -485,6 +495,7 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 		print("🔁 Returned camera to self")
 	end
 end)
+
 
 
 -- settings
