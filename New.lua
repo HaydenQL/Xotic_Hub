@@ -1,4 +1,4 @@
--- Remove existing GUI
+-- Clear any existing GUI
 for _, gui in pairs(game.CoreGui:GetChildren()) do
 	if gui.Name == "SigmaHub" then gui:Destroy() end
 end
@@ -6,6 +6,7 @@ end
 local UIS = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "SigmaHub"
@@ -18,6 +19,7 @@ local function makeRounded(obj, radius)
 	corner.Parent = obj
 end
 
+-- Main Frame
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
 mainFrame.Size = UDim2.new(0, 450, 0, 280)
@@ -29,6 +31,7 @@ mainFrame.Draggable = true
 mainFrame.Parent = ScreenGui
 makeRounded(mainFrame, 12)
 
+-- Top Bar
 local topBar = Instance.new("Frame")
 topBar.Size = UDim2.new(1, 0, 0, 30)
 topBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -57,6 +60,21 @@ usernameLabel.Font = Enum.Font.Gotham
 usernameLabel.TextXAlignment = Enum.TextXAlignment.Right
 usernameLabel.Parent = topBar
 
+-- Close Button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -30, 0, 0)
+closeBtn.BackgroundTransparency = 1
+closeBtn.Text = "❌"
+closeBtn.TextSize = 14
+closeBtn.TextColor3 = Color3.fromRGB(200, 50, 50)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.Parent = topBar
+closeBtn.MouseButton1Click:Connect(function()
+	mainFrame.Visible = false
+end)
+
+-- Minimize Button
 local minBtn = Instance.new("TextButton")
 minBtn.Size = UDim2.new(0, 30, 0, 30)
 minBtn.Position = UDim2.new(1, -60, 0, 0)
@@ -67,21 +85,12 @@ minBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
 minBtn.Font = Enum.Font.GothamBold
 minBtn.Parent = topBar
 
-local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0, 30, 0, 30)
-closeBtn.Position = UDim2.new(1, -30, 0, 0)
-closeBtn.BackgroundTransparency = 1
-closeBtn.Text = "❌"
-closeBtn.TextSize = 14
-closeBtn.TextColor3 = Color3.fromRGB(200, 50, 50)
-closeBtn.Font = Enum.Font.GothamBold
-closeBtn.Parent = topBar
-
+-- Tab Frame
 local tabFrame = Instance.new("ScrollingFrame")
 tabFrame.Size = UDim2.new(0, 100, 1, -30)
 tabFrame.Position = UDim2.new(0, 0, 0, 30)
 tabFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-tabFrame.CanvasSize = UDim2.new(0, 0, 0, 300)
+tabFrame.CanvasSize = UDim2.new(0, 0, 0, 350)
 tabFrame.ScrollBarThickness = 4
 tabFrame.Parent = mainFrame
 makeRounded(tabFrame, 10)
@@ -91,6 +100,7 @@ uiListLayout.Padding = UDim.new(0, 5)
 uiListLayout.Parent = tabFrame
 uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
+-- Content Frame
 local contentFrame = Instance.new("Frame")
 contentFrame.Name = "ContentFrame"
 contentFrame.Size = UDim2.new(1, -100, 1, -30)
@@ -99,6 +109,7 @@ contentFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 contentFrame.Parent = mainFrame
 makeRounded(contentFrame, 10)
 
+-- Version Label
 local versionLabel = Instance.new("TextLabel")
 versionLabel.Size = UDim2.new(0, 150, 0, 20)
 versionLabel.Position = UDim2.new(0, 5, 1, -20)
@@ -110,7 +121,59 @@ versionLabel.Font = Enum.Font.Gotham
 versionLabel.TextXAlignment = Enum.TextXAlignment.Left
 versionLabel.Parent = mainFrame
 
--- Tabs
+-- Resizing Corner
+local resizeCorner = Instance.new("TextButton")
+resizeCorner.Size = UDim2.new(0, 15, 0, 15)
+resizeCorner.Position = UDim2.new(1, -15, 1, -15)
+resizeCorner.BackgroundColor3 = Color3.fromRGB(100,100,100)
+resizeCorner.BorderSizePixel = 0
+resizeCorner.Text = ""
+resizeCorner.Parent = mainFrame
+makeRounded(resizeCorner, 4)
+
+local resizing = false
+local lastMousePos
+local lastFrameSize
+
+resizeCorner.MouseButton1Down:Connect(function()
+	resizing = true
+	lastMousePos = UIS:GetMouseLocation()
+	lastFrameSize = mainFrame.Size
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = UIS:GetMouseLocation() - lastMousePos
+		mainFrame.Size = UDim2.new(
+			0, math.max(300, lastFrameSize.X.Offset + delta.X),
+			0, math.max(150, lastFrameSize.Y.Offset + delta.Y)
+		)
+	end
+end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		resizing = false
+	end
+end)
+
+-- K key to toggle
+UIS.InputBegan:Connect(function(input, gpe)
+	if input.KeyCode == Enum.KeyCode.K and not gpe then
+		mainFrame.Visible = not mainFrame.Visible
+	end
+end)
+
+-- Minimize toggle
+local minimized = false
+minBtn.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	tabFrame.Visible = not minimized
+	contentFrame.Visible = not minimized
+	mainFrame.Size = minimized and UDim2.new(0, 450, 0, 30) or UDim2.new(0, 450, 0, 280)
+end)
+
+-- Tab Info
 local tabInfo = {
 	{"🏠", "Home"},
 	{"🧍", "Player"},
@@ -118,6 +181,7 @@ local tabInfo = {
 	{"🎙️", "VoiceChat"},
 	{"⚙️", "Settings"},
 	{"📜", "Credits"},
+	{"🧪", "RemoteTest"},
 }
 
 local tabButtons = {}
@@ -154,7 +218,7 @@ welcomeLabel.TextSize = 20
 welcomeLabel.TextXAlignment = Enum.TextXAlignment.Center
 welcomeLabel.Parent = WelcomeFrame
 
--- Create a frame template function
+-- Template for each tab's frame
 local function createTabFrame(name, labelText)
 	local frame = Instance.new("Frame")
 	frame.Name = name .. "Frame"
@@ -177,71 +241,162 @@ local function createTabFrame(name, labelText)
 	return frame
 end
 
--- Home Tab
+-- Create basic tabs
 local HomeFrame = createTabFrame("Home", "Home Tab")
-
-local infYieldBtn = Instance.new("TextButton")
-infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
-infYieldBtn.Position = UDim2.new(0, 20, 0, 50)
-infYieldBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-infYieldBtn.Text = "Launch Infinite Yield"
-infYieldBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-infYieldBtn.Font = Enum.Font.Gotham
-infYieldBtn.TextSize = 14
-infYieldBtn.Parent = HomeFrame
-makeRounded(infYieldBtn, 6)
-
-infYieldBtn.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
-end)
-
-local comingSoonLabel = Instance.new("TextLabel")
-comingSoonLabel.Size = UDim2.new(1, -40, 0, 30)
-comingSoonLabel.Position = UDim2.new(0, 20, 0, 90)
-comingSoonLabel.BackgroundTransparency = 1
-comingSoonLabel.Text = "Reanimations coming in the future."
-comingSoonLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-comingSoonLabel.Font = Enum.Font.Gotham
-comingSoonLabel.TextSize = 14
-comingSoonLabel.TextXAlignment = Enum.TextXAlignment.Left
-comingSoonLabel.Parent = HomeFrame
-
--- Other Tabs (Player, Visual, VoiceChat, Settings, Credits)
 local PlayerFrame = createTabFrame("Player", "Player Tab")
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
 local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
 local CreditsFrame = createTabFrame("Credits", "Credits Tab")
 
--- Add credit labels
-local creditsText = Instance.new("TextLabel")
-creditsText.Size = UDim2.new(1, -40, 0, 30)
-creditsText.Position = UDim2.new(0, 20, 0, 50)
-creditsText.BackgroundTransparency = 1
-creditsText.Text = "Made by Hayden"
-creditsText.TextColor3 = Color3.fromRGB(200, 200, 200)
-creditsText.Font = Enum.Font.Gotham
-creditsText.TextSize = 14
-creditsText.TextXAlignment = Enum.TextXAlignment.Left
-creditsText.Parent = CreditsFrame
+-- Credits info
+local creditsInfo = Instance.new("TextLabel")
+creditsInfo.Size = UDim2.new(1, -40, 0, 30)
+creditsInfo.Position = UDim2.new(0, 20, 0, 50)
+creditsInfo.BackgroundTransparency = 1
+creditsInfo.Text = "Made by Hayden"
+creditsInfo.TextColor3 = Color3.fromRGB(200, 200, 200)
+creditsInfo.Font = Enum.Font.Gotham
+creditsInfo.TextSize = 14
+creditsInfo.TextXAlignment = Enum.TextXAlignment.Left
+creditsInfo.Parent = CreditsFrame
 
-local creditsNote = Instance.new("TextLabel")
-creditsNote.Size = UDim2.new(1, -40, 0, 30)
-creditsNote.Position = UDim2.new(0, 20, 0, 80)
-creditsNote.BackgroundTransparency = 1
-creditsNote.Text = "💬 Type '!admin' in chat to unlock the admin panel."
-creditsNote.TextColor3 = Color3.fromRGB(200, 200, 200)
-creditsNote.Font = Enum.Font.Gotham
-creditsNote.TextSize = 14
-creditsNote.TextXAlignment = Enum.TextXAlignment.Left
-creditsNote.Parent = CreditsFrame
+local creditsTip = Instance.new("TextLabel")
+creditsTip.Size = UDim2.new(1, -40, 0, 30)
+creditsTip.Position = UDim2.new(0, 20, 0, 80)
+creditsTip.BackgroundTransparency = 1
+creditsTip.Text = "💬 Type !admin in chat to unlock admin panel"
+creditsTip.TextColor3 = Color3.fromRGB(180, 180, 180)
+creditsTip.Font = Enum.Font.Gotham
+creditsTip.TextSize = 13
+creditsTip.TextXAlignment = Enum.TextXAlignment.Left
+creditsTip.Parent = CreditsFrame
 
--- Tab switching
+-- RemoteEvent Tester Frame
+local RemoteTestFrame = Instance.new("Frame")
+RemoteTestFrame.Name = "RemoteTestFrame"
+RemoteTestFrame.Size = UDim2.new(1, 0, 1, 0)
+RemoteTestFrame.BackgroundTransparency = 1
+RemoteTestFrame.Visible = false
+RemoteTestFrame.Parent = contentFrame
+
+local tutorial = Instance.new("TextLabel")
+tutorial.Size = UDim2.new(1, -20, 0, 40)
+tutorial.Position = UDim2.new(0, 10, 0, 10)
+tutorial.BackgroundTransparency = 1
+tutorial.Text = "Enter RemoteEvent and (optional) player name. Hit 'Fire' to test."
+tutorial.TextColor3 = Color3.fromRGB(200, 200, 200)
+tutorial.Font = Enum.Font.Gotham
+tutorial.TextSize = 14
+tutorial.TextWrapped = true
+tutorial.TextXAlignment = Enum.TextXAlignment.Left
+tutorial.Parent = RemoteTestFrame
+
+local remoteInput = Instance.new("TextBox")
+remoteInput.PlaceholderText = "RemoteEvent Name (e.g., RagdollEvent)"
+remoteInput.Size = UDim2.new(0, 250, 0, 30)
+remoteInput.Position = UDim2.new(0, 10, 0, 60)
+remoteInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+remoteInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+remoteInput.Font = Enum.Font.Gotham
+remoteInput.TextSize = 14
+remoteInput.Text = ""
+remoteInput.ClearTextOnFocus = false
+makeRounded(remoteInput, 6)
+remoteInput.Parent = RemoteTestFrame
+
+local playerInput = Instance.new("TextBox")
+playerInput.PlaceholderText = "Target Player (optional)"
+playerInput.Size = UDim2.new(0, 200, 0, 30)
+playerInput.Position = UDim2.new(0, 270, 0, 60)
+playerInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+playerInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+playerInput.Font = Enum.Font.Gotham
+playerInput.TextSize = 14
+playerInput.Text = ""
+playerInput.ClearTextOnFocus = false
+makeRounded(playerInput, 6)
+playerInput.Parent = RemoteTestFrame
+
+local fireBtn = Instance.new("TextButton")
+fireBtn.Size = UDim2.new(0, 120, 0, 30)
+fireBtn.Position = UDim2.new(0, 10, 0, 100)
+fireBtn.BackgroundColor3 = Color3.fromRGB(40, 100, 40)
+fireBtn.Text = "🔥 Fire"
+fireBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+fireBtn.Font = Enum.Font.GothamBold
+fireBtn.TextSize = 14
+makeRounded(fireBtn, 6)
+fireBtn.Parent = RemoteTestFrame
+
+local outputBox = Instance.new("ScrollingFrame")
+outputBox.Size = UDim2.new(1, -20, 0, 100)
+outputBox.Position = UDim2.new(0, 10, 0, 140)
+outputBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+outputBox.BorderSizePixel = 0
+outputBox.CanvasSize = UDim2.new(0, 0, 10, 0)
+outputBox.ScrollBarThickness = 4
+makeRounded(outputBox, 6)
+outputBox.Parent = RemoteTestFrame
+
+local logLayout = Instance.new("UIListLayout")
+logLayout.Parent = outputBox
+logLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Function to log messages to the output box
+local function logOutput(msg)
+	local log = Instance.new("TextLabel")
+	log.Size = UDim2.new(1, -10, 0, 20)
+	log.BackgroundTransparency = 1
+	log.Text = msg
+	log.TextColor3 = Color3.fromRGB(180, 180, 180)
+	log.Font = Enum.Font.Gotham
+	log.TextSize = 13
+	log.TextXAlignment = Enum.TextXAlignment.Left
+	log.Parent = outputBox
+end
+
+-- Fire button functionality
+fireBtn.MouseButton1Click:Connect(function()
+	local remoteName = remoteInput.Text
+	local targetName = playerInput.Text
+	local remote = nil
+
+	-- Try to find the RemoteEvent
+	for _, v in pairs(ReplicatedStorage:GetDescendants()) do
+		if v:IsA("RemoteEvent") and v.Name == remoteName then
+			remote = v
+			break
+		end
+	end
+
+	if not remote then
+		logOutput("❌ RemoteEvent '" .. remoteName .. "' not found.")
+		return
+	end
+
+	local targetPlayer = Players:FindFirstChild(targetName)
+	local success, err = pcall(function()
+		if targetPlayer then
+			remote:FireServer(targetPlayer)
+			logOutput("✅ Fired '" .. remoteName .. "' at " .. targetPlayer.Name)
+		else
+			remote:FireServer()
+			logOutput("✅ Fired '" .. remoteName .. "' with no player target.")
+		end
+	end)
+
+	if not success then
+		logOutput("⚠️ Error: " .. tostring(err))
+	end
+end)
+
+-- Tab Switching
 for tabName, button in pairs(tabButtons) do
 	button.MouseButton1Click:Connect(function()
-		for _, child in ipairs(contentFrame:GetChildren()) do
-			if child:IsA("Frame") then
-				child.Visible = false
+		for _, frame in ipairs(contentFrame:GetChildren()) do
+			if frame:IsA("Frame") then
+				frame.Visible = false
 			end
 		end
 		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
@@ -254,68 +409,3 @@ for tabName, button in pairs(tabButtons) do
 		end
 	end)
 end
-
--- 🔐 Admin Panel (hidden unless !admin is typed)
-local AdminFrame = Instance.new("Frame")
-AdminFrame.Name = "AdminFrame"
-AdminFrame.Size = UDim2.new(1, 0, 1, 0)
-AdminFrame.BackgroundTransparency = 0
-AdminFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-AdminFrame.Visible = false
-AdminFrame.Parent = contentFrame
-makeRounded(AdminFrame, 10)
-
-local adminTitle = Instance.new("TextLabel")
-adminTitle.Size = UDim2.new(1, 0, 0, 40)
-adminTitle.Position = UDim2.new(0, 0, 0, 0)
-adminTitle.BackgroundTransparency = 1
-adminTitle.Text = "🔧 Admin Panel"
-adminTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-adminTitle.Font = Enum.Font.GothamBold
-adminTitle.TextSize = 18
-adminTitle.Parent = AdminFrame
-
-local adminMsg = Instance.new("TextLabel")
-adminMsg.Size = UDim2.new(1, -40, 0, 30)
-adminMsg.Position = UDim2.new(0, 20, 0, 50)
-adminMsg.BackgroundTransparency = 1
-adminMsg.Text = "Admin tools will go here soon..."
-adminMsg.TextColor3 = Color3.fromRGB(200, 200, 200)
-adminMsg.Font = Enum.Font.Gotham
-adminMsg.TextSize = 14
-adminMsg.TextXAlignment = Enum.TextXAlignment.Left
-adminMsg.Parent = AdminFrame
-
--- 💬 Listen for !admin in chat
-LocalPlayer.Chatted:Connect(function(msg)
-	if msg:lower() == "!admin" then
-		for _, frame in ipairs(contentFrame:GetChildren()) do
-			if frame:IsA("Frame") then
-				frame.Visible = false
-			end
-		end
-		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
-		if welcome then
-			welcome.Visible = false
-		end
-		AdminFrame.Visible = true
-	end
-end)
-
--- 💬 Chat Commands for Admin
-LocalPlayer.Chatted:Connect(function(msg)
-	local args = msg:split(" ")
-	local command = args[1]:lower()
-
-	-- Kick Command: !kick username
-	if command == "!kick" and args[2] then
-		local targetName = args[2]:lower()
-		for _, plr in ipairs(Players:GetPlayers()) do
-			if plr.Name:lower() == targetName or plr.DisplayName:lower() == targetName then
-				if plr ~= LocalPlayer then
-					plr:Kick("You have been kicked by REDACTED.")
-				end
-			end
-		end
-	end
-end)
