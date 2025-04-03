@@ -1,4 +1,4 @@
--- Remove existing GUI
+-- Remove existing GUIa
 for _, gui in pairs(game.CoreGui:GetChildren()) do
 	if gui.Name == "SigmaHub" then gui:Destroy() end
 end
