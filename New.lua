@@ -1,4 +1,4 @@
--- Remove existing GUI
+-- Remove existing GUIa
 for _, gui in pairs(game.CoreGui:GetChildren()) do
 	if gui.Name == "SigmaHub" then gui:Destroy() end
 end
@@ -302,13 +302,8 @@ resetBtn.MouseButton1Click:Connect(function()
 	gravitySlider.Value = 196.2
 end)
 
--- Other Tabs (Visual, VoiceChat, Settings, Credits)
-local VisualFrame = createTabFrame("Visual", "Visual Tab")
-local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
-local SettingsFrame = createTabFrame("Settings", "Settings Tab")
+-- Credits Tab Content
 local CreditsFrame = createTabFrame("Credits", "Credits Tab")
-
--- Add credit labels
 local creditsText = Instance.new("TextLabel")
 creditsText.Size = UDim2.new(1, -40, 0, 30)
 creditsText.Position = UDim2.new(0, 20, 0, 50)
@@ -331,7 +326,7 @@ creditsNote.TextSize = 14
 creditsNote.TextXAlignment = Enum.TextXAlignment.Left
 creditsNote.Parent = CreditsFrame
 
--- Tab switching
+-- Tab switching behavior
 for tabName, button in pairs(tabButtons) do
 	button.MouseButton1Click:Connect(function()
 		for _, child in ipairs(contentFrame:GetChildren()) do
@@ -350,7 +345,7 @@ for tabName, button in pairs(tabButtons) do
 	end)
 end
 
--- 🔐 Admin Panel (hidden unless !admin is typed)
+-- Admin Panel (hidden unless !admin is typed)
 local AdminFrame = Instance.new("Frame")
 AdminFrame.Name = "AdminFrame"
 AdminFrame.Size = UDim2.new(1, 0, 1, 0)
