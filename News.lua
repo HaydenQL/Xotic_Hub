@@ -342,12 +342,62 @@ gravityBox.FocusLost:Connect(function(enterPressed)
 	end
 end)
 
-
-
-
-
+--Tabs gui each
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
+
+
+-- 🎙️ Voice Chat Controls (working buttons)
 local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
+
+-- Unban / Rejoin VC Button
+local unbanVCBtn = Instance.new("TextButton")
+unbanVCBtn.Size = UDim2.new(0, 200, 0, 35)
+unbanVCBtn.Position = UDim2.new(0, 20, 0, 50)
+unbanVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+unbanVCBtn.Text = "🔓 Rejoin Voice Chat"
+unbanVCBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+unbanVCBtn.Font = Enum.Font.Gotham
+unbanVCBtn.TextSize = 14
+unbanVCBtn.Parent = VoiceChatFrame
+makeRounded(unbanVCBtn, 6)
+
+unbanVCBtn.MouseButton1Click:Connect(function()
+	local success, result = pcall(function()
+		local vchat = game:GetService("VoiceChatService")
+		vchat:JoinVoice()
+	end)
+	if success then
+		print("✅ Attempted to rejoin VC.")
+	else
+		warn("❌ Failed to rejoin VC:", result)
+	end
+end)
+
+-- Disconnect VC Button
+local disconnectVCBtn = Instance.new("TextButton")
+disconnectVCBtn.Size = UDim2.new(0, 200, 0, 35)
+disconnectVCBtn.Position = UDim2.new(0, 20, 0, 95)
+disconnectVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+disconnectVCBtn.Text = "🔌 Disconnect from Voice Chat"
+disconnectVCBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+disconnectVCBtn.Font = Enum.Font.Gotham
+disconnectVCBtn.TextSize = 14
+disconnectVCBtn.Parent = VoiceChatFrame
+makeRounded(disconnectVCBtn, 6)
+
+disconnectVCBtn.MouseButton1Click:Connect(function()
+	local success, result = pcall(function()
+		local vchat = game:GetService("VoiceChatService")
+		vchat:Leave()
+	end)
+	if success then
+		print("✅ Disconnected from VC.")
+	else
+		warn("❌ Failed to disconnect from VC:", result)
+	end
+end)
+
+-- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
 local CreditsFrame = createTabFrame("Credits", "Credits Tab")
 
