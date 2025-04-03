@@ -1,98 +1,183 @@
---// SigmaHub GUI (Fresh Start - Federal Style Inspired)
+-- Remove existing GUI
+for _, gui in pairs(game.CoreGui:GetChildren()) do
+	if gui.Name == "SigmaHub" then gui:Destroy() end
+end
 
--- Services
-local Players = game:GetService("Players")
-local Player = Players.LocalPlayer
-local Mouse = Player:GetMouse()
 local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
--- ScreenGui Setup
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "SigmaHub"
+ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-ScreenGui.Parent = Player:WaitForChild("PlayerGui")
 
--- Main Frame
-local MainFrame = Instance.new("Frame")
-MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 500, 0, 300)
-MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-MainFrame.BorderSizePixel = 0
-MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-MainFrame.Active = true
-MainFrame.Draggable = true
-MainFrame.Parent = ScreenGui
+local function makeRounded(obj, radius)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, radius)
+    corner.Parent = obj
+end
 
--- UI Corner
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 8)
-UICorner.Parent = MainFrame
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 450, 0, 280)
+mainFrame.Position = UDim2.new(0.5, -225, 0.5, -140)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = ScreenGui
+makeRounded(mainFrame, 12)
 
--- Top Bar
-local TopBar = Instance.new("Frame")
-TopBar.Name = "TopBar"
-TopBar.Size = UDim2.new(1, 0, 0, 40)
-TopBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-TopBar.BorderSizePixel = 0
-TopBar.Parent = MainFrame
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 0, 30)
+topBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+topBar.Parent = mainFrame
+makeRounded(topBar, 8)
 
-local TopCorner = Instance.new("UICorner")
-TopCorner.CornerRadius = UDim.new(0, 8)
-TopCorner.Parent = TopBar
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -180, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "👑 Sigma Hub"
+title.TextSize = 16
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = topBar
 
--- Title Label
-local Title = Instance.new("TextLabel")
-Title.Name = "Title"
-Title.Text = "SigmaHub"
-Title.Size = UDim2.new(1, -80, 1, 0)
-Title.Position = UDim2.new(0, 10, 0, 0)
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.BackgroundTransparency = 1
-Title.TextXAlignment = Enum.TextXAlignment.Left
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 18
-Title.Parent = TopBar
+local usernameLabel = Instance.new("TextLabel")
+usernameLabel.Size = UDim2.new(0, 100, 1, 0)
+usernameLabel.Position = UDim2.new(1, -170, 0, 0)
+usernameLabel.BackgroundTransparency = 1
+usernameLabel.Text = LocalPlayer.Name
+usernameLabel.TextSize = 14
+usernameLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+usernameLabel.Font = Enum.Font.Gotham
+usernameLabel.TextXAlignment = Enum.TextXAlignment.Right
+usernameLabel.Parent = topBar
 
--- Minimize Button
-local MinButton = Instance.new("TextButton")
-MinButton.Name = "Minimize"
-MinButton.Size = UDim2.new(0, 20, 0, 20)
-MinButton.Position = UDim2.new(1, -50, 0.5, -10)
-MinButton.Text = "-"
-MinButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-MinButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinButton.Font = Enum.Font.GothamBold
-MinButton.TextSize = 14
-MinButton.Parent = TopBar
+local minBtn = Instance.new("TextButton")
+minBtn.Size = UDim2.new(0, 30, 0, 30)
+minBtn.Position = UDim2.new(1, -60, 0, 0)
+minBtn.BackgroundTransparency = 1
+minBtn.Text = "➖"
+minBtn.TextSize = 16
+minBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+minBtn.Font = Enum.Font.GothamBold
+minBtn.Parent = topBar
 
--- Close Button
-local CloseButton = Instance.new("TextButton")
-CloseButton.Name = "Close"
-CloseButton.Size = UDim2.new(0, 20, 0, 20)
-CloseButton.Position = UDim2.new(1, -25, 0.5, -10)
-CloseButton.Text = "x"
-CloseButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.Font = Enum.Font.GothamBold
-CloseButton.TextSize = 14
-CloseButton.Parent = TopBar
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -30, 0, 0)
+closeBtn.BackgroundTransparency = 1
+closeBtn.Text = "❌"
+closeBtn.TextSize = 14
+closeBtn.TextColor3 = Color3.fromRGB(200, 50, 50)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.Parent = topBar
 
--- Toggle Open/Close with K key
-local IsOpen = true
-CloseButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = false
-    IsOpen = false
-end)\n
-MinButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = not MainFrame.Visible
-    IsOpen = not IsOpen
+local tabFrame = Instance.new("Frame")
+tabFrame.Size = UDim2.new(0, 100, 1, -30)
+tabFrame.Position = UDim2.new(0, 0, 0, 30)
+tabFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+tabFrame.Parent = mainFrame
+makeRounded(tabFrame, 10)
+
+local uiListLayout = Instance.new("UIListLayout")
+uiListLayout.Parent = tabFrame
+uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local contentFrame = Instance.new("Frame")
+contentFrame.Name = "ContentFrame"
+contentFrame.Size = UDim2.new(1, -100, 1, -30)
+contentFrame.Position = UDim2.new(0, 100, 0, 30)
+contentFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+contentFrame.Parent = mainFrame
+makeRounded(contentFrame, 10)
+
+local versionLabel = Instance.new("TextLabel")
+versionLabel.Size = UDim2.new(0, 150, 0, 20)
+versionLabel.Position = UDim2.new(0, 5, 1, -20)
+versionLabel.BackgroundTransparency = 1
+versionLabel.Text = "Version: v0.01 Beta"
+versionLabel.TextSize = 13
+versionLabel.TextColor3 = Color3.fromRGB(120, 120, 120)
+versionLabel.Font = Enum.Font.Gotham
+versionLabel.TextXAlignment = Enum.TextXAlignment.Left
+versionLabel.Parent = mainFrame
+
+local minimized = false
+minBtn.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	tabFrame.Visible = not minimized
+	contentFrame.Visible = not minimized
+	mainFrame.Size = minimized and UDim2.new(0, 450, 0, 30) or UDim2.new(0, 450, 0, 280)
 end)
 
-UIS.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.K then
-        IsOpen = not IsOpen
-        MainFrame.Visible = IsOpen
-    end
+closeBtn.MouseButton1Click:Connect(function()
+	mainFrame.Visible = false
 end)
+
+local resizeCorner = Instance.new("TextButton")
+resizeCorner.Size = UDim2.new(0, 15, 0, 15)
+resizeCorner.Position = UDim2.new(1, -15, 1, -15)
+resizeCorner.BackgroundColor3 = Color3.fromRGB(100,100,100)
+resizeCorner.BorderSizePixel = 0
+resizeCorner.Text = ""
+resizeCorner.Parent = mainFrame
+makeRounded(resizeCorner, 4)
+
+local resizing = false
+local lastMousePos
+local lastFrameSize
+
+resizeCorner.MouseButton1Down:Connect(function()
+	resizing = true
+	lastMousePos = UIS:GetMouseLocation()
+	lastFrameSize = mainFrame.Size
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = UIS:GetMouseLocation() - lastMousePos
+		mainFrame.Size = UDim2.new(
+			0, math.max(300, lastFrameSize.X.Offset + delta.X),
+			0, math.max(150, lastFrameSize.Y.Offset + delta.Y)
+		)
+	end
+end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		resizing = false
+	end
+end)
+
+UIS.InputBegan:Connect(function(key, gpe)
+	if key.KeyCode == Enum.KeyCode.K and not gpe then
+		mainFrame.Visible = not mainFrame.Visible
+	end
+end)
+
+-- Create tab buttons with symbols
+local tabInfo = {
+	{"🏠", "Home"},
+	{"🧍", "Player"},
+	{"🎨", "Visual"},
+	{"🎙️", "VoiceChat"},
+	{"⚙️", "Settings"},
+	{"📜", "Credits"},
+}
+
+for _, tab in ipairs(tabInfo) do
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(1, 0, 0, 30)
+	button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	button.Text = tab[1]  -- symbol only
+	button.Font = Enum.Font.Gotham
+	button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	button.Name = tab[2] .. "Tab"
+	button.Parent = tabFrame
+	makeRounded(button, 6)
+end
