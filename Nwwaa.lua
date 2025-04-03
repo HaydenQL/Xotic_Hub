@@ -342,8 +342,65 @@ gravityBox.FocusLost:Connect(function(enterPressed)
 	end
 end)
 
+-- 🧭 Teleport to Display Name
+local tpLabel = Instance.new("TextLabel")
+tpLabel.Size = UDim2.new(0, 200, 0, 20)
+tpLabel.Position = UDim2.new(0, 20, 0, 270)
+tpLabel.BackgroundTransparency = 1
+tpLabel.Text = "Teleport to Display Name:"
+tpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+tpLabel.Font = Enum.Font.Gotham
+tpLabel.TextSize = 14
+tpLabel.TextXAlignment = Enum.TextXAlignment.Left
+tpLabel.Parent = PlayerFrame
+
+local tpBox = Instance.new("TextBox")
+tpBox.Size = UDim2.new(0, 200, 0, 30)
+tpBox.Position = UDim2.new(0, 20, 0, 295)
+tpBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+tpBox.Text = ""
+tpBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+tpBox.Font = Enum.Font.Gotham
+tpBox.TextSize = 14
+tpBox.ClearTextOnFocus = false
+tpBox.PlaceholderText = "Type a display name..."
+tpBox.Parent = PlayerFrame
+makeRounded(tpBox, 6)
+
+local tpButton = Instance.new("TextButton")
+tpButton.Size = UDim2.new(0, 200, 0, 30)
+tpButton.Position = UDim2.new(0, 20, 0, 335)
+tpButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+tpButton.Text = "🚀 Teleport to Player"
+tpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+tpButton.Font = Enum.Font.Gotham
+tpButton.TextSize = 14
+tpButton.Parent = PlayerFrame
+makeRounded(tpButton, 6)
+
+tpButton.MouseButton1Click:Connect(function()
+	local inputName = tpBox.Text:lower()
+	for _, plr in pairs(game.Players:GetPlayers()) do
+		if plr.DisplayName:lower() == inputName and plr ~= LocalPlayer then
+			local targetChar = plr.Character
+			local myChar = LocalPlayer.Character
+
+			if targetChar and targetChar:FindFirstChild("HumanoidRootPart") and myChar and myChar:FindFirstChild("HumanoidRootPart") then
+				myChar:MoveTo(targetChar.HumanoidRootPart.Position + Vector3.new(0, 3, 0))
+				print("✅ Teleported to " .. plr.DisplayName)
+			else
+				warn("❌ Could not find player or their character.")
+			end
+			break
+		end
+	end
+end)
+
+
 --Tabs gui each
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
+mainFrame.ClipsDescendants = true
+contentFrame.ClipsDescendants = true
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
@@ -514,7 +571,14 @@ end)
 
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
+mainFrame.ClipsDescendants = true
+contentFrame.ClipsDescendants = true
+
+
 local CreditsFrame = createTabFrame("Credits", "Credits Tab")
+mainFrame.ClipsDescendants = true
+contentFrame.ClipsDescendants = true
+
 
 -- Add credit labels
 local creditsText = Instance.new("TextLabel")
