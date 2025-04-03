@@ -331,7 +331,7 @@ makeRounded(gravityBox, 6)
 -- Apply gravity function
 local function setGravity(amount)
 	amount = tonumber(amount)
-	if amount and amount >= 0 and amount <= 1000 then
+	if amount and amount >= 0 and amount <= 10000 then
 		workspace.Gravity = amount
 	end
 end
