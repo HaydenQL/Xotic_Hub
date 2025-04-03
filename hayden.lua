@@ -801,7 +801,7 @@ end)
 
 -- ❌ Close button functionality
 closeBtn.MouseButton1Click:Connect(function()
-	ScreenGui.Enabled = false
+	mainFrame.Visible = false
 end)
 
 -- 🎹 Toggle GUI with "K" key
@@ -810,9 +810,10 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 	if gameProcessed then return end
 	if input.KeyCode == Enum.KeyCode.K then
 		guiToggled = not guiToggled
-		ScreenGui.Enabled = guiToggled
+		mainFrame.Visible = guiToggled
 	end
 end)
+
 
 -- Resize corner handle
 local resizeCorner = Instance.new("TextButton")
