@@ -227,7 +227,7 @@ comingSoonLabel.TextXAlignment = Enum.TextXAlignment.Left
 comingSoonLabel.LayoutOrder = 2
 comingSoonLabel.Parent = HomeFrame
 
--- 🧍 Player Tab (Scrollable)
+-- 🧍 Player Tab (Scrollable & Styled)
 local PlayerFrame = Instance.new("ScrollingFrame")
 PlayerFrame.Name = "PlayerFrame"
 PlayerFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -239,7 +239,7 @@ PlayerFrame.Parent = contentFrame
 makeRounded(PlayerFrame, 10)
 
 local playerLayout = Instance.new("UIListLayout")
-playerLayout.Padding = UDim.new(0, 8)
+playerLayout.Padding = UDim.new(0, 5)
 playerLayout.SortOrder = Enum.SortOrder.LayoutOrder
 playerLayout.Parent = PlayerFrame
 
@@ -248,9 +248,31 @@ playerPadding.PaddingTop = UDim.new(0, 10)
 playerPadding.PaddingLeft = UDim.new(0, 20)
 playerPadding.Parent = PlayerFrame
 
--- WalkSpeed Input
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -20, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "Player Tab"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.LayoutOrder = 0
+title.Parent = PlayerFrame
+
+-- Helper: Spacer
+local function addSpacer(order)
+	local spacer = Instance.new("Frame")
+	spacer.Size = UDim2.new(0, 0, 0, 5)
+	spacer.BackgroundTransparency = 1
+	spacer.LayoutOrder = order
+	spacer.Parent = PlayerFrame
+end
+
+-- WalkSpeed
 local walkSpeedLabel = Instance.new("TextLabel")
 walkSpeedLabel.Size = UDim2.new(0, 200, 0, 20)
+walkSpeedLabel.BackgroundTransparency = 1
 walkSpeedLabel.Text = "WalkSpeed (Max 500):"
 walkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 walkSpeedLabel.Font = Enum.Font.Gotham
@@ -273,6 +295,8 @@ walkSpeedBox.LayoutOrder = 2
 walkSpeedBox.Parent = PlayerFrame
 makeRounded(walkSpeedBox, 6)
 
+addSpacer(3)
+
 walkSpeedBox.FocusLost:Connect(function(enterPressed)
 	if enterPressed then
 		local num = tonumber(walkSpeedBox.Text)
@@ -287,15 +311,16 @@ walkSpeedBox.FocusLost:Connect(function(enterPressed)
 	end
 end)
 
--- JumpPower Input
+-- JumpPower
 local jumpPowerLabel = Instance.new("TextLabel")
 jumpPowerLabel.Size = UDim2.new(0, 200, 0, 20)
+jumpPowerLabel.BackgroundTransparency = 1
 jumpPowerLabel.Text = "JumpPower:"
 jumpPowerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 jumpPowerLabel.Font = Enum.Font.Gotham
 jumpPowerLabel.TextSize = 14
 jumpPowerLabel.TextXAlignment = Enum.TextXAlignment.Left
-jumpPowerLabel.LayoutOrder = 3
+jumpPowerLabel.LayoutOrder = 4
 jumpPowerLabel.Parent = PlayerFrame
 
 local jumpPowerBox = Instance.new("TextBox")
@@ -306,9 +331,12 @@ jumpPowerBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 jumpPowerBox.Font = Enum.Font.Gotham
 jumpPowerBox.TextSize = 14
 jumpPowerBox.ClearTextOnFocus = false
-jumpPowerBox.LayoutOrder = 4
+jumpPowerBox.PlaceholderText = "Enter jump"
+jumpPowerBox.LayoutOrder = 5
 jumpPowerBox.Parent = PlayerFrame
 makeRounded(jumpPowerBox, 6)
+
+addSpacer(6)
 
 local function setJumpPower(amount)
 	amount = tonumber(amount)
@@ -336,12 +364,13 @@ end)
 -- Gravity
 local gravityLabel = Instance.new("TextLabel")
 gravityLabel.Size = UDim2.new(0, 200, 0, 20)
+gravityLabel.BackgroundTransparency = 1
 gravityLabel.Text = "Gravity (0–10000):"
 gravityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 gravityLabel.Font = Enum.Font.Gotham
 gravityLabel.TextSize = 14
 gravityLabel.TextXAlignment = Enum.TextXAlignment.Left
-gravityLabel.LayoutOrder = 5
+gravityLabel.LayoutOrder = 7
 gravityLabel.Parent = PlayerFrame
 
 local gravityBox = Instance.new("TextBox")
@@ -352,9 +381,12 @@ gravityBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 gravityBox.Font = Enum.Font.Gotham
 gravityBox.TextSize = 14
 gravityBox.ClearTextOnFocus = false
-gravityBox.LayoutOrder = 6
+gravityBox.PlaceholderText = "Enter gravity"
+gravityBox.LayoutOrder = 8
 gravityBox.Parent = PlayerFrame
 makeRounded(gravityBox, 6)
+
+addSpacer(9)
 
 local function setGravity(amount)
 	amount = tonumber(amount)
@@ -369,15 +401,16 @@ gravityBox.FocusLost:Connect(function(enterPressed)
 	end
 end)
 
--- Teleport
+-- Teleport to Display Name
 local tpLabel = Instance.new("TextLabel")
 tpLabel.Size = UDim2.new(0, 200, 0, 20)
+tpLabel.BackgroundTransparency = 1
 tpLabel.Text = "Teleport to Display Name:"
 tpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 tpLabel.Font = Enum.Font.Gotham
 tpLabel.TextSize = 14
 tpLabel.TextXAlignment = Enum.TextXAlignment.Left
-tpLabel.LayoutOrder = 7
+tpLabel.LayoutOrder = 10
 tpLabel.Parent = PlayerFrame
 
 local tpBox = Instance.new("TextBox")
@@ -389,7 +422,7 @@ tpBox.Font = Enum.Font.Gotham
 tpBox.TextSize = 14
 tpBox.ClearTextOnFocus = false
 tpBox.PlaceholderText = "Type a display name..."
-tpBox.LayoutOrder = 8
+tpBox.LayoutOrder = 11
 tpBox.Parent = PlayerFrame
 makeRounded(tpBox, 6)
 
@@ -400,7 +433,7 @@ tpButton.Text = "🚀 Teleport to Player"
 tpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 tpButton.Font = Enum.Font.Gotham
 tpButton.TextSize = 14
-tpButton.LayoutOrder = 9
+tpButton.LayoutOrder = 12
 tpButton.Parent = PlayerFrame
 makeRounded(tpButton, 6)
 
@@ -421,6 +454,7 @@ tpButton.MouseButton1Click:Connect(function()
 		end
 	end
 end)
+
 
 
 --Tabs gui each
