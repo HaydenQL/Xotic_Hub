@@ -329,12 +329,15 @@ end)
  
  -- You can later connect this button to a dropdown or list of gravity settings
  -- Dropdown frame (hidden until clicked)
+-- 🪐 Gravity Dropdown Menu (Fixed)
 local dropdownFrame = Instance.new("Frame")
+dropdownFrame.ZIndex = 5
 dropdownFrame.Size = UDim2.new(0, 200, 0, 0)
 dropdownFrame.Position = UDim2.new(0, 20, 0, 265)
 dropdownFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 dropdownFrame.ClipsDescendants = true
 dropdownFrame.Visible = false
+dropdownFrame.Active = false -- prevents blocking input when hidden
 dropdownFrame.Parent = PlayerFrame
 makeRounded(dropdownFrame, 6)
 
@@ -369,6 +372,8 @@ for name, gravity in pairs(gravityOptions) do
 	option.TextColor3 = Color3.fromRGB(255, 255, 255)
 	option.Font = Enum.Font.Gotham
 	option.TextSize = 14
+	option.ZIndex = 6 -- ensures above frame
+	option.AutoButtonColor = true
 	option.Parent = dropdownFrame
 	makeRounded(option, 4)
 
@@ -376,14 +381,18 @@ for name, gravity in pairs(gravityOptions) do
 		game.Workspace.Gravity = gravity
 		dropdownBtn.Text = "Gravity: " .. name
 		dropdownFrame.Visible = false
+		dropdownFrame.Active = false
 	end)
 end
 
 updateDropdownSize()
 
--- Toggle dropdown visibility
+-- Toggle dropdown visibility (safe)
+local dropdownOpen = false
 dropdownBtn.MouseButton1Click:Connect(function()
-	dropdownFrame.Visible = not dropdownFrame.Visible
+	dropdownOpen = not dropdownOpen
+	dropdownFrame.Visible = dropdownOpen
+	dropdownFrame.Active = dropdownOpen
 end)
 
 
