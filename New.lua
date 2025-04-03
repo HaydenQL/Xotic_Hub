@@ -13,9 +13,9 @@ ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
 
 local function makeRounded(obj, radius)
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, radius)
-    corner.Parent = obj
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, radius)
+	corner.Parent = obj
 end
 
 local mainFrame = Instance.new("Frame")
@@ -189,22 +189,42 @@ for _, tab in ipairs(tabInfo) do
 	tabButtons[tab[2]] = button
 end
 
+-- Welcome Screen
+local welcomeFrame = Instance.new("Frame")
+welcomeFrame.Name = "WelcomeFrame"
+welcomeFrame.Size = UDim2.new(1, 0, 1, 0)
+welcomeFrame.BackgroundTransparency = 1
+welcomeFrame.Visible = true
+welcomeFrame.Parent = contentFrame
+
+local welcomeLabel = Instance.new("TextLabel")
+welcomeLabel.Size = UDim2.new(1, 0, 0, 50)
+welcomeLabel.Position = UDim2.new(0, 0, 0.4, 0)
+welcomeLabel.BackgroundTransparency = 1
+welcomeLabel.Text = "Welcome to Sigma Hub"
+welcomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+welcomeLabel.Font = Enum.Font.GothamBold
+welcomeLabel.TextSize = 20
+welcomeLabel.TextXAlignment = Enum.TextXAlignment.Center
+welcomeLabel.Parent = welcomeFrame
+
 -- Home Tab Content
-local homeFrame = Instance.new("Frame")
-homeFrame.Size = UDim2.new(1, 0, 1, 0)
-homeFrame.BackgroundTransparency = 1
-homeFrame.Visible = true
-homeFrame.Parent = contentFrame
+local HomeFrame = Instance.new("Frame")
+HomeFrame.Name = "HomeFrame"
+HomeFrame.Size = UDim2.new(1, 0, 1, 0)
+HomeFrame.BackgroundTransparency = 1
+HomeFrame.Visible = false
+HomeFrame.Parent = contentFrame
 
 local infYieldBtn = Instance.new("TextButton")
 infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
 infYieldBtn.Position = UDim2.new(0, 20, 0, 20)
 infYieldBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-infYieldBtn.Text = "Infinite Yield"
+infYieldBtn.Text = "Launch Infinite Yield"
 infYieldBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 infYieldBtn.Font = Enum.Font.Gotham
 infYieldBtn.TextSize = 14
-infYieldBtn.Parent = homeFrame
+infYieldBtn.Parent = HomeFrame
 makeRounded(infYieldBtn, 6)
 
 infYieldBtn.MouseButton1Click:Connect(function()
@@ -215,12 +235,12 @@ local comingSoonLabel = Instance.new("TextLabel")
 comingSoonLabel.Size = UDim2.new(1, -40, 0, 30)
 comingSoonLabel.Position = UDim2.new(0, 20, 0, 70)
 comingSoonLabel.BackgroundTransparency = 1
-comingSoonLabel.Text = "Reans coming in the future."
+comingSoonLabel.Text = "Reanimations coming in the future."
 comingSoonLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 comingSoonLabel.Font = Enum.Font.Gotham
 comingSoonLabel.TextSize = 14
 comingSoonLabel.TextXAlignment = Enum.TextXAlignment.Left
-comingSoonLabel.Parent = homeFrame
+comingSoonLabel.Parent = HomeFrame
 
 -- Tab switching behavior
 for tabName, button in pairs(tabButtons) do
@@ -230,9 +250,13 @@ for tabName, button in pairs(tabButtons) do
 				child.Visible = false
 			end
 		end
-		local tabFrameName = tabName:lower() .. "Frame"
+		local tabFrameName = tabName .. "Frame"
 		local target = contentFrame:FindFirstChild(tabFrameName)
 		if target then
+			local welcome = contentFrame:FindFirstChild("WelcomeFrame")
+			if welcome then
+				welcome.Visible = false
+			end
 			target.Visible = true
 		end
 	end)
