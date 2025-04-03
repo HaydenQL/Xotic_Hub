@@ -1,8 +1,6 @@
--- Remove existing GUI if open
+-- Remove existing GUI aaa
 for _, gui in pairs(game.CoreGui:GetChildren()) do
-	if gui.Name == "SigmaHub" then
-		gui:Destroy()
-	end
+	if gui.Name == "SigmaHub" then gui:Destroy() end
 end
 
 -- 👑 Sigma Hub v0.01 Beta
@@ -74,7 +72,6 @@ tabFrame.Position = UDim2.new(0,0,0,30)
 tabFrame.BackgroundColor3 = Color3.fromRGB(25,25,25)
 
 local uiListLayout = Instance.new("UIListLayout", tabFrame)
-uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
 -- Content Frame
 local contentFrame = Instance.new("Frame", mainFrame)
@@ -82,7 +79,7 @@ contentFrame.Size = UDim2.new(1,-100,1,-30)
 contentFrame.Position = UDim2.new(0,100,0,30)
 contentFrame.BackgroundColor3 = Color3.fromRGB(15,15,15)
 
--- Version label
+-- Version Label
 local versionLabel = Instance.new("TextLabel", mainFrame)
 versionLabel.Size = UDim2.new(0,150,0,20)
 versionLabel.Position = UDim2.new(0,5,1,-20)
@@ -126,34 +123,32 @@ UIS.InputEnded:Connect(function(input)
 	end
 end)
 
--- Toggle visibility with K
+-- Toggle GUI visibility with "K"
 UIS.InputBegan:Connect(function(key,gpe)
 	if key.KeyCode == Enum.KeyCode.K and not gpe then
 		mainFrame.Visible = not mainFrame.Visible
 	end
 end)
 
--- Local Tab
-local localTab = Instance.new("TextButton", tabFrame)
-localTab.Size = UDim2.new(1,0,0,30)
-localTab.BackgroundColor3 = Color3.fromRGB(35,35,35)
-localTab.Font = Enum.Font.Gotham
-localTab.Text = "Local"
-localTab.TextSize = 14
-localTab.TextColor3 = Color3.fromRGB(255,255,255)
+-- Local Tab Button
+local localTabBtn = Instance.new("TextButton", tabFrame)
+localTabBtn.Size = UDim2.new(1,0,0,30)
+localTabBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
+localTabBtn.Font = Enum.Font.Gotham
+localTabBtn.Text = "Local"
+localTabBtn.TextColor3 = Color3.fromRGB(255,255,255)
 
--- Ride Player button
+-- Ride Player Button
 local rideBtn = Instance.new("TextButton", contentFrame)
 rideBtn.Size = UDim2.new(0,140,0,30)
 rideBtn.Position = UDim2.new(0,10,0,10)
-rideBtn.BackgroundColor3 = Color3.fromRGB(30,30,30)
+rideBtn.BackgroundColor3 = Color3.fromRGB(35,35,35)
 rideBtn.Font = Enum.Font.Gotham
 rideBtn.Text = "🚗 Ride Player"
-rideBtn.TextSize = 13
 rideBtn.TextColor3 = Color3.fromRGB(255,255,255)
 rideBtn.Visible = false
 
-localTab.MouseButton1Click:Connect(function()
+localTabBtn.MouseButton1Click:Connect(function()
 	rideBtn.Visible = true
 end)
 
@@ -174,18 +169,18 @@ rideBtn.MouseButton1Click:Connect(function()
 		btn.Font = Enum.Font.Gotham
 		btn.Text = p.DisplayName.." ("..p.Name..")"
 		btn.TextColor3 = Color3.fromRGB(255,255,255)
-		btn.TextSize = 13
 
 		btn.MouseButton1Click:Connect(function()
 			dropdown:Destroy()
 			local char = p.Character
 			if char and char:FindFirstChild("HumanoidRootPart") then
 				local seat = Instance.new("Seat",workspace)
-				seat.Anchored=false seat.Transparency=0.6 seat.Size=Vector3.new(2,0.4,2)
+				seat.Anchored=false seat.CanCollide=false seat.Transparency=0.6
+				seat.Size=Vector3.new(2,0.4,2)
 				seat.CFrame=char.HumanoidRootPart.CFrame*CFrame.new(0,1.5,0)
-				local weld=Instance.new("Weld",seat)weld.Part0=seat weld.Part1=char.HumanoidRootPart
-				wait(.1)LocalPlayer.Character.HumanoidRootPart.CFrame=seat.CFrame+Vector3.new(0,1,0)
-				wait(.1)seat:Sit(LocalPlayer.Character.Humanoid)
+				local weld=Instance.new("Weld",seat) weld.Part0=seat weld.Part1=char.HumanoidRootPart
+				wait(.1) LocalPlayer.Character.HumanoidRootPart.CFrame=seat.CFrame+Vector3.new(0,1,0)
+				wait(.1) LocalPlayer.Character.Humanoid.Sit=true seat:Sit(LocalPlayer.Character.Humanoid)
 				LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
 					if not LocalPlayer.Character.Humanoid.Sit then seat:Destroy() end
 				end)
