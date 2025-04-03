@@ -1,4 +1,4 @@
--- Remove existing GUI
+-- Remove existing GUI a
 for _, gui in pairs(game.CoreGui:GetChildren()) do
 	if gui.Name == "SigmaHub" then gui:Destroy() end
 end
@@ -249,8 +249,11 @@ for tabName, button in pairs(tabButtons) do
 				child.Visible = false
 			end
 		end
-		local tabFrameName = tabName:lower() .. "Frame"
+		local tabFrameName = tabName:lower() .. (tabName == "Home" and "Frame" or "Frame")
 		local target = contentFrame:FindFirstChild(tabFrameName)
+		if not target and tabName == "Home" then
+			target = contentFrame:FindFirstChild("homeFrame")
+		end
 		if target then
 			-- Hide welcome on tab switch
 			local welcome = contentFrame:FindFirstChild("welcomeFrame")
