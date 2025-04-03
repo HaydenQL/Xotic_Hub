@@ -1,5 +1,5 @@
-for _, plr in ipairs(game.Players:GetPlayers()) do
-    if plr ~= game.Players.LocalPlayer then
-        game.ReplicatedStorage.RagdollEvent:FireServer(plr)
-    end
+local victim = game.Players:FindFirstChild("Fireeigg")
+for i = 1, 10 do
+    game.ReplicatedStorage.RagdollEvent:FireServer(victim)
+    wait(0.2)
 end
