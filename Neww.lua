@@ -453,6 +453,7 @@ notesTitle.TextSize = 16
 notesTitle.TextXAlignment = Enum.TextXAlignment.Left
 notesTitle.Parent = NotesFrame
 
+-- Create resizable and scrollable Notes textbox
 local notesBox = Instance.new("TextBox")
 notesBox.Size = UDim2.new(1, -20, 0, 180)
 notesBox.Position = UDim2.new(0, 10, 0, 50)
@@ -485,6 +486,21 @@ end
 makeRounded(notesBox, 8)
 notesBox.Parent = NotesFrame
 
+-- Make NotesBox scrollable
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, -20, 0, 180)
+scrollFrame.Position = UDim2.new(0, 10, 0, 50)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+scrollFrame.BorderSizePixel = 0
+scrollFrame.ScrollBarThickness = 6
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 200) -- Dynamic height
+scrollFrame.Parent = NotesFrame
+makeRounded(scrollFrame, 8)
+
+-- Add the TextBox to the scroll frame
+notesBox.Parent = scrollFrame
+
+-- Copy to Clipboard Button
 local copyBtn = Instance.new("TextButton")
 copyBtn.Size = UDim2.new(0, 150, 0, 30)
 copyBtn.Position = UDim2.new(0, 10, 0, 240)
