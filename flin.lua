@@ -1,11 +1,12 @@
--- 🌀 Orbiting Fling Ball (avoids HaydenSigma24)
+-- 🌀 Fling Ball (lower orbit, flings others, avoids HaydenSigma24)
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 
--- Only apply NoCollision to this specific user
+-- Fling-safe user
 local avoidPlayerName = "HaydenSigma24"
 
+-- Character + Root
 local char = player.Character or player.CharacterAdded:Wait()
 local hrp = char:WaitForChild("HumanoidRootPart")
 
@@ -13,40 +14,43 @@ local hrp = char:WaitForChild("HumanoidRootPart")
 local part = Instance.new("Part")
 part.Name = "OrbitFlinger"
 part.Shape = Enum.PartType.Ball
-part.Size = Vector3.new(2, 2, 2)
-part.Material = Enum.Material.ForceField
+part.Size = Vector3.new(2.5, 2.5, 2.5)
+part.Material = Enum.Material.Neon
 part.Color = Color3.fromRGB(255, 0, 0)
 part.Anchored = false
 part.CanCollide = true
-part.Massless = true
-part.Position = hrp.Position + Vector3.new(3, 2, 0)
+part.Massless = false
+part.CustomPhysicalProperties = PhysicalProperties.new(1000, 0.3, 0.5) -- heavy
+part.Position = hrp.Position + Vector3.new(4, 0.5, 0)
 part.Parent = workspace
 
--- Prevent fling from hitting this player
+-- Prevent it from hitting you
 if player.Name == avoidPlayerName then
-	for _, descendant in pairs(char:GetDescendants()) do
-		if descendant:IsA("BasePart") then
+	for _, partB in ipairs(char:GetDescendants()) do
+		if partB:IsA("BasePart") then
 			local noCollide = Instance.new("NoCollisionConstraint")
 			noCollide.Part0 = part
-			noCollide.Part1 = descendant
+			noCollide.Part1 = partB
 			noCollide.Parent = part
 		end
 	end
 end
 
--- Spin power
+-- Add spin (fling energy)
 local bav = Instance.new("BodyAngularVelocity")
 bav.AngularVelocity = Vector3.new(0, 999999, 0)
 bav.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
-bav.P = 1250
+bav.P = 3000
 bav.Parent = part
 
--- Orbit logic
+-- Orbit logic (lower + tighter)
 local angle = 0
 RunService.RenderStepped:Connect(function(dt)
 	if hrp and char then
-		angle += dt * 3.5 -- orbit speed
-		local offset = Vector3.new(math.cos(angle) * 4, 2, math.sin(angle) * 4)
+		angle += dt * 4
+		local radius = 3.5
+		local height = 1 -- lower to hit legs/torsos
+		local offset = Vector3.new(math.cos(angle) * radius, height, math.sin(angle) * radius)
 		part.Position = hrp.Position + offset
 	end
 end)
