@@ -462,6 +462,113 @@ local VisualFrame = createTabFrame("Visual", "Visual Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
+-- 🎨 Visual Tab (Scrollable)
+local VisualFrame = Instance.new("ScrollingFrame")
+VisualFrame.Name = "VisualFrame"
+VisualFrame.Size = UDim2.new(1, 0, 1, 0)
+VisualFrame.CanvasSize = UDim2.new(0, 0, 0, 400)
+VisualFrame.ScrollBarThickness = 4
+VisualFrame.BackgroundTransparency = 1
+VisualFrame.Visible = false
+VisualFrame.Parent = contentFrame
+makeRounded(VisualFrame, 10)
+
+local visualLayout = Instance.new("UIListLayout")
+visualLayout.Padding = UDim.new(0, 5)
+visualLayout.SortOrder = Enum.SortOrder.LayoutOrder
+visualLayout.Parent = VisualFrame
+
+local visualPadding = Instance.new("UIPadding")
+visualPadding.PaddingTop = UDim.new(0, 10)
+visualPadding.PaddingLeft = UDim.new(0, 20)
+visualPadding.Parent = VisualFrame
+
+-- Title
+local visualTitle = Instance.new("TextLabel")
+visualTitle.Size = UDim2.new(1, -20, 0, 30)
+visualTitle.BackgroundTransparency = 1
+visualTitle.Text = "Visual Tab"
+visualTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+visualTitle.Font = Enum.Font.GothamBold
+visualTitle.TextSize = 16
+visualTitle.TextXAlignment = Enum.TextXAlignment.Left
+visualTitle.LayoutOrder = 0
+visualTitle.Parent = VisualFrame
+
+-- 🧍 Lineform Toggle Button
+local lineFormBtn = Instance.new("TextButton")
+lineFormBtn.Size = UDim2.new(0, 200, 0, 30)
+lineFormBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+lineFormBtn.Text = "🧍 Lineform: OFF"
+lineFormBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+lineFormBtn.Font = Enum.Font.Gotham
+lineFormBtn.TextSize = 14
+lineFormBtn.LayoutOrder = 1
+lineFormBtn.Parent = VisualFrame
+makeRounded(lineFormBtn, 6)
+
+-- Toggle state
+local lineFormOn = false
+local welds = {}
+
+lineFormBtn.MouseButton1Click:Connect(function()
+	local char = LocalPlayer.Character
+	if not char then return end
+
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	if lineFormOn == false then
+		-- Toggle ON: weld and reposition
+		lineFormOn = true
+		lineFormBtn.Text = "🧍 Lineform: ON"
+
+		local function weldToTorso(part, yOffset)
+			if part then
+				local weld = Instance.new("WeldConstraint")
+				weld.Part0 = root
+				weld.Part1 = part
+				weld.Parent = root
+
+				part.Anchored = false
+				part.CanCollide = false
+				part.CFrame = root.CFrame * CFrame.new(0, yOffset, 0)
+				welds[#welds + 1] = weld
+			end
+		end
+
+		local offsets = {
+			["Head"] = 3,
+			["LeftUpperArm"] = 2,
+			["RightUpperArm"] = 1,
+			["UpperTorso"] = 0,
+			["LowerTorso"] = -1,
+			["LeftUpperLeg"] = -2,
+			["RightUpperLeg"] = -3,
+		}
+
+		for partName, yOffset in pairs(offsets) do
+			local part = char:FindFirstChild(partName)
+			weldToTorso(part, yOffset)
+		end
+
+	else
+		-- Toggle OFF: remove welds and reset positions
+		lineFormOn = false
+		lineFormBtn.Text = "🧍 Lineform: OFF"
+
+		for _, weld in pairs(welds) do
+			if weld and weld.Parent then
+				weld:Destroy()
+			end
+		end
+		welds = {}
+
+		-- Optional: reset parts (let Roblox auto handle pose on next anim)
+		char:BreakJoints() -- or reload character, your call
+	end
+end)
+
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
 VoiceChatFrame.Name = "VoiceChatFrame"
