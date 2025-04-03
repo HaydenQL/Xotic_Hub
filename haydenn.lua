@@ -801,7 +801,7 @@ end)
 
 -- ❌ Close button functionality
 closeBtn.MouseButton1Click:Connect(function()
-	mainFrame.Visible = false
+	ScreenGui.Enabled = false
 end)
 
 -- 🎹 Toggle GUI with "K" key
@@ -810,10 +810,9 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 	if gameProcessed then return end
 	if input.KeyCode == Enum.KeyCode.K then
 		guiToggled = not guiToggled
-		mainFrame.Visible = guiToggled
+		ScreenGui.Enabled = guiToggled
 	end
 end)
-
 
 -- Resize corner handle
 local resizeCorner = Instance.new("TextButton")
@@ -849,44 +848,3 @@ UIS.InputEnded:Connect(function(input)
 		resizing = false
 	end
 end)
-
-UIS.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		resizing = false
-	end
-end)
-
--- ✅ FINAL PATCHED ADDITIONS (PASTE BELOW THIS LINE)
--- Make sure ScreenGui stays on top and GUI doesn’t bug
-ScreenGui.DisplayOrder = 999
-ScreenGui.IgnoreGuiInset = true
-ScreenGui.ResetOnSpawn = false
-
--- Make sure mainFrame never loses interaction
-mainFrame.Active = true
-mainFrame.Selectable = true
-mainFrame.ZIndex = 10
-
--- Blink GUI once to refresh Roblox input focus (optional but helpful)
-task.delay(1, function()
-	mainFrame.Visible = false
-	task.wait(0.1)
-	mainFrame.Visible = true
-end)
-
--- K Key Toggle
-local guiToggled = true
-UIS.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-	if input.KeyCode == Enum.KeyCode.K then
-		guiToggled = not guiToggled
-		mainFrame.Visible = guiToggled
-	end
-end)
-
--- Close button just hides GUI
-closeBtn.MouseButton1Click:Connect(function()
-	guiToggled = false
-	mainFrame.Visible = false
-end)
-
