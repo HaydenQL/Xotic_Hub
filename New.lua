@@ -200,7 +200,70 @@ for _, tab in ipairs(tabInfo) do
 	tabButtons[tab[2]] = button
 end
 
--- Admin Panel (hidden initially)
+-- Welcome Screen (Re-added)
+local WelcomeFrame = Instance.new("Frame")
+WelcomeFrame.Name = "WelcomeFrame"
+WelcomeFrame.Size = UDim2.new(1, 0, 1, 0)
+WelcomeFrame.BackgroundTransparency = 1
+WelcomeFrame.Parent = contentFrame
+
+local welcomeLabel = Instance.new("TextLabel")
+welcomeLabel.Size = UDim2.new(1, 0, 0, 50)
+welcomeLabel.Position = UDim2.new(0, 0, 0.4, 0)
+welcomeLabel.BackgroundTransparency = 1
+welcomeLabel.Text = "Welcome to Sigma Hub"
+welcomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+welcomeLabel.Font = Enum.Font.GothamBold
+welcomeLabel.TextSize = 20
+welcomeLabel.TextXAlignment = Enum.TextXAlignment.Center
+welcomeLabel.Parent = WelcomeFrame
+
+-- Home Tab Content
+local HomeFrame = Instance.new("Frame")
+HomeFrame.Size = UDim2.new(1, 0, 1, 0)
+HomeFrame.BackgroundTransparency = 1
+HomeFrame.Visible = false
+HomeFrame.Parent = contentFrame
+
+local infYieldBtn = Instance.new("TextButton")
+infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
+infYieldBtn.Position = UDim2.new(0, 20, 0, 20)
+infYieldBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+infYieldBtn.Text = "Launch Infinite Yield"
+infYieldBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+infYieldBtn.Font = Enum.Font.Gotham
+infYieldBtn.TextSize = 14
+infYieldBtn.Parent = HomeFrame
+makeRounded(infYieldBtn, 6)
+
+infYieldBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+end)
+
+-- Credits Info
+local creditsInfo = Instance.new("TextLabel")
+creditsInfo.Size = UDim2.new(1, -40, 0, 30)
+creditsInfo.Position = UDim2.new(0, 20, 0, 50)
+creditsInfo.BackgroundTransparency = 1
+creditsInfo.Text = "Made by Hayden"
+creditsInfo.TextColor3 = Color3.fromRGB(200, 200, 200)
+creditsInfo.Font = Enum.Font.Gotham
+creditsInfo.TextSize = 14
+creditsInfo.TextXAlignment = Enum.TextXAlignment.Left
+creditsInfo.Parent = CreditsFrame
+
+local creditsTip = Instance.new("TextLabel")
+creditsTip.Size = UDim2.new(1, -40, 0, 30)
+creditsTip.Position = UDim2.new(0, 20, 0, 80)
+creditsTip.BackgroundTransparency = 1
+creditsTip.Text = "💬 Type !admin in chat to unlock admin panel"
+creditsTip.TextColor3 = Color3.fromRGB(180, 180, 180)
+creditsTip.Font = Enum.Font.Gotham
+creditsTip.TextSize = 13
+creditsTip.TextXAlignment = Enum.TextXAlignment.Left
+creditsTip.Parent = CreditsFrame
+
+-- Admin Panel (Re-added)
 local AdminFrame = Instance.new("Frame")
 AdminFrame.Name = "AdminFrame"
 AdminFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -268,172 +331,6 @@ local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
 local CreditsFrame = createTabFrame("Credits", "Credits Tab")
 
--- Credits info
-local creditsInfo = Instance.new("TextLabel")
-creditsInfo.Size = UDim2.new(1, -40, 0, 30)
-creditsInfo.Position = UDim2.new(0, 20, 0, 50)
-creditsInfo.BackgroundTransparency = 1
-creditsInfo.Text = "Made by Hayden"
-creditsInfo.TextColor3 = Color3.fromRGB(200, 200, 200)
-creditsInfo.Font = Enum.Font.Gotham
-creditsInfo.TextSize = 14
-creditsInfo.TextXAlignment = Enum.TextXAlignment.Left
-creditsInfo.Parent = CreditsFrame
-
-local creditsTip = Instance.new("TextLabel")
-creditsTip.Size = UDim2.new(1, -40, 0, 30)
-creditsTip.Position = UDim2.new(0, 20, 0, 80)
-creditsTip.BackgroundTransparency = 1
-creditsTip.Text = "💬 Type !admin in chat to unlock admin panel"
-creditsTip.TextColor3 = Color3.fromRGB(180, 180, 180)
-creditsTip.Font = Enum.Font.Gotham
-creditsTip.TextSize = 13
-creditsTip.TextXAlignment = Enum.TextXAlignment.Left
-creditsTip.Parent = CreditsFrame
-
-
--- RemoteEvent Tester Frame
-local RemoteTestFrame = Instance.new("Frame")
-RemoteTestFrame.Name = "RemoteTestFrame"
-RemoteTestFrame.Size = UDim2.new(1, 0, 1, 0)
-RemoteTestFrame.BackgroundTransparency = 1
-RemoteTestFrame.Visible = false
-RemoteTestFrame.Parent = contentFrame
-
-local tutorial = Instance.new("TextLabel")
-tutorial.Size = UDim2.new(1, -20, 0, 40)
-tutorial.Position = UDim2.new(0, 10, 0, 10)
-tutorial.BackgroundTransparency = 1
-tutorial.Text = "Enter RemoteEvent and (optional) player name. Hit 'Fire' to test."
-tutorial.TextColor3 = Color3.fromRGB(200, 200, 200)
-tutorial.Font = Enum.Font.Gotham
-tutorial.TextSize = 14
-tutorial.TextWrapped = true
-tutorial.TextXAlignment = Enum.TextXAlignment.Left
-tutorial.Parent = RemoteTestFrame
-
-local remoteInput = Instance.new("TextBox")
-remoteInput.PlaceholderText = "RemoteEvent Name (e.g., RagdollEvent)"
-remoteInput.Size = UDim2.new(0, 250, 0, 30)
-remoteInput.Position = UDim2.new(0, 10, 0, 60)
-remoteInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-remoteInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-remoteInput.Font = Enum.Font.Gotham
-remoteInput.TextSize = 14
-remoteInput.Text = ""
-remoteInput.ClearTextOnFocus = false
-makeRounded(remoteInput, 6)
-remoteInput.Parent = RemoteTestFrame
-
-local playerInput = Instance.new("TextBox")
-playerInput.PlaceholderText = "Target Player (optional)"
-playerInput.Size = UDim2.new(0, 200, 0, 30)
-playerInput.Position = UDim2.new(0, 270, 0, 60)
-playerInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-playerInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-playerInput.Font = Enum.Font.Gotham
-playerInput.TextSize = 14
-playerInput.Text = ""
-playerInput.ClearTextOnFocus = false
-makeRounded(playerInput, 6)
-playerInput.Parent = RemoteTestFrame
-
-local fireBtn = Instance.new("TextButton")
-fireBtn.Size = UDim2.new(0, 120, 0, 30)
-fireBtn.Position = UDim2.new(0, 10, 0, 100)
-fireBtn.BackgroundColor3 = Color3.fromRGB(40, 100, 40)
-fireBtn.Text = "🔥 Fire"
-fireBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-fireBtn.Font = Enum.Font.GothamBold
-fireBtn.TextSize = 14
-makeRounded(fireBtn, 6)
-fireBtn.Parent = RemoteTestFrame
-
-local copyRemotesBtn = Instance.new("TextButton")
-copyRemotesBtn.Size = UDim2.new(0, 250, 0, 30)
-copyRemotesBtn.Position = UDim2.new(0, 140, 0, 100)
-copyRemotesBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 120)
-copyRemotesBtn.Text = "📋 Copy All RemoteEvents"
-copyRemotesBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-copyRemotesBtn.Font = Enum.Font.GothamBold
-copyRemotesBtn.TextSize = 13
-makeRounded(copyRemotesBtn, 6)
-copyRemotesBtn.Parent = RemoteTestFrame
-
-copyRemotesBtn.MouseButton1Click:Connect(function()
-	local success, err = pcall(function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/Xeno1234112/Chat-bypass/refs/heads/main/GUI.lua"))()
-	end)
-	if success then
-		logOutput("✅ RemoteEvent list copied to clipboard!")
-	else
-		logOutput("⚠️ Failed to load remote scanner: " .. tostring(err))
-	end
-end)
-
-
-local outputBox = Instance.new("ScrollingFrame")
-outputBox.Size = UDim2.new(1, -20, 0, 100)
-outputBox.Position = UDim2.new(0, 10, 0, 140)
-outputBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-outputBox.BorderSizePixel = 0
-outputBox.CanvasSize = UDim2.new(0, 0, 10, 0)
-outputBox.ScrollBarThickness = 4
-makeRounded(outputBox, 6)
-outputBox.Parent = RemoteTestFrame
-
-local logLayout = Instance.new("UIListLayout")
-logLayout.Parent = outputBox
-logLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
--- Function to log messages to the output box
-local function logOutput(msg)
-	local log = Instance.new("TextLabel")
-	log.Size = UDim2.new(1, -10, 0, 20)
-	log.BackgroundTransparency = 1
-	log.Text = msg
-	log.TextColor3 = Color3.fromRGB(180, 180, 180)
-	log.Font = Enum.Font.Gotham
-	log.TextSize = 13
-	log.TextXAlignment = Enum.TextXAlignment.Left
-	log.Parent = outputBox
-end
-
--- Fire button functionality
-fireBtn.MouseButton1Click:Connect(function()
-	local remoteName = remoteInput.Text
-	local targetName = playerInput.Text
-	local remote = nil
-
-	-- Try to find the RemoteEvent
-	for _, v in pairs(ReplicatedStorage:GetDescendants()) do
-		if v:IsA("RemoteEvent") and v.Name == remoteName then
-			remote = v
-			break
-		end
-	end
-
-	if not remote then
-		logOutput("❌ RemoteEvent '" .. remoteName .. "' not found.")
-		return
-	end
-
-	local targetPlayer = Players:FindFirstChild(targetName)
-	local success, err = pcall(function()
-		if targetPlayer then
-			remote:FireServer(targetPlayer)
-			logOutput("✅ Fired '" .. remoteName .. "' at " .. targetPlayer.Name)
-		else
-			remote:FireServer()
-			logOutput("✅ Fired '" .. remoteName .. "' with no player target.")
-		end
-	end)
-
-	if not success then
-		logOutput("⚠️ Error: " .. tostring(err))
-	end
-end)
-
 -- Tab Switching
 for tabName, button in pairs(tabButtons) do
 	button.MouseButton1Click:Connect(function()
@@ -452,5 +349,3 @@ for tabName, button in pairs(tabButtons) do
 		end
 	end)
 end
-
-
