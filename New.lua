@@ -249,41 +249,56 @@ walkSpeedBox.FocusLost:Connect(function(enterPressed)
 	end
 end)
 
--- 🦘 Jump Height Controls
+-- 🦘 Jump Height Input (Max 500)
 local jumpPowerLabel = Instance.new("TextLabel")
 jumpPowerLabel.Size = UDim2.new(0, 200, 0, 20)
 jumpPowerLabel.Position = UDim2.new(0, 20, 0, 120)
 jumpPowerLabel.BackgroundTransparency = 1
-jumpPowerLabel.Text = "JumpPower: 50"
+jumpPowerLabel.Text = "JumpPower:"
 jumpPowerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 jumpPowerLabel.Font = Enum.Font.Gotham
 jumpPowerLabel.TextSize = 14
 jumpPowerLabel.TextXAlignment = Enum.TextXAlignment.Left
 jumpPowerLabel.Parent = PlayerFrame
 
-local jumpPowerBtn = Instance.new("TextButton")
-jumpPowerBtn.Size = UDim2.new(0, 200, 0, 30)
-jumpPowerBtn.Position = UDim2.new(0, 20, 0, 150)
-jumpPowerBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-jumpPowerBtn.Text = "Click to Increase (Max: 500)"
-jumpPowerBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-jumpPowerBtn.Font = Enum.Font.Gotham
-jumpPowerBtn.TextSize = 14
-jumpPowerBtn.Parent = PlayerFrame
-makeRounded(jumpPowerBtn, 6)
+local jumpPowerBox = Instance.new("TextBox")
+jumpPowerBox.Size = UDim2.new(0, 200, 0, 30)
+jumpPowerBox.Position = UDim2.new(0, 20, 0, 150)
+jumpPowerBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+jumpPowerBox.Text = "50"
+jumpPowerBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+jumpPowerBox.Font = Enum.Font.Gotham
+jumpPowerBox.TextSize = 14
+jumpPowerBox.ClearTextOnFocus = false
+jumpPowerBox.Parent = PlayerFrame
+makeRounded(jumpPowerBox, 6)
 
-local currentJumpPower = 50
+-- 🧠 Function to update jump power (also works after respawn)
+local function setJumpPower(amount)
+	amount = tonumber(amount)
+	if amount and amount >= 1 and amount <= 500 then
+		local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+		if humanoid then
+			humanoid.UseJumpPower = true
+			humanoid.JumpPower = amount
+		end
+	end
+end
 
-jumpPowerBtn.MouseButton1Click:Connect(function()
-	currentJumpPower = currentJumpPower + 25
-	if currentJumpPower > 500 then
-		currentJumpPower = 50
+-- Update on enter
+jumpPowerBox.FocusLost:Connect(function(enterPressed)
+	if enterPressed then
+		setJumpPower(jumpPowerBox.Text)
 	end
-	if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-		LocalPlayer.Character:FindFirstChildOfClass("Humanoid").JumpPower = currentJumpPower
-	end
-	jumpPowerLabel.Text = "JumpPower: " .. tostring(currentJumpPower)
 end)
+
+-- Reapply when respawning
+LocalPlayer.CharacterAdded:Connect(function(char)
+	char:WaitForChild("Humanoid")
+	wait(0.2)
+	setJumpPower(jumpPowerBox.Text)
+end)
+
 
 -- 🪐 Gravity Options (Placeholder Dropdown UI)
 local gravityLabel = Instance.new("TextLabel")
