@@ -182,8 +182,6 @@ local tabInfo = {
 	{"⚙️", "Settings"},
 	{"📜", "Credits"},
 	{"🧪", "RemoteTest"},
-
-
 }
 
 local tabButtons = {}
@@ -202,23 +200,42 @@ for _, tab in ipairs(tabInfo) do
 	tabButtons[tab[2]] = button
 end
 
--- Welcome Screen
-local WelcomeFrame = Instance.new("Frame")
-WelcomeFrame.Name = "WelcomeFrame"
-WelcomeFrame.Size = UDim2.new(1, 0, 1, 0)
-WelcomeFrame.BackgroundTransparency = 1
-WelcomeFrame.Parent = contentFrame
+-- Admin Panel (hidden initially)
+local AdminFrame = Instance.new("Frame")
+AdminFrame.Name = "AdminFrame"
+AdminFrame.Size = UDim2.new(1, 0, 1, 0)
+AdminFrame.BackgroundTransparency = 0
+AdminFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+AdminFrame.Visible = false  -- Initially hidden
+AdminFrame.Parent = contentFrame
+makeRounded(AdminFrame, 10)
 
-local welcomeLabel = Instance.new("TextLabel")
-welcomeLabel.Size = UDim2.new(1, 0, 0, 50)
-welcomeLabel.Position = UDim2.new(0, 0, 0.4, 0)
-welcomeLabel.BackgroundTransparency = 1
-welcomeLabel.Text = "Welcome to Sigma Hub"
-welcomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-welcomeLabel.Font = Enum.Font.GothamBold
-welcomeLabel.TextSize = 20
-welcomeLabel.TextXAlignment = Enum.TextXAlignment.Center
-welcomeLabel.Parent = WelcomeFrame
+local adminTitle = Instance.new("TextLabel")
+adminTitle.Size = UDim2.new(1, 0, 0, 40)
+adminTitle.Position = UDim2.new(0, 0, 0, 0)
+adminTitle.BackgroundTransparency = 1
+adminTitle.Text = "🔧 Admin Panel"
+adminTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+adminTitle.Font = Enum.Font.GothamBold
+adminTitle.TextSize = 18
+adminTitle.Parent = AdminFrame
+
+-- Chat command to open Admin Panel
+LocalPlayer.Chatted:Connect(function(msg)
+    if msg:lower() == "!admin" then
+        -- Hide other frames and show Admin Frame
+        for _, frame in ipairs(contentFrame:GetChildren()) do
+            if frame:IsA("Frame") then
+                frame.Visible = false
+            end
+        end
+        local welcome = contentFrame:FindFirstChild("WelcomeFrame")
+        if welcome then
+            welcome.Visible = false
+        end
+        AdminFrame.Visible = true
+    end
+end)
 
 -- Template for each tab's frame
 local function createTabFrame(name, labelText)
@@ -273,6 +290,7 @@ creditsTip.Font = Enum.Font.Gotham
 creditsTip.TextSize = 13
 creditsTip.TextXAlignment = Enum.TextXAlignment.Left
 creditsTip.Parent = CreditsFrame
+
 
 -- RemoteEvent Tester Frame
 local RemoteTestFrame = Instance.new("Frame")
