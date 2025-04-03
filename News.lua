@@ -179,6 +179,8 @@ end
 
 -- Home Tab
 local HomeFrame = createTabFrame("Home", "Home Tab")
+mainFrame.ClipsDescendants = true
+contentFrame.ClipsDescendants = true
 
 local infYieldBtn = Instance.new("TextButton")
 infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
@@ -208,6 +210,8 @@ comingSoonLabel.Parent = HomeFrame
 
 -- Other Tabs (Player, Visual, VoiceChat, Settings, Credits)
 local PlayerFrame = createTabFrame("Player", "Player Tab")
+mainFrame.ClipsDescendants = true
+contentFrame.ClipsDescendants = true
 
 -- WalkSpeed Input
 local walkSpeedLabel = Instance.new("TextLabel")
@@ -448,23 +452,13 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 	end
 end)
 
--- 🖱️ Make the mainFrame resizable with a resize grip
-local resizeGrip = Instance.new("Frame")
-resizeGrip.Size = UDim2.new(0, 20, 0, 20)
-resizeGrip.Position = UDim2.new(1, -20, 1, -20)
-resizeGrip.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-resizeGrip.BackgroundTransparency = 0.3
-resizeGrip.Parent = mainFrame
-resizeGrip.ZIndex = 10
-makeRounded(resizeGrip, 4)
-
 local resizing = false
-local startPos, startSize
+local startSize, startMousePos
 
 resizeGrip.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		resizing = true
-		startPos = UIS:GetMouseLocation()
+		startMousePos = UIS:GetMouseLocation()
 		startSize = mainFrame.Size
 	end
 end)
@@ -477,9 +471,11 @@ end)
 
 UIS.InputChanged:Connect(function(input)
 	if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
-		local currentPos = UIS:GetMouseLocation()
-		local delta = currentPos - startPos
-		mainFrame.Size = UDim2.new(0, math.clamp(startSize.X.Offset + delta.X, 300, 800), 0, math.clamp(startSize.Y.Offset + delta.Y, 200, 600))
+		local currentMouse = UIS:GetMouseLocation()
+		local delta = currentMouse - startMousePos
+		local newWidth = math.clamp(startSize.X.Offset + delta.X, 300, 800)
+		local newHeight = math.clamp(startSize.Y.Offset + delta.Y, 200, 600)
+		mainFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
 	end
 end)
 
