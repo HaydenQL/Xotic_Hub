@@ -506,9 +506,9 @@ lineFormBtn.LayoutOrder = 1
 lineFormBtn.Parent = VisualFrame
 makeRounded(lineFormBtn, 6)
 
--- Toggle state
+-- State
 local lineFormOn = false
-local welds = {}
+local storedCFrames = {}
 
 lineFormBtn.MouseButton1Click:Connect(function()
 	local char = LocalPlayer.Character
@@ -517,56 +517,47 @@ lineFormBtn.MouseButton1Click:Connect(function()
 	local root = char:FindFirstChild("HumanoidRootPart")
 	if not root then return end
 
-	if lineFormOn == false then
-		-- Toggle ON: weld and reposition
+	-- Define body parts to affect
+	local parts = {
+		"Head",
+		"UpperTorso",
+		"LowerTorso",
+		"LeftUpperArm",
+		"RightUpperArm",
+		"LeftUpperLeg",
+		"RightUpperLeg",
+	}
+
+	if not lineFormOn then
 		lineFormOn = true
 		lineFormBtn.Text = "🧍 Lineform: ON"
+		storedCFrames = {}
 
-		local function weldToTorso(part, yOffset)
+		local yOffset = 3
+		for _, name in ipairs(parts) do
+			local part = char:FindFirstChild(name)
 			if part then
-				local weld = Instance.new("WeldConstraint")
-				weld.Part0 = root
-				weld.Part1 = part
-				weld.Parent = root
-
-				part.Anchored = false
-				part.CanCollide = false
+				storedCFrames[part] = part.CFrame
+				part.Anchored = true
 				part.CFrame = root.CFrame * CFrame.new(0, yOffset, 0)
-				welds[#welds + 1] = weld
+				yOffset -= 1.5
 			end
-		end
-
-		local offsets = {
-			["Head"] = 3,
-			["LeftUpperArm"] = 2,
-			["RightUpperArm"] = 1,
-			["UpperTorso"] = 0,
-			["LowerTorso"] = -1,
-			["LeftUpperLeg"] = -2,
-			["RightUpperLeg"] = -3,
-		}
-
-		for partName, yOffset in pairs(offsets) do
-			local part = char:FindFirstChild(partName)
-			weldToTorso(part, yOffset)
 		end
 
 	else
-		-- Toggle OFF: remove welds and reset positions
 		lineFormOn = false
 		lineFormBtn.Text = "🧍 Lineform: OFF"
 
-		for _, weld in pairs(welds) do
-			if weld and weld.Parent then
-				weld:Destroy()
+		for part, oldCFrame in pairs(storedCFrames) do
+			if part then
+				part.CFrame = oldCFrame
+				part.Anchored = false
 			end
 		end
-		welds = {}
-
-		-- Optional: reset parts (let Roblox auto handle pose on next anim)
-		char:BreakJoints() -- or reload character, your call
+		storedCFrames = {}
 	end
 end)
+
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
