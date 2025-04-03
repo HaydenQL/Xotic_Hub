@@ -346,56 +346,7 @@ end)
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
 
 
--- 🎙️ Voice Chat Controls (working buttons)
-local VoiceChatFrame = createTabFrame("VoiceChat", "Voice Chat Tab")
-
--- Unban / Rejoin VC Button
-local unbanVCBtn = Instance.new("TextButton")
-unbanVCBtn.Size = UDim2.new(0, 200, 0, 35)
-unbanVCBtn.Position = UDim2.new(0, 20, 0, 50)
-unbanVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-unbanVCBtn.Text = "🔓 Rejoin Voice Chat"
-unbanVCBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-unbanVCBtn.Font = Enum.Font.Gotham
-unbanVCBtn.TextSize = 14
-unbanVCBtn.Parent = VoiceChatFrame
-makeRounded(unbanVCBtn, 6)
-
-unbanVCBtn.MouseButton1Click:Connect(function()
-	local success, result = pcall(function()
-		local vchat = game:GetService("VoiceChatService"):joinVoice()
-	end)
-	if success then
-		print("✅ Attempted to rejoin VC.")
-	else
-		warn("❌ Failed to rejoin VC:", result)
-	end
-end)
-
--- Disconnect VC Button
-local disconnectVCBtn = Instance.new("TextButton")
-disconnectVCBtn.Size = UDim2.new(0, 200, 0, 35)
-disconnectVCBtn.Position = UDim2.new(0, 20, 0, 95)
-disconnectVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-disconnectVCBtn.Text = "🔴 Disconnect from Voice Chat"
-disconnectVCBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-disconnectVCBtn.Font = Enum.Font.Gotham
-disconnectVCBtn.TextSize = 14
-disconnectVCBtn.Parent = VoiceChatFrame
-makeRounded(disconnectVCBtn, 6)
-
-disconnectVCBtn.MouseButton1Click:Connect(function()
-	local success, result = pcall(function()
-		local vchat = game:GetService("VoiceChatService"):leaveVoice()
-	end)
-	if success then
-		print("✅ Disconnected from VC.")
-	else
-		warn("❌ Failed to disconnect from VC:", result)
-	end
-end)
-
--- 🕵️‍♂️ Spy Listen Section
+-- 🕵️ Spy Listen (with SoundService.Listener workaround)
 
 local spyNameLabel = Instance.new("TextLabel")
 spyNameLabel.Size = UDim2.new(0, 200, 0, 20)
@@ -432,42 +383,74 @@ spyButton.TextSize = 14
 spyButton.Parent = VoiceChatFrame
 makeRounded(spyButton, 6)
 
-local clonedVoices = {}
+local stopSpyButton = Instance.new("TextButton")
+stopSpyButton.Size = UDim2.new(0, 200, 0, 30)
+stopSpyButton.Position = UDim2.new(0, 20, 0, 250)
+stopSpyButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+stopSpyButton.Text = "🔇 Stop Spying"
+stopSpyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+stopSpyButton.Font = Enum.Font.Gotham
+stopSpyButton.TextSize = 14
+stopSpyButton.Parent = VoiceChatFrame
+makeRounded(stopSpyButton, 6)
 
+local SoundService = game:GetService("SoundService")
+local currentSpyPart = nil
+local connection = nil
+
+-- 🧠 Start spying
 spyButton.MouseButton1Click:Connect(function()
 	local displayName = spyNameBox.Text:lower()
-	for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-		if player.DisplayName:lower() == displayName and player ~= LocalPlayer then
-			-- Clear old clone
-			if clonedVoices[player] then
-				clonedVoices[player]:Destroy()
+	for _, player in pairs(game.Players:GetPlayers()) do
+		if player ~= LocalPlayer and player.DisplayName:lower() == displayName then
+			if player.Character and player.Character:FindFirstChild("Head") then
+				local targetHead = player.Character.Head
+
+				-- Create invisible proxy part
+				local spyPart = Instance.new("Part")
+				spyPart.Size = Vector3.new(1, 1, 1)
+				spyPart.Anchored = true
+				spyPart.CanCollide = false
+				spyPart.Transparency = 1
+				spyPart.Name = "SpyListenerPart"
+				spyPart.Parent = workspace
+
+				-- Position the spy part near target's head
+				spyPart.CFrame = targetHead.CFrame + Vector3.new(1, 0, 0)
+
+				-- Attach listener to spy part
+				SoundService:SetListener(Enum.ListenerType.ObjectCFrame, spyPart)
+
+				-- Update position every frame
+				if connection then connection:Disconnect() end
+				connection = game:GetService("RunService").RenderStepped:Connect(function()
+					if player.Character and player.Character:FindFirstChild("Head") then
+						spyPart.CFrame = player.Character.Head.CFrame + Vector3.new(1, 0, 0)
+					end
+				end)
+
+				currentSpyPart = spyPart
+				print("🎧 Spying on:", player.DisplayName)
+				break
 			end
-
-			-- Wait for character and voice emitter
-			local char = player.Character
-			if not char then return end
-
-			local head = char:FindFirstChild("Head")
-			if not head then return end
-
-			local voiceSound = head:FindFirstChildWhichIsA("Sound")
-			if not voiceSound then return end
-
-			-- Clone voice emitter and put it near LocalPlayer
-			local clone = voiceSound:Clone()
-			clone.Parent = LocalPlayer:WaitForChild("Head")
-			clone.Name = "[SPY] " .. player.Name
-			clone.Looped = false
-			clone:Play()
-
-			clonedVoices[player] = clone
-
-			print("🎧 Spying on:", player.DisplayName)
-			break
 		end
 	end
 end)
 
+-- 🔇 Stop spying
+stopSpyButton.MouseButton1Click:Connect(function()
+	if currentSpyPart then
+		currentSpyPart:Destroy()
+		currentSpyPart = nil
+	end
+	if connection then
+		connection:Disconnect()
+		connection = nil
+	end
+	-- Restore normal listener (camera-based)
+	SoundService:SetListener(Enum.ListenerType.Camera)
+	print("🔇 Spy stopped.")
+end)
 
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
