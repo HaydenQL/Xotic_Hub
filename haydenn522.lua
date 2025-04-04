@@ -585,7 +585,7 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 
 	-- Phase 2: Lift up slowly
 	local liftForce = Instance.new("BodyVelocity")
-	liftForce.Velocity = Vector3.new(0, 35.36, 0)
+	liftForce.Velocity = Vector3.new(0, 100, 0)
 	liftForce.MaxForce = Vector3.new(0, math.huge, 0)
 	liftForce.P = 5000
 	liftForce.Parent = root
