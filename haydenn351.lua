@@ -462,7 +462,7 @@ local VisualFrame = createTabFrame("Visual", "Visual Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
--- 💀 Spin and Die Button
+-- 💀 Spin and Die Button (softer fling)
 local spinDieBtn = Instance.new("TextButton")
 spinDieBtn.Size = UDim2.new(0, 200, 0, 30)
 spinDieBtn.BackgroundColor3 = Color3.fromRGB(120, 30, 30)
@@ -481,8 +481,8 @@ spinDieBtn.MouseButton1Click:Connect(function()
 	local hrp = char:FindFirstChild("HumanoidRootPart")
 	if not hrp then return end
 
-	-- Tiny fling
-	hrp.Velocity = Vector3.new(30, 60, 30)
+	-- Soft fling
+	hrp.Velocity = Vector3.new(10, 20, 10)
 
 	-- Spin effect
 	local spin = Instance.new("BodyAngularVelocity")
