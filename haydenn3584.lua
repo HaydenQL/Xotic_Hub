@@ -594,12 +594,10 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 
 	-- Phase 3: Pause mid-air & face target
 	local headPos = target.Character.Head.Position
-	local direction = (headPos - root.Position).Unit
+	local lookVec = (headPos - root.Position).Unit
+	local newCFrame = CFrame.new(root.Position, root.Position + lookVec)
+	root.CFrame = newCFrame
 
-	-- Rotate character so HEAD faces toward target, not feet
-	-- We'll rotate the CFrame by 90 degrees around X axis to tip forward (head-first)
-	local rotationCFrame = CFrame.lookAt(root.Position, headPos) * CFrame.Angles(math.rad(90), 0, 0)
-	root.CFrame = rotationCFrame
 
 	-- Freeze moment before launch
 	local freeze = Instance.new("BodyPosition")
