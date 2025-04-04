@@ -524,77 +524,97 @@ spinDieBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
--- 🚀 Launch Missile Button (placed below)
-local missileBtn = Instance.new("TextButton")
-missileBtn.Size = UDim2.new(0, 200, 0, 30)
-missileBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 120)
-missileBtn.Text = "🚀 Launch Missile"
-missileBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-missileBtn.Font = Enum.Font.Gotham
-missileBtn.TextSize = 14
-missileBtn.LayoutOrder = 2
-missileBtn.Parent = VisualFrame
-makeRounded(missileBtn, 6)
+-- 🧑‍🚀 Missile Display Name Input
+local missileTargetBox = Instance.new("TextBox")
+missileTargetBox.Size = UDim2.new(0, 200, 0, 30)
+missileTargetBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+missileTargetBox.Text = ""
+missileTargetBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+missileTargetBox.Font = Enum.Font.Gotham
+missileTargetBox.TextSize = 14
+missileTargetBox.PlaceholderText = "Enter target display name"
+missileTargetBox.ClearTextOnFocus = false
+missileTargetBox.LayoutOrder = 5
+missileTargetBox.Parent = VisualFrame
+makeRounded(missileTargetBox, 6)
 
--- Input box for display name
-local missileBox = Instance.new("TextBox")
-missileBox.Size = UDim2.new(0, 200, 0, 30)
-missileBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-missileBox.PlaceholderText = "Target Display Name"
-missileBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-missileBox.Font = Enum.Font.Gotham
-missileBox.TextSize = 14
-missileBox.ClearTextOnFocus = false
-missileBox.LayoutOrder = 4
-missileBox.Parent = VisualFrame
-makeRounded(missileBox, 6)
+-- 🎯 Missile Launch Button
+local smartMissileBtn = Instance.new("TextButton")
+smartMissileBtn.Size = UDim2.new(0, 200, 0, 30)
+smartMissileBtn.BackgroundColor3 = Color3.fromRGB(100, 30, 100)
+smartMissileBtn.Text = "🎯 Target Missile"
+smartMissileBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+smartMissileBtn.Font = Enum.Font.Gotham
+smartMissileBtn.TextSize = 14
+smartMissileBtn.LayoutOrder = 6
+smartMissileBtn.Parent = VisualFrame
+makeRounded(smartMissileBtn, 6)
 
-missileBtn.MouseButton1Click:Connect(function()
-	local targetName = missileBox.Text:lower()
-	local myChar = LocalPlayer.Character
-	if not myChar then return end
+smartMissileBtn.MouseButton1Click:Connect(function()
+	local char = LocalPlayer.Character
+	if not char then return end
 
-	local hrp = myChar:FindFirstChild("HumanoidRootPart")
-	if not hrp then return end
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
+	if not hrp or not humanoid then return end
 
-	-- Find target
-	local targetPlayer = nil
-	for _, plr in pairs(Players:GetPlayers()) do
+	-- Find target by display name
+	local targetName = missileTargetBox.Text:lower()
+	local targetPlayer
+	for _, plr in pairs(game.Players:GetPlayers()) do
 		if plr ~= LocalPlayer and plr.DisplayName:lower() == targetName then
 			targetPlayer = plr
 			break
 		end
 	end
 	if not targetPlayer or not targetPlayer.Character or not targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-		warn("❌ Target not found.")
+		warn("❌ Could not find target.")
 		return
 	end
 
-	local targetPos = targetPlayer.Character.HumanoidRootPart.Position
+	local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 
-	-- Spin effect
+	-- Start spinning
 	local spin = Instance.new("BodyAngularVelocity")
-	spin.AngularVelocity = Vector3.new(0, 150, 0)
-	spin.MaxTorque = Vector3.new(1, 1, 1) * 100000
+	spin.AngularVelocity = Vector3.new(0, 50, 0)
+	spin.MaxTorque = Vector3.new(1, 1, 1) * math.huge
 	spin.P = 1000
 	spin.Parent = hrp
 
-	-- Fly upward for 2 seconds
-	hrp.Velocity = Vector3.new(0, 150, 0)
+	humanoid:ChangeState(Enum.HumanoidStateType.Physics)
 
+	-- Ramp up spinning + slight movement
+	local ramp = Instance.new("BodyVelocity")
+	ramp.Velocity = Vector3.new(0, 0, 0)
+	ramp.MaxForce = Vector3.new(1, 1, 1) * math.huge
+	ramp.P = 3000
+	ramp.Parent = hrp
+
+	-- Ramp up for 2 seconds
+	local startTime = tick()
+	while tick() - startTime < 2 do
+		ramp.Velocity = ramp.Velocity + Vector3.new(0, 2, 0) + hrp.CFrame.LookVector * 10
+		task.wait(0.05)
+	end
+
+	-- Rise up slightly
+	ramp.Velocity = Vector3.new(0, 100, 0)
+	wait(1)
+
+	-- Dive head first toward target
+	local direction = (targetHRP.Position - hrp.Position).Unit
+	ramp.Velocity = direction * 300
+
+	-- Optional: spin even faster while diving
+	spin.AngularVelocity = Vector3.new(0, 150, 0)
+
+	-- Kill on impact
 	task.delay(2, function()
-		-- Aim and launch toward target
-		local dir = (targetPos - hrp.Position).Unit
-		hrp.Velocity = dir * 300
-
-		-- Explosion and death after impact
-		task.delay(1, function()
-			spin:Destroy()
-			local humanoid = myChar:FindFirstChildWhichIsA("Humanoid")
-			if humanoid then
-				humanoid.Health = 0
-			end
-		end)
+		if humanoid then
+			humanoid.Health = 0
+		end
+		ramp:Destroy()
+		spin:Destroy()
 	end)
 end)
 
