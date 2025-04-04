@@ -462,62 +462,53 @@ local VisualFrame = createTabFrame("Visual", "Visual Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
--- 🎆 Spin & Explode Button (Visual Tab)
-local spinExplodeBtn = Instance.new("TextButton")
-spinExplodeBtn.Size = UDim2.new(0, 200, 0, 30)
-spinExplodeBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-spinExplodeBtn.Text = "💥 Spin & Explode"
-spinExplodeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-spinExplodeBtn.Font = Enum.Font.Gotham
-spinExplodeBtn.TextSize = 14
-spinExplodeBtn.LayoutOrder = 2
-spinExplodeBtn.Parent = VisualFrame
-makeRounded(spinExplodeBtn, 6)
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
 
-spinExplodeBtn.MouseButton1Click:Connect(function()
-	local char = LocalPlayer.Character
-	if not char then return end
-
+local function fullBodySpinExplode()
+	local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 	local root = char:FindFirstChild("HumanoidRootPart")
-	if not root then return end
+	local humanoid = char:FindFirstChildOfClass("Humanoid")
+	if not root or not humanoid then return end
 
-	-- Anchor the character
-	for _, part in pairs(char:GetDescendants()) do
-		if part:IsA("BasePart") then
-			part.Anchored = true
-		end
-	end
+	-- Anchor the root to keep you in place
+	root.Anchored = true
 
-	local spinning = true
+	-- Start spinning logic
+	local spinTime = 3 -- seconds
 	local startTime = tick()
+	local connection
 
-	-- Spin parts in all directions
-	task.spawn(function()
-		while spinning and tick() - startTime < 3 do
-			for _, part in pairs(char:GetDescendants()) do
-				if part:IsA("BasePart") then
-					local x = math.rad(math.random(-40, 40))
-					local y = math.rad(math.random(-40, 40))
-					local z = math.rad(math.random(-40, 40))
-					part.CFrame = part.CFrame * CFrame.Angles(x, y, z)
-				end
-			end
-			task.wait(0.03)
+	connection = RunService.Heartbeat:Connect(function()
+		local elapsed = tick() - startTime
+		if elapsed >= spinTime then
+			connection:Disconnect()
+			humanoid.Health = 0
+			root.Anchored = false
+			return
 		end
 
-		-- Unanchor and explode (kill)
-		for _, part in pairs(char:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.Anchored = false
-			end
-		end
-
-		local hum = char:FindFirstChildOfClass("Humanoid")
-		if hum then hum.Health = 0 end
+		-- Spin in wild directions
+		local x = math.rad(math.sin(elapsed * 3) * 100)
+		local y = math.rad(math.cos(elapsed * 3) * 100)
+		local z = math.rad(math.sin(elapsed * 4) * 100)
+		root.CFrame = root.CFrame * CFrame.Angles(x, y, z)
 	end)
-end)
+end
 
+-- Example button usage
+local crazySpinButton = Instance.new("TextButton")
+crazySpinButton.Size = UDim2.new(0, 200, 0, 30)
+crazySpinButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+crazySpinButton.Text = "☠️ Freak Out & Explode"
+crazySpinButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+crazySpinButton.Font = Enum.Font.GothamBold
+crazySpinButton.TextSize = 14
+crazySpinButton.Parent = VisualFrame
+makeRounded(crazySpinButton, 6)
 
+crazySpinButton.MouseButton1Click:Connect(fullBodySpinExplode)
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
