@@ -592,12 +592,11 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	task.wait(1)
 	liftForce:Destroy()
 
-	-- Phase 3: Pause mid-air & orient head-first toward target
+	-- Phase 3: Pause mid-air & face target
 	local headPos = target.Character.Head.Position
-	local direction = (headPos - root.Position).Unit
-	local missileCFrame = CFrame.lookAt(root.Position, root.Position + direction) * CFrame.Angles(math.rad(90), 0, 0)
-	root.CFrame = missileCFrame
-
+	local lookVec = (headPos - root.Position).Unit
+	local missileCF = CFrame.lookAt(root.Position, root.Position + lookVec) * CFrame.Angles(math.rad(90), 0, 0)
+	root.CFrame = missileCF
 
 	-- Freeze moment before launch
 	local freeze = Instance.new("BodyPosition")
@@ -608,6 +607,7 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 
 	task.wait(0.75)
 	freeze:Destroy()
+
 
 	-- Phase 4: Launch toward target
 	local launchForce = Instance.new("BodyVelocity")
