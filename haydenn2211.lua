@@ -556,7 +556,7 @@ staticOverlay.Position = UDim2.new(0, 0, 0, 0)
 staticOverlay.BackgroundTransparency = 1
 staticOverlay.ImageTransparency = 0
 staticOverlay.Image = "rbxassetid://15988137208"
-staticOverlay.Visible = false
+staticOverlay.Visible = true
 staticOverlay.ZIndex = 9999
 staticOverlay.Parent = game:GetService("CoreGui")
 
@@ -574,6 +574,7 @@ makeRounded(toggleStaticBtn, 6)
 
 toggleStaticBtn.MouseButton1Click:Connect(function()
 	staticOverlay.Visible = not staticOverlay.Visible
+	print("🔁 Static overlay toggled to", staticOverlay.Visible)
 end)
 
 local camSpyNameLabel = Instance.new("TextLabel")
@@ -668,6 +669,7 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 		print("🔁 Returned camera to self")
 	end
 end)
+
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
 mainFrame.ClipsDescendants = true
