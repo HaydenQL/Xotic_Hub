@@ -593,29 +593,50 @@ stopSpyCamBtn.LayoutOrder = 6
 stopSpyCamBtn.Parent = VoiceChatFrame
 makeRounded(stopSpyCamBtn, 6)
 
+-- 🎯 Start camera spy (smooth view mimic)
 startSpyCamBtn.MouseButton1Click:Connect(function()
 	local displayName = camSpyBox.Text:lower()
 	for _, player in pairs(game.Players:GetPlayers()) do
 		if player ~= LocalPlayer and player.DisplayName:lower() == displayName then
-			local head = player.Character and player.Character:FindFirstChild("Head")
-			if head then
-				originalCamCF = cam.CFrame
-				spyCamActive = true
+			local character = player.Character
+			local head = character and character:FindFirstChild("Head")
+			local root = character and character:FindFirstChild("HumanoidRootPart")
+			if not (head and root) then return end
 
-				if spyConnection then spyConnection:Disconnect() end
-				spyConnection = game:GetService("RunService").RenderStepped:Connect(function()
-					if player.Character and player.Character:FindFirstChild("Head") then
-						local pos = player.Character.Head.Position + Vector3.new(0, 2, 0)
-						cam.CFrame = CFrame.new(pos + Vector3.new(0, 0, 5), pos)
-					end
-				end)
-
-				print("🎥 Camera spy started on", player.DisplayName)
-				break
+			-- Setup spy dummy camera anchor
+			if not workspace:FindFirstChild("SigmaSpyDummy") then
+				local dummy = Instance.new("Part")
+				dummy.Name = "SigmaSpyDummy"
+				dummy.Size = Vector3.new(1, 1, 1)
+				dummy.Transparency = 1
+				dummy.Anchored = true
+				dummy.CanCollide = false
+				dummy.Parent = workspace
 			end
+
+			local spyDummy = workspace:FindFirstChild("SigmaSpyDummy")
+			originalCamCF = cam.CFrame
+			spyCamActive = true
+
+			if spyConnection then spyConnection:Disconnect() end
+			spyConnection = game:GetService("RunService").RenderStepped:Connect(function()
+				if player.Character and head and root then
+					local lookVec = (head.CFrame.LookVector + root.CFrame.LookVector).Unit
+					local camPos = head.Position - lookVec * 5 + Vector3.new(0, 2.5, 0)
+					local focusPos = head.Position + lookVec * 10
+
+					spyDummy.CFrame = CFrame.new(camPos, focusPos)
+					cam.CameraType = Enum.CameraType.Scriptable
+					cam.CFrame = spyDummy.CFrame
+				end
+			end)
+
+			print("🎥 Camera spy started on", player.DisplayName)
+			break
 		end
 	end
 end)
+
 
 stopSpyCamBtn.MouseButton1Click:Connect(function()
 	if spyCamActive then
