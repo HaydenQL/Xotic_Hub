@@ -114,7 +114,7 @@ versionLabel.Parent = mainFrame
 local tabInfo = {
 	{"🏠", "Home"},
 	{"🧍", "Player"},
-	{"🎨", ""},
+	{"🎨", "Visual"},
 	{"🎙️", "VoiceChat"},
 	{"⚙️", "Settings"},
 	{"📜", "Credits"},
@@ -597,7 +597,6 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	local lookVec = (headPos - root.Position).Unit
 	local newCFrame = CFrame.new(root.Position, root.Position + lookVec)
 	root.CFrame = newCFrame
-
 
 	-- Freeze moment before launch
 	local freeze = Instance.new("BodyPosition")
