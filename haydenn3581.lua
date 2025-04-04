@@ -524,24 +524,25 @@ spinDieBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
--- 📦 Missile Target Input
-local missileInput = Instance.new("TextBox")
-missileInput.Size = UDim2.new(0, 200, 0, 30)
-missileInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-missileInput.Text = ""
-missileInput.PlaceholderText = "Target Display Name..."
-missileInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-missileInput.Font = Enum.Font.Gotham
-missileInput.TextSize = 14
-missileInput.LayoutOrder = 5
-missileInput.Parent = VisualFrame
-makeRounded(missileInput, 6)
+-- 🧠 Missile Target Box
+local missileTargetBox = Instance.new("TextBox")
+missileTargetBox.Size = UDim2.new(0, 200, 0, 30)
+missileTargetBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+missileTargetBox.Text = ""
+missileTargetBox.PlaceholderText = "Target display name..."
+missileTargetBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+missileTargetBox.Font = Enum.Font.Gotham
+missileTargetBox.TextSize = 14
+missileTargetBox.ClearTextOnFocus = false
+missileTargetBox.LayoutOrder = 5
+missileTargetBox.Parent = VisualFrame
+makeRounded(missileTargetBox, 6)
 
--- 🚀 Missile Button
+-- 🚀 Precision Missile Button
 local missileBtn = Instance.new("TextButton")
 missileBtn.Size = UDim2.new(0, 200, 0, 30)
 missileBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 120)
-missileBtn.Text = "🚀 Missile Strike"
+missileBtn.Text = "🚀 Launch Missile"
 missileBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 missileBtn.Font = Enum.Font.Gotham
 missileBtn.TextSize = 14
@@ -550,66 +551,54 @@ missileBtn.Parent = VisualFrame
 makeRounded(missileBtn, 6)
 
 missileBtn.MouseButton1Click:Connect(function()
-	local char = LocalPlayer.Character
-	if not char then return end
-
-	local root = char:FindFirstChild("HumanoidRootPart")
-	if not root then return end
-
-	local inputName = missileInput.Text:lower()
+	local inputName = missileTargetBox.Text:lower()
 	local target = nil
-
-	for _, player in ipairs(game.Players:GetPlayers()) do
-		if player ~= LocalPlayer and player.DisplayName:lower() == inputName then
-			target = player
+	for _, plr in ipairs(game.Players:GetPlayers()) do
+		if plr ~= LocalPlayer and plr.DisplayName:lower() == inputName then
+			target = plr
 			break
 		end
 	end
 
-	if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
-		warn("❌ Target not found or invalid.")
+	if not target or not target.Character or not target.Character:FindFirstChild("Head") then
+		warn("❌ Target not found or missing head.")
 		return
 	end
 
-	local spin = Instance.new("BodyAngularVelocity")
-	spin.AngularVelocity = Vector3.new(0, 1, 0)
-	spin.MaxTorque = Vector3.new(1, 1, 1) * 100000
-	spin.P = 1000
-	spin.Parent = root
+	local char = LocalPlayer.Character
+	if not char then return end
 
-	-- Ramp up spinning
-	local tweenService = game:GetService("TweenService")
-	local goal = {AngularVelocity = Vector3.new(0, 300, 0)}
-	local tween = tweenService:Create(spin, TweenInfo.new(2, Enum.EasingStyle.Quad), goal)
-	tween:Play()
+	local root = char:FindFirstChild("HumanoidRootPart")
+	local humanoid = char:FindFirstChildOfClass("Humanoid")
+	if not root or not humanoid then return end
+
+	-- Step 1: Spin in place for 2 seconds
+	local spin = Instance.new("BodyAngularVelocity")
+	spin.AngularVelocity = Vector3.new(0, 25, 0)
+	spin.MaxTorque = Vector3.new(1, 1, 1) * math.huge
+	spin.P = 10000
+	spin.Parent = root
 
 	task.wait(2)
 
-	-- Stop spinning on ground
+	-- Step 2: Go straight up
 	spin:Destroy()
+	root.Velocity = Vector3.new(0, 60, 0)
 
-	-- Slowly rise up
-	root.Velocity = Vector3.new(0, 30, 0)
 	task.wait(1)
 
-	-- Pause mid-air and rotate downward
+	-- Step 3: Hover and rotate to face target
 	root.Velocity = Vector3.zero
-	root.CFrame = root.CFrame * CFrame.Angles(math.rad(180), 0, 0)
+	local direction = (target.Character.Head.Position - root.Position).Unit
+	local newLook = CFrame.new(root.Position, root.Position + direction)
+	root.CFrame = CFrame.new(root.Position) * CFrame.Angles(math.rad(90), 0, 0)
+	root.CFrame = CFrame.new(root.Position, target.Character.Head.Position)
 
-	task.wait(0.5)
-
-	-- Dive downward into target
-	local targetPos = target.Character.HumanoidRootPart.Position
-	local dir = (targetPos - root.Position).Unit
-	root.Velocity = dir * 150
-
-	task.delay(2.5, function()
-		-- Freeze before impact
-		root.Velocity = Vector3.zero
-	end)
+	-- Step 4: Launch toward target
+	task.wait(0.25)
+	local missileForce = direction * 300
+	root.Velocity = missileForce
 end)
-
-
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
