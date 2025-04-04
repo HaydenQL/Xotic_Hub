@@ -462,6 +462,71 @@ local VisualFrame = createTabFrame("Visual", "Visual Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
+-- 💥 Spin & Explode Button
+local spinExplodeBtn = Instance.new("TextButton")
+spinExplodeBtn.Size = UDim2.new(0, 200, 0, 30)
+spinExplodeBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+spinExplodeBtn.Text = "💥 Spin & Explode"
+spinExplodeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+spinExplodeBtn.Font = Enum.Font.Gotham
+spinExplodeBtn.TextSize = 14
+spinExplodeBtn.LayoutOrder = 2
+spinExplodeBtn.Parent = VisualFrame
+makeRounded(spinExplodeBtn, 6)
+
+spinExplodeBtn.MouseButton1Click:Connect(function()
+	local char = LocalPlayer.Character
+	if not char then return end
+
+	-- Make character spin
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if hrp then
+		local spinning = true
+		local connection
+		connection = game:GetService("RunService").Heartbeat:Connect(function()
+			if spinning and hrp and hrp.Parent then
+				hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(30), 0)
+			else
+				connection:Disconnect()
+			end
+		end)
+
+		-- Wait then fall and explode
+		task.delay(2, function()
+			spinning = false
+
+			local humanoid = char:FindFirstChildOfClass("Humanoid")
+			if humanoid then
+				humanoid:ChangeState(Enum.HumanoidStateType.Ragdoll)
+			end
+
+			-- Add explosion force
+			for _, part in ipairs(char:GetDescendants()) do
+				if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+					part.Anchored = false
+					local force = Instance.new("BodyVelocity")
+					force.Velocity = Vector3.new(math.random(-30,30), math.random(20,50), math.random(-30,30))
+					force.MaxForce = Vector3.new(1e5,1e5,1e5)
+					force.P = 10000
+					force.Parent = part
+					game:GetService("Debris"):AddItem(force, 0.5)
+				end
+			end
+
+			-- Optional particle explosion
+			local explosion = Instance.new("ParticleEmitter")
+			explosion.Texture = "rbxassetid://243098098" -- simple fireball
+			explosion.Rate = 200
+			explosion.Lifetime = NumberRange.new(0.5)
+			explosion.Speed = NumberRange.new(50)
+			explosion.Rotation = NumberRange.new(0, 360)
+			explosion.Parent = hrp
+			game:GetService("Debris"):AddItem(explosion, 0.5)
+		end)
+	end
+end)
+
+
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
 VoiceChatFrame.Name = "VoiceChatFrame"
