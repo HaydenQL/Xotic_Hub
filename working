@@ -457,10 +457,175 @@ end)
 
 
 
---Tabs gui each
-local VisualFrame = createTabFrame("Visual", "Visual Tab")
-mainFrame.ClipsDescendants = true
-contentFrame.ClipsDescendants = true
+-- 🎨 Visual Tab (Scrollable + Ordered Buttons)
+local VisualFrame = Instance.new("ScrollingFrame")
+VisualFrame.Name = "VisualFrame"
+VisualFrame.Size = UDim2.new(1, 0, 1, 0)
+VisualFrame.CanvasSize = UDim2.new(0, 0, 0, 200) -- Expand as needed
+VisualFrame.ScrollBarThickness = 4
+VisualFrame.BackgroundTransparency = 1
+VisualFrame.Visible = false
+VisualFrame.Parent = contentFrame
+makeRounded(VisualFrame, 10)
+
+-- Layout for vertical stacking
+local visualLayout = Instance.new("UIListLayout")
+visualLayout.Padding = UDim.new(0, 6)
+visualLayout.SortOrder = Enum.SortOrder.LayoutOrder
+visualLayout.Parent = VisualFrame
+
+-- Optional padding
+local visualPadding = Instance.new("UIPadding")
+visualPadding.PaddingTop = UDim.new(0, 10)
+visualPadding.PaddingLeft = UDim.new(0, 20)
+visualPadding.Parent = VisualFrame
+
+-- 💀 Spin and Die Button (softer fling)
+local spinDieBtn = Instance.new("TextButton")
+spinDieBtn.Size = UDim2.new(0, 200, 0, 30)
+spinDieBtn.BackgroundColor3 = Color3.fromRGB(120, 30, 30)
+spinDieBtn.Text = "💀 Spin & Explode"
+spinDieBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+spinDieBtn.Font = Enum.Font.Gotham
+spinDieBtn.TextSize = 14
+spinDieBtn.LayoutOrder = 1
+spinDieBtn.Parent = VisualFrame
+makeRounded(spinDieBtn, 6)
+
+spinDieBtn.MouseButton1Click:Connect(function()
+	local char = LocalPlayer.Character
+	if not char then return end
+
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if not hrp then return end
+
+	-- Soft fling
+	hrp.Velocity = Vector3.new(10, 20, 10)
+
+	-- Spin effect
+	local spin = Instance.new("BodyAngularVelocity")
+	spin.AngularVelocity = Vector3.new(0, 100, 0)
+	spin.MaxTorque = Vector3.new(1, 1, 1) * 100000
+	spin.P = 1000
+	spin.Parent = hrp
+
+	-- Ragdoll-like stumble
+	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
+	if humanoid then
+		humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+	end
+
+	-- Kill after 2 seconds
+	task.delay(2, function()
+		spin:Destroy()
+		if humanoid then
+			humanoid.Health = 0
+		end
+	end)
+end)
+
+-- 📍 Target Name Input
+local missileInput = Instance.new("TextBox")
+missileInput.Size = UDim2.new(0, 200, 0, 30)
+missileInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+missileInput.Text = ""
+missileInput.PlaceholderText = "Display Name..."
+missileInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+missileInput.Font = Enum.Font.Gotham
+missileInput.TextSize = 14
+missileInput.LayoutOrder = 5
+missileInput.ClearTextOnFocus = false
+missileInput.Parent = VisualFrame
+makeRounded(missileInput, 6)
+
+-- 🚀 Missile Button
+local missileLaunchBtn = Instance.new("TextButton")
+missileLaunchBtn.Size = UDim2.new(0, 200, 0, 30)
+missileLaunchBtn.BackgroundColor3 = Color3.fromRGB(20, 100, 200)
+missileLaunchBtn.Text = "🚀 Missile Launch"
+missileLaunchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+missileLaunchBtn.Font = Enum.Font.Gotham
+missileLaunchBtn.TextSize = 14
+missileLaunchBtn.LayoutOrder = 6
+missileLaunchBtn.Parent = VisualFrame
+makeRounded(missileLaunchBtn, 6)
+
+missileLaunchBtn.MouseButton1Click:Connect(function()
+	local char = LocalPlayer.Character
+	if not char then return end
+
+	local root = char:FindFirstChild("HumanoidRootPart")
+	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
+	if not root or not humanoid then return end
+
+	local inputName = missileInput.Text:lower()
+	local target = nil
+
+	for _, plr in ipairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer and plr.DisplayName:lower() == inputName then
+			target = plr
+			break
+		end
+	end
+
+	if not target or not target.Character or not target.Character:FindFirstChild("Head") then
+		warn("Target not found")
+		return
+	end
+
+	-- Phase 1: Spin in place for 2 seconds
+	local spin = Instance.new("BodyAngularVelocity")
+	spin.AngularVelocity = Vector3.new(0, 20, 0)
+	spin.MaxTorque = Vector3.new(0, math.huge, 0)
+	spin.P = 1000
+	spin.Parent = root
+
+	task.wait(2)
+	spin:Destroy()
+
+	-- Phase 2: Lift up slowly
+	local liftForce = Instance.new("BodyVelocity")
+	liftForce.Velocity = Vector3.new(0, 25, 0)
+	liftForce.MaxForce = Vector3.new(0, math.huge, 0)
+	liftForce.P = 5000
+	liftForce.Parent = root
+	task.wait(1)
+	liftForce:Destroy()
+
+	-- Phase 3: Pause mid-air & face target
+	local headPos = target.Character.Head.Position
+	local lookVec = (headPos - root.Position).Unit
+	local newCFrame = CFrame.new(root.Position, root.Position + lookVec)
+	root.CFrame = newCFrame
+
+	-- Freeze moment before launch
+	local freeze = Instance.new("BodyPosition")
+	freeze.Position = root.Position
+	freeze.MaxForce = Vector3.new(1, 1, 1) * math.huge
+	freeze.P = 15000
+	freeze.Parent = root
+
+	task.wait(0.75)
+	freeze:Destroy()
+
+	-- Phase 4: Launch toward target
+	local launchForce = Instance.new("BodyVelocity")
+	launchForce.Velocity = lookVec * 200
+	launchForce.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+	launchForce.P = 12500
+	launchForce.Parent = root
+
+	-- Freeze at target after 1.25s
+	task.delay(1.25, function()
+		launchForce:Destroy()
+		local freezeFinal = Instance.new("BodyPosition")
+		freezeFinal.Position = root.Position
+		freezeFinal.MaxForce = Vector3.new(1, 1, 1) * math.huge
+		freezeFinal.P = 15000
+		freezeFinal.Parent = root
+	end)
+end)
+
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
@@ -541,11 +706,50 @@ disconnectVCBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
+
 -- 🎥 Camera Spy
 local cam = workspace.CurrentCamera
 local originalCamCF = cam.CFrame
 local spyCamActive = false
 local spyConnection = nil
+
+-- Static Overlay (fallback with noise texture)
+local staticOverlay = Instance.new("Frame")
+staticOverlay.Name = "StaticOverlay"
+staticOverlay.Size = UDim2.new(1, 0, 1, 0)
+staticOverlay.Position = UDim2.new(0, 0, 0, 0)
+staticOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+staticOverlay.BackgroundTransparency = 0.2
+staticOverlay.Visible = false
+staticOverlay.ZIndex = 9999
+staticOverlay.Parent = game:GetService("CoreGui")
+
+-- Add fallback static noise pattern
+local noise = Instance.new("ImageLabel")
+noise.Size = UDim2.new(1, 0, 1, 0)
+noise.Position = UDim2.new(0, 0, 0, 0)
+noise.BackgroundTransparency = 1
+noise.ImageTransparency = 0
+noise.Image = "rbxassetid://15988137208" -- Fallback noise texture
+noise.ZIndex = 9999
+noise.Parent = staticOverlay
+
+-- Toggle Static Button
+local toggleStaticBtn = Instance.new("TextButton")
+toggleStaticBtn.Size = UDim2.new(0, 200, 0, 30)
+toggleStaticBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+toggleStaticBtn.Text = "📺 Toggle Static Overlay"
+toggleStaticBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleStaticBtn.Font = Enum.Font.Gotham
+toggleStaticBtn.TextSize = 14
+toggleStaticBtn.LayoutOrder = 7
+toggleStaticBtn.Parent = VoiceChatFrame
+makeRounded(toggleStaticBtn, 6)
+
+toggleStaticBtn.MouseButton1Click:Connect(function()
+	staticOverlay.Visible = not staticOverlay.Visible
+	print("🔁 Static overlay toggled to", staticOverlay.Visible)
+end)
 
 local camSpyNameLabel = Instance.new("TextLabel")
 camSpyNameLabel.Size = UDim2.new(0, 200, 0, 20)
@@ -597,16 +801,26 @@ startSpyCamBtn.MouseButton1Click:Connect(function()
 	local displayName = camSpyBox.Text:lower()
 	for _, player in pairs(game.Players:GetPlayers()) do
 		if player ~= LocalPlayer and player.DisplayName:lower() == displayName then
-			local head = player.Character and player.Character:FindFirstChild("Head")
-			if head then
+			local char = player.Character
+			local head = char and char:FindFirstChild("Head")
+			local root = char and char:FindFirstChild("HumanoidRootPart")
+
+			if head and root then
 				originalCamCF = cam.CFrame
 				spyCamActive = true
 
+				cam.CameraType = Enum.CameraType.Scriptable
+				cam.FieldOfView = 95
+
 				if spyConnection then spyConnection:Disconnect() end
 				spyConnection = game:GetService("RunService").RenderStepped:Connect(function()
-					if player.Character and player.Character:FindFirstChild("Head") then
-						local pos = player.Character.Head.Position + Vector3.new(0, 2, 0)
-						cam.CFrame = CFrame.new(pos + Vector3.new(0, 0, 5), pos)
+					if player.Character and head and root then
+						local lookVec = (head.CFrame.LookVector + root.CFrame.LookVector).Unit
+						local camPos = head.Position - lookVec * 5 + Vector3.new(0, 2.5, 0)
+						local bob = math.sin(tick() * 3) * 0.15
+						camPos = camPos + Vector3.new(0, bob, 0)
+						local focus = head.Position + lookVec * 10
+						cam.CFrame = CFrame.new(camPos, focus)
 					end
 				end)
 
@@ -624,10 +838,12 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 			spyConnection:Disconnect()
 			spyConnection = nil
 		end
-		cam.CFrame = originalCamCF
+		cam.CameraType = Enum.CameraType.Custom
+		cam.CameraSubject = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
 		print("🔁 Returned camera to self")
 	end
 end)
+
 
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
