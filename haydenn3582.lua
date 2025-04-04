@@ -524,36 +524,44 @@ spinDieBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
--- 🧠 Missile Target Box
-local missileTargetBox = Instance.new("TextBox")
-missileTargetBox.Size = UDim2.new(0, 200, 0, 30)
-missileTargetBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-missileTargetBox.Text = ""
-missileTargetBox.PlaceholderText = "Target display name..."
-missileTargetBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-missileTargetBox.Font = Enum.Font.Gotham
-missileTargetBox.TextSize = 14
-missileTargetBox.ClearTextOnFocus = false
-missileTargetBox.LayoutOrder = 5
-missileTargetBox.Parent = VisualFrame
-makeRounded(missileTargetBox, 6)
+-- 📍 Target Name Input
+local missileInput = Instance.new("TextBox")
+missileInput.Size = UDim2.new(0, 200, 0, 30)
+missileInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+missileInput.Text = ""
+missileInput.PlaceholderText = "Display Name..."
+missileInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+missileInput.Font = Enum.Font.Gotham
+missileInput.TextSize = 14
+missileInput.LayoutOrder = 5
+missileInput.ClearTextOnFocus = false
+missileInput.Parent = VisualFrame
+makeRounded(missileInput, 6)
 
--- 🚀 Precision Missile Button
-local missileBtn = Instance.new("TextButton")
-missileBtn.Size = UDim2.new(0, 200, 0, 30)
-missileBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 120)
-missileBtn.Text = "🚀 Launch Missile"
-missileBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-missileBtn.Font = Enum.Font.Gotham
-missileBtn.TextSize = 14
-missileBtn.LayoutOrder = 6
-missileBtn.Parent = VisualFrame
-makeRounded(missileBtn, 6)
+-- 🚀 Missile Button
+local missileLaunchBtn = Instance.new("TextButton")
+missileLaunchBtn.Size = UDim2.new(0, 200, 0, 30)
+missileLaunchBtn.BackgroundColor3 = Color3.fromRGB(20, 100, 200)
+missileLaunchBtn.Text = "🚀 Missile Launch"
+missileLaunchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+missileLaunchBtn.Font = Enum.Font.Gotham
+missileLaunchBtn.TextSize = 14
+missileLaunchBtn.LayoutOrder = 6
+missileLaunchBtn.Parent = VisualFrame
+makeRounded(missileLaunchBtn, 6)
 
-missileBtn.MouseButton1Click:Connect(function()
-	local inputName = missileTargetBox.Text:lower()
+missileLaunchBtn.MouseButton1Click:Connect(function()
+	local char = LocalPlayer.Character
+	if not char then return end
+
+	local root = char:FindFirstChild("HumanoidRootPart")
+	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
+	if not root or not humanoid then return end
+
+	local inputName = missileInput.Text:lower()
 	local target = nil
-	for _, plr in ipairs(game.Players:GetPlayers()) do
+
+	for _, plr in ipairs(Players:GetPlayers()) do
 		if plr ~= LocalPlayer and plr.DisplayName:lower() == inputName then
 			target = plr
 			break
@@ -561,44 +569,63 @@ missileBtn.MouseButton1Click:Connect(function()
 	end
 
 	if not target or not target.Character or not target.Character:FindFirstChild("Head") then
-		warn("❌ Target not found or missing head.")
+		warn("Target not found")
 		return
 	end
 
-	local char = LocalPlayer.Character
-	if not char then return end
-
-	local root = char:FindFirstChild("HumanoidRootPart")
-	local humanoid = char:FindFirstChildOfClass("Humanoid")
-	if not root or not humanoid then return end
-
-	-- Step 1: Spin in place for 2 seconds
+	-- Phase 1: Spin in place for 2 seconds
 	local spin = Instance.new("BodyAngularVelocity")
-	spin.AngularVelocity = Vector3.new(0, 25, 0)
-	spin.MaxTorque = Vector3.new(1, 1, 1) * math.huge
-	spin.P = 10000
+	spin.AngularVelocity = Vector3.new(0, 20, 0)
+	spin.MaxTorque = Vector3.new(0, math.huge, 0)
+	spin.P = 1000
 	spin.Parent = root
 
 	task.wait(2)
-
-	-- Step 2: Go straight up
 	spin:Destroy()
-	root.Velocity = Vector3.new(0, 60, 0)
 
+	-- Phase 2: Lift up slowly
+	local liftForce = Instance.new("BodyVelocity")
+	liftForce.Velocity = Vector3.new(0, 25, 0)
+	liftForce.MaxForce = Vector3.new(0, math.huge, 0)
+	liftForce.P = 5000
+	liftForce.Parent = root
 	task.wait(1)
+	liftForce:Destroy()
 
-	-- Step 3: Hover and rotate to face target
-	root.Velocity = Vector3.zero
-	local direction = (target.Character.Head.Position - root.Position).Unit
-	local newLook = CFrame.new(root.Position, root.Position + direction)
-	root.CFrame = CFrame.new(root.Position) * CFrame.Angles(math.rad(90), 0, 0)
-	root.CFrame = CFrame.new(root.Position, target.Character.Head.Position)
+	-- Phase 3: Pause mid-air & face target
+	local headPos = target.Character.Head.Position
+	local lookVec = (headPos - root.Position).Unit
+	local newCFrame = CFrame.new(root.Position, root.Position + lookVec)
+	root.CFrame = newCFrame
 
-	-- Step 4: Launch toward target
-	task.wait(0.25)
-	local missileForce = direction * 300
-	root.Velocity = missileForce
+	-- Freeze moment before launch
+	local freeze = Instance.new("BodyPosition")
+	freeze.Position = root.Position
+	freeze.MaxForce = Vector3.new(1, 1, 1) * math.huge
+	freeze.P = 15000
+	freeze.Parent = root
+
+	task.wait(0.75)
+	freeze:Destroy()
+
+	-- Phase 4: Launch toward target
+	local launchForce = Instance.new("BodyVelocity")
+	launchForce.Velocity = lookVec * 200
+	launchForce.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+	launchForce.P = 12500
+	launchForce.Parent = root
+
+	-- Freeze at target after 1.25s
+	task.delay(1.25, function()
+		launchForce:Destroy()
+		local freezeFinal = Instance.new("BodyPosition")
+		freezeFinal.Position = root.Position
+		freezeFinal.MaxForce = Vector3.new(1, 1, 1) * math.huge
+		freezeFinal.P = 15000
+		freezeFinal.Parent = root
+	end)
 end)
+
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
