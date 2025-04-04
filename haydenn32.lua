@@ -463,68 +463,58 @@ mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
 -- 💥 Spin & Explode Button
-local spinExplodeBtn = Instance.new("TextButton")
-spinExplodeBtn.Size = UDim2.new(0, 200, 0, 30)
-spinExplodeBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-spinExplodeBtn.Text = "💥 Spin & Explode"
-spinExplodeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-spinExplodeBtn.Font = Enum.Font.Gotham
-spinExplodeBtn.TextSize = 14
-spinExplodeBtn.LayoutOrder = 2
-spinExplodeBtn.Parent = VisualFrame
-makeRounded(spinExplodeBtn, 6)
+local explodeBtn = Instance.new("TextButton")
+explodeBtn.Size = UDim2.new(0, 200, 0, 30)
+explodeBtn.BackgroundColor3 = Color3.fromRGB(60, 20, 20)
+explodeBtn.Text = "💥 Spin & Explode"
+explodeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+explodeBtn.Font = Enum.Font.Gotham
+explodeBtn.TextSize = 14
+explodeBtn.LayoutOrder = 2
+explodeBtn.Parent = VisualFrame
+makeRounded(explodeBtn, 6)
 
-spinExplodeBtn.MouseButton1Click:Connect(function()
+explodeBtn.MouseButton1Click:Connect(function()
 	local char = LocalPlayer.Character
-	if not char then return end
+	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
 
-	-- Make character spin
-	local hrp = char:FindFirstChild("HumanoidRootPart")
-	if hrp then
-		local spinning = true
-		local connection
-		connection = game:GetService("RunService").Heartbeat:Connect(function()
-			if spinning and hrp and hrp.Parent then
-				hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(30), 0)
-			else
-				connection:Disconnect()
-			end
-		end)
+	local hrp = char.HumanoidRootPart
 
-		-- Wait then fall and explode
-		task.delay(2, function()
-			spinning = false
+	-- Detach character control
+	local humanoid = char:FindFirstChildOfClass("Humanoid")
+	if humanoid then humanoid.PlatformStand = true end
 
-			local humanoid = char:FindFirstChildOfClass("Humanoid")
-			if humanoid then
-				humanoid:ChangeState(Enum.HumanoidStateType.Ragdoll)
-			end
+	-- Spin logic
+	local spinSpeed = math.rad(100) -- 100 degrees/frame
+	local spinConn
+	local startTime = tick()
 
-			-- Add explosion force
-			for _, part in ipairs(char:GetDescendants()) do
-				if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-					part.Anchored = false
-					local force = Instance.new("BodyVelocity")
-					force.Velocity = Vector3.new(math.random(-30,30), math.random(20,50), math.random(-30,30))
-					force.MaxForce = Vector3.new(1e5,1e5,1e5)
-					force.P = 10000
-					force.Parent = part
-					game:GetService("Debris"):AddItem(force, 0.5)
+	spinConn = game:GetService("RunService").RenderStepped:Connect(function()
+		if tick() - startTime >= 2.82 then -- Spin for 2.82 seconds
+			spinConn:Disconnect()
+
+			-- Apply explosive force and kill
+			for _, part in pairs(char:GetChildren()) do
+				if part:IsA("BasePart") then
+					part.Velocity = Vector3.new(
+						math.random(-123, 123),
+						math.random(80, 123),
+						math.random(-123, 123)
+					)
 				end
 			end
 
-			-- Optional particle explosion
-			local explosion = Instance.new("ParticleEmitter")
-			explosion.Texture = "rbxassetid://243098098" -- simple fireball
-			explosion.Rate = 200
-			explosion.Lifetime = NumberRange.new(0.5)
-			explosion.Speed = NumberRange.new(50)
-			explosion.Rotation = NumberRange.new(0, 360)
-			explosion.Parent = hrp
-			game:GetService("Debris"):AddItem(explosion, 0.5)
-		end)
-	end
+			if humanoid then
+				humanoid.Health = 0
+			end
+			return
+		end
+
+		-- Rotate HRP
+		hrp.CFrame = hrp.CFrame * CFrame.Angles(0, spinSpeed, 0)
+	end)
 end)
+
 
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
