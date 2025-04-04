@@ -555,10 +555,10 @@ staticOverlay.Size = UDim2.new(1, 0, 1, 0)
 staticOverlay.Position = UDim2.new(0, 0, 0, 0)
 staticOverlay.BackgroundTransparency = 1
 staticOverlay.ImageTransparency = 0
-staticOverlay.Image = "rbxassetid://2270890385"
+staticOverlay.Image = "rbxassetid://15988137208"
 staticOverlay.Visible = false
 staticOverlay.ZIndex = 9999
-staticOverlay.Parent = game.CoreGui:FindFirstChild("SigmaHub") or game.CoreGui
+staticOverlay.Parent = game:GetService("CoreGui")
 
 -- Toggle Static Button
 local toggleStaticBtn = Instance.new("TextButton")
@@ -668,7 +668,6 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 		print("🔁 Returned camera to self")
 	end
 end)
-
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
 mainFrame.ClipsDescendants = true
