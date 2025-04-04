@@ -462,44 +462,61 @@ local VisualFrame = createTabFrame("Visual", "Visual Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
--- 🧨 Chaos Spin Button
-local chaosSpinBtn = Instance.new("TextButton")
-chaosSpinBtn.Size = UDim2.new(0, 200, 0, 30)
-chaosSpinBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-chaosSpinBtn.Text = "💥 Chaos Spin & Explode"
-chaosSpinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-chaosSpinBtn.Font = Enum.Font.Gotham
-chaosSpinBtn.TextSize = 14
-chaosSpinBtn.LayoutOrder = 10
-chaosSpinBtn.Parent = VisualFrame
-makeRounded(chaosSpinBtn, 6)
+-- 🎆 Spin & Explode Button (Visual Tab)
+local spinExplodeBtn = Instance.new("TextButton")
+spinExplodeBtn.Size = UDim2.new(0, 200, 0, 30)
+spinExplodeBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+spinExplodeBtn.Text = "💥 Spin & Explode"
+spinExplodeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+spinExplodeBtn.Font = Enum.Font.Gotham
+spinExplodeBtn.TextSize = 14
+spinExplodeBtn.LayoutOrder = 2
+spinExplodeBtn.Parent = VisualFrame
+makeRounded(spinExplodeBtn, 6)
 
-chaosSpinBtn.MouseButton1Click:Connect(function()
+spinExplodeBtn.MouseButton1Click:Connect(function()
 	local char = LocalPlayer.Character
 	if not char then return end
-	local hrp = char:FindFirstChild("HumanoidRootPart")
-	local humanoid = char:FindFirstChildOfClass("Humanoid")
-	if not hrp or not humanoid then return end
 
-	-- Stop movement and ragdoll posture
-	humanoid.PlatformStand = true
-	hrp.Anchored = false
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if not root then return end
 
-	-- Add BodyAngularVelocity for chaotic multi-axis spinning
-	local bav = Instance.new("BodyAngularVelocity")
-	bav.AngularVelocity = Vector3.new(50, 50, 50) -- full 3D spin
-	bav.MaxTorque = Vector3.new(999999, 999999, 999999)
-	bav.P = 12500
-	bav.Parent = hrp
-
-	-- Wait 3 seconds then explode
-	task.delay(3, function()
-		bav:Destroy()
-		if humanoid then
-			humanoid.Health = 0
+	-- Anchor the character
+	for _, part in pairs(char:GetDescendants()) do
+		if part:IsA("BasePart") then
+			part.Anchored = true
 		end
+	end
+
+	local spinning = true
+	local startTime = tick()
+
+	-- Spin parts in all directions
+	task.spawn(function()
+		while spinning and tick() - startTime < 3 do
+			for _, part in pairs(char:GetDescendants()) do
+				if part:IsA("BasePart") then
+					local x = math.rad(math.random(-40, 40))
+					local y = math.rad(math.random(-40, 40))
+					local z = math.rad(math.random(-40, 40))
+					part.CFrame = part.CFrame * CFrame.Angles(x, y, z)
+				end
+			end
+			task.wait(0.03)
+		end
+
+		-- Unanchor and explode (kill)
+		for _, part in pairs(char:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.Anchored = false
+			end
+		end
+
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if hum then hum.Health = 0 end
 	end)
 end)
+
 
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
