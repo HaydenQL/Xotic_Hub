@@ -595,19 +595,17 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	-- Phase 3: Pause mid-air & face target
 	local headPos = target.Character.Head.Position
 	local lookVec = (headPos - root.Position).Unit
-	local missileCF = CFrame.lookAt(root.Position, root.Position + lookVec) * CFrame.Angles(math.rad(90), 0, 0)
-	root.CFrame = missileCF
+	local newCFrame = CFrame.lookAt(root.Position, headPos) * CFrame.Angles(math.rad(90), 0, 0) -- Face with top of head
+	root.CFrame = newCFrame
 
-	-- Freeze moment before launch
 	local freeze = Instance.new("BodyPosition")
 	freeze.Position = root.Position
-	freeze.MaxForce = Vector3.new(1, 1, 1) * math.huge
+	freeze.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
 	freeze.P = 15000
 	freeze.Parent = root
 
 	task.wait(0.75)
 	freeze:Destroy()
-
 
 	-- Phase 4: Launch toward target
 	local launchForce = Instance.new("BodyVelocity")
@@ -616,18 +614,26 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	launchForce.P = 12500
 	launchForce.Parent = root
 
-	-- Kill on impact detection
-	local impactCheck = game:GetService("RunService").Heartbeat:Connect(function()
-		if (root.Position - headPos).Magnitude <= 5 then
-			local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-			if hum then
-				hum.Health = 0
+	-- Impact detection: stop when close
+	local connection
+	connection = game:GetService("RunService").Heartbeat:Connect(function()
+		if target and target.Character and target.Character:FindFirstChild("Head") then
+			local distance = (root.Position - target.Character.Head.Position).Magnitude
+			if distance <= 5 then
+				launchForce:Destroy()
+				connection:Disconnect()
+
+				-- Restore control
+				if humanoid then
+					humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+				end
+				print("💥 Missile impact! Freed.")
 			end
-			launchForce:Destroy()
-			impactCheck:Disconnect()
 		end
-	end
+	end)
 end)
+
+
 
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
