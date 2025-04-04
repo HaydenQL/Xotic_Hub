@@ -512,71 +512,10 @@ missileBtn.Text = "🚀 Launch Missile"
 missileBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 missileBtn.Font = Enum.Font.Gotham
 missileBtn.TextSize = 14
-missileBtn.LayoutOrder = 3
+missileBtn.LayoutOrder = 4
 missileBtn.Parent = VisualFrame
 makeRounded(missileBtn, 6)
 
--- Input box for display name
-local missileBox = Instance.new("TextBox")
-missileBox.Size = UDim2.new(0, 200, 0, 30)
-missileBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-missileBox.PlaceholderText = "Target Display Name"
-missileBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-missileBox.Font = Enum.Font.Gotham
-missileBox.TextSize = 14
-missileBox.ClearTextOnFocus = false
-missileBox.LayoutOrder = 4
-missileBox.Parent = VisualFrame
-makeRounded(missileBox, 6)
-
-missileBtn.MouseButton1Click:Connect(function()
-	local targetName = missileBox.Text:lower()
-	local myChar = LocalPlayer.Character
-	if not myChar then return end
-
-	local hrp = myChar:FindFirstChild("HumanoidRootPart")
-	if not hrp then return end
-
-	-- Find target
-	local targetPlayer = nil
-	for _, plr in pairs(Players:GetPlayers()) do
-		if plr ~= LocalPlayer and plr.DisplayName:lower() == targetName then
-			targetPlayer = plr
-			break
-		end
-	end
-	if not targetPlayer or not targetPlayer.Character or not targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-		warn("❌ Target not found.")
-		return
-	end
-
-	local targetPos = targetPlayer.Character.HumanoidRootPart.Position
-
-	-- Spin effect
-	local spin = Instance.new("BodyAngularVelocity")
-	spin.AngularVelocity = Vector3.new(0, 150, 0)
-	spin.MaxTorque = Vector3.new(1, 1, 1) * 100000
-	spin.P = 1000
-	spin.Parent = hrp
-
-	-- Fly upward for 2 seconds
-	hrp.Velocity = Vector3.new(0, 150, 0)
-
-	task.delay(2, function()
-		-- Aim and launch toward target
-		local dir = (targetPos - hrp.Position).Unit
-		hrp.Velocity = dir * 300
-
-		-- Explosion and death after impact
-		task.delay(1, function()
-			spin:Destroy()
-			local humanoid = myChar:FindFirstChildWhichIsA("Humanoid")
-			if humanoid then
-				humanoid.Health = 0
-			end
-		end)
-	end)
-end)
 
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
