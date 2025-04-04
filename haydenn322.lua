@@ -462,11 +462,11 @@ local VisualFrame = createTabFrame("Visual", "Visual Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
--- 💥 Spin-Fall-Explode Button
+-- 💥 Explode Spin Button
 local explodeBtn = Instance.new("TextButton")
 explodeBtn.Size = UDim2.new(0, 200, 0, 30)
-explodeBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-explodeBtn.Text = "💥 Explode & Spin"
+explodeBtn.BackgroundColor3 = Color3.fromRGB(150, 30, 30)
+explodeBtn.Text = "💥 Explode Spin"
 explodeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 explodeBtn.Font = Enum.Font.Gotham
 explodeBtn.TextSize = 14
@@ -478,32 +478,38 @@ explodeBtn.MouseButton1Click:Connect(function()
 	local char = LocalPlayer.Character
 	if not char then return end
 
-	local root = char:FindFirstChild("HumanoidRootPart")
-	local hum = char:FindFirstChildOfClass("Humanoid")
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	local humanoid = char:FindFirstChildOfClass("Humanoid")
 
-	if root and hum then
-		hum:ChangeState(Enum.HumanoidStateType.Physics)
+	if not hrp or not humanoid then return end
 
-		for _, part in pairs(char:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.Anchored = false
-				part.Velocity = Vector3.new(
-					math.random(-150, 150),
-					math.random(100, 300),
-					math.random(-150, 150)
-				)
-				part.RotVelocity = Vector3.new(
-					math.rad(150),
-					math.rad(200),
-					math.rad(180)
-				)
-			end
+	-- Anchor to hold still
+	hrp.Anchored = true
+
+	-- Spin in all directions
+	local spinning = true
+	local spinConn
+	spinConn = game:GetService("RunService").Heartbeat:Connect(function()
+		if spinning and hrp then
+			local spinCFrame = hrp.CFrame * CFrame.Angles(
+				math.rad(math.random(-25, 25)),
+				math.rad(math.random(-25, 25)),
+				math.rad(math.random(-25, 25))
+			)
+			hrp.CFrame = spinCFrame
 		end
+	end)
 
-		wait(0.4)
-		hum.Health = 0
-	end
+	-- Wait 3 seconds then explode
+	task.delay(3, function()
+		spinning = false
+		if spinConn then spinConn:Disconnect() end
+
+		hrp.Anchored = false
+		humanoid.Health = 0
+	end)
 end)
+
 
 
 
