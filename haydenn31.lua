@@ -548,24 +548,24 @@ local originalCamCF = cam.CFrame
 local spyCamActive = false
 local spyConnection = nil
 
--- Static Overlay (created without asset ID)
+-- Static Overlay (fallback with noise texture)
 local staticOverlay = Instance.new("Frame")
 staticOverlay.Name = "StaticOverlay"
 staticOverlay.Size = UDim2.new(1, 0, 1, 0)
 staticOverlay.Position = UDim2.new(0, 0, 0, 0)
-staticOverlay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-staticOverlay.BackgroundTransparency = 0
+staticOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+staticOverlay.BackgroundTransparency = 0.2
 staticOverlay.Visible = false
 staticOverlay.ZIndex = 9999
 staticOverlay.Parent = game:GetService("CoreGui")
 
--- Add a fake static using noise effect
+-- Add fallback static noise pattern
 local noise = Instance.new("ImageLabel")
 noise.Size = UDim2.new(1, 0, 1, 0)
 noise.Position = UDim2.new(0, 0, 0, 0)
 noise.BackgroundTransparency = 1
-noise.ImageTransparency = 0.15
-noise.Image = "http://www.roblox.com/asset/?id=15988137208"  -- fallback visual
+noise.ImageTransparency = 0
+noise.Image = "rbxassetid://15988137208" -- Fallback noise texture
 noise.ZIndex = 9999
 noise.Parent = staticOverlay
 
@@ -678,6 +678,7 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 		print("🔁 Returned camera to self")
 	end
 end)
+
 
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
