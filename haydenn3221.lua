@@ -462,55 +462,64 @@ local VisualFrame = createTabFrame("Visual", "Visual Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
--- 💥 Explode Spin Button
-local explodeBtn = Instance.new("TextButton")
-explodeBtn.Size = UDim2.new(0, 200, 0, 30)
-explodeBtn.BackgroundColor3 = Color3.fromRGB(150, 30, 30)
-explodeBtn.Text = "💥 Explode Spin"
-explodeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-explodeBtn.Font = Enum.Font.Gotham
-explodeBtn.TextSize = 14
-explodeBtn.LayoutOrder = 99
-explodeBtn.Parent = VisualFrame
-makeRounded(explodeBtn, 6)
+-- 🧨 Spin & Explode Button
+local spinExplodeBtn = Instance.new("TextButton")
+spinExplodeBtn.Size = UDim2.new(0, 200, 0, 30)
+spinExplodeBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+spinExplodeBtn.Text = "💥 Spin, Fall & Explode"
+spinExplodeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+spinExplodeBtn.Font = Enum.Font.Gotham
+spinExplodeBtn.TextSize = 14
+spinExplodeBtn.LayoutOrder = 99
+spinExplodeBtn.Parent = VisualFrame
+makeRounded(spinExplodeBtn, 6)
 
-explodeBtn.MouseButton1Click:Connect(function()
+spinExplodeBtn.MouseButton1Click:Connect(function()
 	local char = LocalPlayer.Character
 	if not char then return end
 
-	local hrp = char:FindFirstChild("HumanoidRootPart")
-	local humanoid = char:FindFirstChildOfClass("Humanoid")
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if not root then return end
 
-	if not hrp or not humanoid then return end
-
-	-- Anchor to hold still
-	hrp.Anchored = true
-
-	-- Spin in all directions
 	local spinning = true
-	local spinConn
-	spinConn = game:GetService("RunService").Heartbeat:Connect(function()
-		if spinning and hrp then
-			local spinCFrame = hrp.CFrame * CFrame.Angles(
-				math.rad(math.random(-25, 25)),
-				math.rad(math.random(-25, 25)),
-				math.rad(math.random(-25, 25))
-			)
-			hrp.CFrame = spinCFrame
-		end
+
+	local spinConnection
+	local t = 0
+
+	spinConnection = game:GetService("RunService").RenderStepped:Connect(function(dt)
+		if not spinning then return end
+		t += dt * 10
+
+		local pitch = math.sin(t * 1.3) * math.pi
+		local yaw = math.cos(t * 1.5) * math.pi
+		local roll = math.sin(t * 1.7) * math.pi
+
+		root.CFrame = root.CFrame * CFrame.Angles(pitch * dt, yaw * dt, roll * dt)
 	end)
 
-	-- Wait 3 seconds then explode
+	-- After 3 seconds, explode
 	task.delay(3, function()
 		spinning = false
-		if spinConn then spinConn:Disconnect() end
+		if spinConnection then spinConnection:Disconnect() end
 
-		hrp.Anchored = false
-		humanoid.Health = 0
+		-- Apply velocity to fling parts
+		for _, part in pairs(char:GetChildren()) do
+			if part:IsA("BasePart") then
+				part.Velocity = Vector3.new(
+					math.random(-150, 150),
+					math.random(100, 200),
+					math.random(-150, 150)
+				)
+			end
+		end
+
+		-- Kill character
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if hum then
+			hum.Health = 0
+		end
 	end)
 end)
-
-
 
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
