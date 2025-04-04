@@ -459,9 +459,6 @@ end)
 
 --Tabs gui each
 local VisualFrame = createTabFrame("Visual", "Visual Tab")
-mainFrame.ClipsDescendants = true
-contentFrame.ClipsDescendants = true
-
 -- 🧟 Ragdoll Spin & Die Button
 local spinDieBtn = Instance.new("TextButton")
 spinDieBtn.Size = UDim2.new(0, 200, 0, 30)
