@@ -592,46 +592,44 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	task.wait(1)
 	liftForce:Destroy()
 
+	-- Ragdoll the character
+	if humanoid then
+		humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+	end
+
 	-- Phase 3: Pause mid-air & face target
 	local headPos = target.Character.Head.Position
 	local lookVec = (headPos - root.Position).Unit
-	local newCFrame = CFrame.lookAt(root.Position, headPos) * CFrame.Angles(math.rad(90), 0, 0) -- Face with top of head
-	root.CFrame = newCFrame
+
+	-- Align body with head facing the target
+	local rootOrientation = CFrame.lookAt(root.Position, headPos) * CFrame.Angles(math.rad(90), 0, 0)
+	root.CFrame = rootOrientation
 
 	local freeze = Instance.new("BodyPosition")
 	freeze.Position = root.Position
-	freeze.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+	freeze.MaxForce = Vector3.new(1, 1, 1) * math.huge
 	freeze.P = 15000
 	freeze.Parent = root
 
 	task.wait(0.75)
 	freeze:Destroy()
 
-	-- Phase 4: Launch toward target
+	-- Phase 4: Launch toward target head-first
 	local launchForce = Instance.new("BodyVelocity")
 	launchForce.Velocity = lookVec * 200
 	launchForce.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
 	launchForce.P = 12500
 	launchForce.Parent = root
 
-	-- Impact detection: stop when close
-	local connection
-	connection = game:GetService("RunService").Heartbeat:Connect(function()
-		if target and target.Character and target.Character:FindFirstChild("Head") then
-			local distance = (root.Position - target.Character.Head.Position).Magnitude
-			if distance <= 5 then
-				launchForce:Destroy()
-				connection:Disconnect()
-
-				-- Restore control
-				if humanoid then
-					humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-				end
-				print("💥 Missile impact! Freed.")
-			end
+	-- Cleanup after impact
+	task.delay(1.25, function()
+		launchForce:Destroy()
+		if humanoid then
+			humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 		end
 	end)
 end)
+
 
 
 
