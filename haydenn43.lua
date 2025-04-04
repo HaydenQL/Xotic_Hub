@@ -616,15 +616,17 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	launchForce.P = 12500
 	launchForce.Parent = root
 
-	-- Freeze at target after 1.25s
-	task.delay(1.25, function()
-		launchForce:Destroy()
-		local freezeFinal = Instance.new("BodyPosition")
-		freezeFinal.Position = root.Position
-		freezeFinal.MaxForce = Vector3.new(1, 1, 1) * math.huge
-		freezeFinal.P = 15000
-		freezeFinal.Parent = root
-	end)
+	-- Kill on impact detection
+	local impactCheck = game:GetService("RunService").Heartbeat:Connect(function()
+		if (root.Position - headPos).Magnitude <= 5 then
+			local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+			if hum then
+				hum.Health = 0
+			end
+			launchForce:Destroy()
+			impactCheck:Disconnect()
+		end
+	end
 end)
 
 
