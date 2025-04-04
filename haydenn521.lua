@@ -621,15 +621,24 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	launchForce.P = 12500
 	launchForce.Parent = root
 
-	-- Cleanup after impact
-	task.delay(1.25, function()
-		launchForce:Destroy()
-		if humanoid then
-			humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+	--- Impact detection: stop when close
+	local connection
+	connection = game:GetService("RunService").Heartbeat:Connect(function()
+		if target and target.Character and target.Character:FindFirstChild("Head") then
+			local distance = (root.Position - target.Character.Head.Position).Magnitude
+			if distance <= 5 then
+				launchForce:Destroy()
+				connection:Disconnect()
+
+				-- Restore control
+				if humanoid then
+					humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+				end
+				print("💥 Missile impact! Freed.")
+			end
 		end
 	end)
 end)
-
 
 
 
