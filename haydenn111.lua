@@ -541,11 +541,24 @@ disconnectVCBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
+
 -- 🎥 Camera Spy
 local cam = workspace.CurrentCamera
 local originalCamCF = cam.CFrame
 local spyCamActive = false
 local spyConnection = nil
+
+-- Static Overlay
+local staticOverlay = Instance.new("ImageLabel")
+staticOverlay.Name = "StaticOverlay"
+staticOverlay.Size = UDim2.new(1, 0, 1, 0)
+staticOverlay.Position = UDim2.new(0, 0, 0, 0)
+staticOverlay.BackgroundTransparency = 1
+staticOverlay.ImageTransparency = 0.7
+staticOverlay.Image = "rbxassetid://13919378951" -- Replace with your static asset ID
+staticOverlay.Visible = false
+staticOverlay.ZIndex = 10
+staticOverlay.Parent = game.CoreGui:FindFirstChild("SigmaHub") or game.CoreGui
 
 local camSpyNameLabel = Instance.new("TextLabel")
 camSpyNameLabel.Size = UDim2.new(0, 200, 0, 20)
@@ -593,50 +606,40 @@ stopSpyCamBtn.LayoutOrder = 6
 stopSpyCamBtn.Parent = VoiceChatFrame
 makeRounded(stopSpyCamBtn, 6)
 
--- 🎯 Start camera spy (smooth view mimic)
 startSpyCamBtn.MouseButton1Click:Connect(function()
 	local displayName = camSpyBox.Text:lower()
 	for _, player in pairs(game.Players:GetPlayers()) do
 		if player ~= LocalPlayer and player.DisplayName:lower() == displayName then
-			local character = player.Character
-			local head = character and character:FindFirstChild("Head")
-			local root = character and character:FindFirstChild("HumanoidRootPart")
-			if not (head and root) then return end
+			local char = player.Character
+			local head = char and char:FindFirstChild("Head")
+			local root = char and char:FindFirstChild("HumanoidRootPart")
 
-			-- Setup spy dummy camera anchor
-			if not workspace:FindFirstChild("SigmaSpyDummy") then
-				local dummy = Instance.new("Part")
-				dummy.Name = "SigmaSpyDummy"
-				dummy.Size = Vector3.new(1, 1, 1)
-				dummy.Transparency = 1
-				dummy.Anchored = true
-				dummy.CanCollide = false
-				dummy.Parent = workspace
+			if head and root then
+				originalCamCF = cam.CFrame
+				spyCamActive = true
+
+				cam.CameraType = Enum.CameraType.Scriptable
+				cam.FieldOfView = 95
+				staticOverlay.Visible = true
+
+				if spyConnection then spyConnection:Disconnect() end
+				spyConnection = game:GetService("RunService").RenderStepped:Connect(function()
+					if player.Character and head and root then
+						local lookVec = (head.CFrame.LookVector + root.CFrame.LookVector).Unit
+						local camPos = head.Position - lookVec * 5 + Vector3.new(0, 2.5, 0)
+						local bob = math.sin(tick() * 3) * 0.15
+						camPos = camPos + Vector3.new(0, bob, 0)
+						local focus = head.Position + lookVec * 10
+						cam.CFrame = CFrame.new(camPos, focus)
+					end
+				end)
+
+				print("🎥 Camera spy started on", player.DisplayName)
+				break
 			end
-
-			local spyDummy = workspace:FindFirstChild("SigmaSpyDummy")
-			originalCamCF = cam.CFrame
-			spyCamActive = true
-
-			if spyConnection then spyConnection:Disconnect() end
-			spyConnection = game:GetService("RunService").RenderStepped:Connect(function()
-				if player.Character and head and root then
-					local lookVec = (head.CFrame.LookVector + root.CFrame.LookVector).Unit
-					local camPos = head.Position - lookVec * 5 + Vector3.new(0, 2.5, 0)
-					local focusPos = head.Position + lookVec * 10
-
-					spyDummy.CFrame = CFrame.new(camPos, focusPos)
-					cam.CameraType = Enum.CameraType.Scriptable
-					cam.CFrame = spyDummy.CFrame
-				end
-			end)
-
-			print("🎥 Camera spy started on", player.DisplayName)
-			break
 		end
 	end
 end)
-
 
 stopSpyCamBtn.MouseButton1Click:Connect(function()
 	if spyCamActive then
@@ -645,7 +648,9 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 			spyConnection:Disconnect()
 			spyConnection = nil
 		end
-		cam.CFrame = originalCamCF
+		staticOverlay.Visible = false
+		cam.CameraType = Enum.CameraType.Custom
+		cam.CameraSubject = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
 		print("🔁 Returned camera to self")
 	end
 end)
