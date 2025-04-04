@@ -457,8 +457,29 @@ end)
 
 
 
---Tabs gui each
-local VisualFrame = createTabFrame("Visual", "Visual Tab")
+-- 🎨 Visual Tab (Scrollable + Ordered Buttons)
+local VisualFrame = Instance.new("ScrollingFrame")
+VisualFrame.Name = "VisualFrame"
+VisualFrame.Size = UDim2.new(1, 0, 1, 0)
+VisualFrame.CanvasSize = UDim2.new(0, 0, 0, 200) -- Expand as needed
+VisualFrame.ScrollBarThickness = 4
+VisualFrame.BackgroundTransparency = 1
+VisualFrame.Visible = false
+VisualFrame.Parent = contentFrame
+makeRounded(VisualFrame, 10)
+
+-- Layout for vertical stacking
+local visualLayout = Instance.new("UIListLayout")
+visualLayout.Padding = UDim.new(0, 6)
+visualLayout.SortOrder = Enum.SortOrder.LayoutOrder
+visualLayout.Parent = VisualFrame
+
+-- Optional padding
+local visualPadding = Instance.new("UIPadding")
+visualPadding.PaddingTop = UDim.new(0, 10)
+visualPadding.PaddingLeft = UDim.new(0, 20)
+visualPadding.Parent = VisualFrame
+
 -- 💀 Spin and Die Button (softer fling)
 local spinDieBtn = Instance.new("TextButton")
 spinDieBtn.Size = UDim2.new(0, 200, 0, 30)
@@ -467,7 +488,7 @@ spinDieBtn.Text = "💀 Spin & Explode"
 spinDieBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 spinDieBtn.Font = Enum.Font.Gotham
 spinDieBtn.TextSize = 14
-spinDieBtn.LayoutOrder = 2
+spinDieBtn.LayoutOrder = 1
 spinDieBtn.Parent = VisualFrame
 makeRounded(spinDieBtn, 6)
 
@@ -503,8 +524,7 @@ spinDieBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
-
--- 🚀 Launch Missile Button
+-- 🚀 Launch Missile Button (placed below)
 local missileBtn = Instance.new("TextButton")
 missileBtn.Size = UDim2.new(0, 200, 0, 30)
 missileBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 120)
@@ -512,9 +532,10 @@ missileBtn.Text = "🚀 Launch Missile"
 missileBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 missileBtn.Font = Enum.Font.Gotham
 missileBtn.TextSize = 14
-missileBtn.LayoutOrder = 4
+missileBtn.LayoutOrder = 2
 missileBtn.Parent = VisualFrame
 makeRounded(missileBtn, 6)
+
 
 
 
