@@ -510,12 +510,12 @@ end)
 local missileLabel = Instance.new("TextLabel")
 missileLabel.Size = UDim2.new(0, 200, 0, 20)
 missileLabel.BackgroundTransparency = 1
-missileLabel.Text = "Target Display Name:"
+missileLabel.Text = "Missile Target:"
 missileLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 missileLabel.Font = Enum.Font.Gotham
 missileLabel.TextSize = 14
 missileLabel.TextXAlignment = Enum.TextXAlignment.Left
-missileLabel.LayoutOrder = 99
+missileLabel.LayoutOrder = 104
 missileLabel.Parent = VisualFrame
 
 local missileBox = Instance.new("TextBox")
@@ -526,8 +526,8 @@ missileBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 missileBox.Font = Enum.Font.Gotham
 missileBox.TextSize = 14
 missileBox.ClearTextOnFocus = false
-missileBox.PlaceholderText = "Type a display name..."
-missileBox.LayoutOrder = 100
+missileBox.PlaceholderText = "Enter display name..."
+missileBox.LayoutOrder = 105
 missileBox.Parent = VisualFrame
 makeRounded(missileBox, 6)
 
@@ -539,14 +539,13 @@ missileBtn.Text = "🚀 Missile Launch"
 missileBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 missileBtn.Font = Enum.Font.Gotham
 missileBtn.TextSize = 14
-missileBtn.LayoutOrder = 101
+missileBtn.LayoutOrder = 106
 missileBtn.Parent = VisualFrame
 makeRounded(missileBtn, 6)
 
--- Missile Logic
 missileBtn.MouseButton1Click:Connect(function()
 	local targetName = missileBox.Text:lower()
-	local targetPlayer = nil
+	local targetPlayer
 
 	for _, plr in pairs(game.Players:GetPlayers()) do
 		if plr.DisplayName:lower() == targetName and plr ~= LocalPlayer then
@@ -563,8 +562,9 @@ missileBtn.MouseButton1Click:Connect(function()
 
 	local bp = Instance.new("BodyPosition")
 	bp.MaxForce = Vector3.new(1e6, 1e6, 1e6)
-	bp.P = 20000
+	bp.P = 30000
 	bp.D = 1000
+	bp.Position = hrp.Position
 	bp.Parent = hrp
 
 	local bav = Instance.new("BodyAngularVelocity")
@@ -575,35 +575,45 @@ missileBtn.MouseButton1Click:Connect(function()
 	local hum = myChar:FindFirstChildOfClass("Humanoid")
 	if hum then hum:ChangeState(Enum.HumanoidStateType.Ragdoll) end
 
+	local spinTime = 2
 	local t = 0
-	local ramp = game:GetService("RunService").Heartbeat:Connect(function(dt)
+	local launchStarted = false
+
+	local loop = game:GetService("RunService").Heartbeat:Connect(function(dt)
 		t = t + dt
-		local spinSpeed = math.clamp(t * 15, 0, 100)
+		local spinSpeed = math.clamp(t * 12, 0, 100)
 		bav.AngularVelocity = Vector3.new(spinSpeed, spinSpeed * 2, spinSpeed)
 
-		if t >= 2 then
+		if t >= spinTime and not launchStarted then
+			launchStarted = true
+
 			local targetHRP = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-			if targetHRP then
-				local startPos = hrp.Position + Vector3.new(0, 10, 0)
-				local endPos = targetHRP.Position + Vector3.new(0, 3, 0)
-				local direction = (endPos - startPos).Unit
-				bp.Position = startPos
-				wait(0.2)
-				for i = 1, 100 do
-					bp.Position = bp.Position + direction * (i * 0.1)
+			if not targetHRP then loop:Disconnect() return end
+
+			local startPos = hrp.Position
+			local targetPos = targetHRP.Position + Vector3.new(0, 2, 0)
+			local midPos = startPos + Vector3.new(0, 40, 0)
+
+			coroutine.wrap(function()
+				-- Go up
+				for i = 1, 20 do
+					bp.Position = midPos
 					wait(0.01)
 				end
-			end
-			ramp:Disconnect()
-			wait(0.2)
-			hum:TakeDamage(9999)
-			bp:Destroy()
-			bav:Destroy()
+				-- Dive to target
+				for i = 1, 50 do
+					bp.Position = bp.Position:Lerp(targetPos, 0.1 + (i/100))
+					wait(0.01)
+				end
+				wait(0.2)
+				if hum then hum:TakeDamage(9999) end
+				bp:Destroy()
+				bav:Destroy()
+				loop:Disconnect()
+			end)()
 		end
 	end)
 end)
-
-
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
