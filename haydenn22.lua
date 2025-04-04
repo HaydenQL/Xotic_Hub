@@ -554,16 +554,27 @@ staticOverlay.Name = "StaticOverlay"
 staticOverlay.Size = UDim2.new(1, 0, 1, 0)
 staticOverlay.Position = UDim2.new(0, 0, 0, 0)
 staticOverlay.BackgroundTransparency = 1
-staticOverlay.ImageTransparency = 0.6 -- Slightly less transparent
+staticOverlay.ImageTransparency = 0
 staticOverlay.Image = "rbxassetid://2270890385"
 staticOverlay.Visible = false
 staticOverlay.ZIndex = 9999
 staticOverlay.Parent = game.CoreGui:FindFirstChild("SigmaHub") or game.CoreGui
 
--- Force render refresh
-staticOverlay.Visible = false
-task.wait(0.1)
-staticOverlay.Visible = true
+-- Toggle Static Button
+local toggleStaticBtn = Instance.new("TextButton")
+toggleStaticBtn.Size = UDim2.new(0, 200, 0, 30)
+toggleStaticBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+toggleStaticBtn.Text = "📺 Toggle Static Overlay"
+toggleStaticBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleStaticBtn.Font = Enum.Font.Gotham
+toggleStaticBtn.TextSize = 14
+toggleStaticBtn.LayoutOrder = 7
+toggleStaticBtn.Parent = VoiceChatFrame
+makeRounded(toggleStaticBtn, 6)
+
+toggleStaticBtn.MouseButton1Click:Connect(function()
+	staticOverlay.Visible = not staticOverlay.Visible
+end)
 
 local camSpyNameLabel = Instance.new("TextLabel")
 camSpyNameLabel.Size = UDim2.new(0, 200, 0, 20)
@@ -625,7 +636,6 @@ startSpyCamBtn.MouseButton1Click:Connect(function()
 
 				cam.CameraType = Enum.CameraType.Scriptable
 				cam.FieldOfView = 95
-				staticOverlay.Visible = true
 
 				if spyConnection then spyConnection:Disconnect() end
 				spyConnection = game:GetService("RunService").RenderStepped:Connect(function()
@@ -653,13 +663,11 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 			spyConnection:Disconnect()
 			spyConnection = nil
 		end
-		staticOverlay.Visible = false
 		cam.CameraType = Enum.CameraType.Custom
 		cam.CameraSubject = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
 		print("🔁 Returned camera to self")
 	end
 end)
-
 
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
