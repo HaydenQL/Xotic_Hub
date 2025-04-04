@@ -462,57 +462,47 @@ local VisualFrame = createTabFrame("Visual", "Visual Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
--- 💥 Spin & Explode Button
+-- 💥 Spin-Fall-Explode Button
 local explodeBtn = Instance.new("TextButton")
 explodeBtn.Size = UDim2.new(0, 200, 0, 30)
-explodeBtn.BackgroundColor3 = Color3.fromRGB(60, 20, 20)
-explodeBtn.Text = "💥 Spin & Explode"
+explodeBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+explodeBtn.Text = "💥 Explode & Spin"
 explodeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 explodeBtn.Font = Enum.Font.Gotham
 explodeBtn.TextSize = 14
-explodeBtn.LayoutOrder = 2
+explodeBtn.LayoutOrder = 99
 explodeBtn.Parent = VisualFrame
 makeRounded(explodeBtn, 6)
 
 explodeBtn.MouseButton1Click:Connect(function()
 	local char = LocalPlayer.Character
-	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+	if not char then return end
 
-	local hrp = char.HumanoidRootPart
+	local root = char:FindFirstChild("HumanoidRootPart")
+	local hum = char:FindFirstChildOfClass("Humanoid")
 
-	-- Detach character control
-	local humanoid = char:FindFirstChildOfClass("Humanoid")
-	if humanoid then humanoid.PlatformStand = true end
+	if root and hum then
+		hum:ChangeState(Enum.HumanoidStateType.Physics)
 
-	-- Spin logic
-	local spinSpeed = math.rad(100) -- 100 degrees/frame
-	local spinConn
-	local startTime = tick()
-
-	spinConn = game:GetService("RunService").RenderStepped:Connect(function()
-		if tick() - startTime >= 2.82 then -- Spin for 2.82 seconds
-			spinConn:Disconnect()
-
-			-- Apply explosive force and kill
-			for _, part in pairs(char:GetChildren()) do
-				if part:IsA("BasePart") then
-					part.Velocity = Vector3.new(
-						math.random(-123, 123),
-						math.random(80, 123),
-						math.random(-123, 123)
-					)
-				end
+		for _, part in pairs(char:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.Anchored = false
+				part.Velocity = Vector3.new(
+					math.random(-150, 150),
+					math.random(100, 300),
+					math.random(-150, 150)
+				)
+				part.RotVelocity = Vector3.new(
+					math.rad(150),
+					math.rad(200),
+					math.rad(180)
+				)
 			end
-
-			if humanoid then
-				humanoid.Health = 0
-			end
-			return
 		end
 
-		-- Rotate HRP
-		hrp.CFrame = hrp.CFrame * CFrame.Angles(0, spinSpeed, 0)
-	end)
+		wait(0.4)
+		hum.Health = 0
+	end
 end)
 
 
