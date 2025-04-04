@@ -557,8 +557,13 @@ staticOverlay.BackgroundTransparency = 1
 staticOverlay.ImageTransparency = 0.6 -- Slightly less transparent
 staticOverlay.Image = "rbxassetid://2270890385"
 staticOverlay.Visible = false
-staticOverlay.ZIndex = 10
+staticOverlay.ZIndex = 9999
 staticOverlay.Parent = game.CoreGui:FindFirstChild("SigmaHub") or game.CoreGui
+
+-- Force render refresh
+staticOverlay.Visible = false
+task.wait(0.1)
+staticOverlay.Visible = true
 
 local camSpyNameLabel = Instance.new("TextLabel")
 camSpyNameLabel.Size = UDim2.new(0, 200, 0, 20)
@@ -654,6 +659,7 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 		print("🔁 Returned camera to self")
 	end
 end)
+
 
 -- settings
 local SettingsFrame = createTabFrame("Settings", "Settings Tab")
