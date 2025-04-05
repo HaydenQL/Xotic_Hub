@@ -114,7 +114,7 @@ versionLabel.Parent = mainFrame
 local tabInfo = {
 	{"🏠", "Home"},
 	{"🧍", "Player"},
-	{"🎨", ""},
+	{"🎨", "Visual"},
 	{"🎙️", "VoiceChat"},
 	{"⚙️", "Settings"},
 	{"📜", "Credits"},
@@ -480,7 +480,6 @@ visualPadding.PaddingTop = UDim.new(0, 10)
 visualPadding.PaddingLeft = UDim.new(0, 20)
 visualPadding.Parent = VisualFrame
 
-
 -- 💀 Spin and Die Button (softer fling)
 local spinDieBtn = Instance.new("TextButton")
 spinDieBtn.Size = UDim2.new(0, 200, 0, 30)
@@ -538,7 +537,6 @@ missileInput.LayoutOrder = 5
 missileInput.ClearTextOnFocus = false
 missileInput.Parent = VisualFrame
 makeRounded(missileInput, 6)
-
 -- 🚀 Missile Button
 local missileLaunchBtn = Instance.new("TextButton")
 missileLaunchBtn.Size = UDim2.new(0, 200, 0, 30)
@@ -636,8 +634,6 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 		root.Velocity = toTarget.Unit * 300
 	end)
 end)
-
-
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
