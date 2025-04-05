@@ -581,6 +581,27 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	cam.CameraType = Enum.CameraType.Scriptable
 	local followConn
 
+	-- 📹 Missile Camera Shake
+	task.spawn(function()
+		local startTime = tick()
+		local duration = 1.5
+		while tick() - startTime < duration do
+			local offset = Vector3.new(math.random(-2,2)/10, math.random(-2,2)/10, math.random(-2,2)/10)
+			cam.CFrame = CFrame.new(cam.CFrame.Position + offset)
+			task.wait()
+		end
+	end)
+
+	-- 🎥 Smooth Follow Camera
+	followConn = game:GetService("RunService").RenderStepped:Connect(function()
+		if cam.CameraType == Enum.CameraType.Scriptable and root then
+			local pos = root.Position
+			cam.CFrame = CFrame.new(pos + Vector3.new(0, 2, -6), pos)
+		else
+			followConn:Disconnect()
+		end
+	end)
+
 	-- Phase 1: Spin in place for 2 seconds
 	local spin = Instance.new("BodyAngularVelocity")
 	spin.AngularVelocity = Vector3.new(0, 20, 0)
@@ -614,7 +635,6 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	align.P = 10000
 	align.CFrame = CFrame.lookAt(root.Position, target.Character.Head.Position) * CFrame.Angles(math.rad(90), 0, 0)
 	align.Parent = root
-
 	task.wait(0.75)
 	freeze:Destroy()
 
@@ -662,35 +682,6 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
--- 📍 Missile Camera Shake
-local function missileCamShake()
-	local startTime = tick()
-	local duration = 1.5
-	while tick() - startTime < duration do
-		local offset = Vector3.new(math.random(-2,2)/10, math.random(-2,2)/10, math.random(-2,2)/10)
-		cam.CFrame = CFrame.new(cam.CFrame.Position + offset)
-		task.wait()
-	end
-end
-
-coroutine.wrap(missileCamShake)()
-
--- 🎥 Smooth Follow Camera
-local followCamConn
-followCamConn = game:GetService("RunService").RenderStepped:Connect(function()
-	if cam.CameraType == Enum.CameraType.Scriptable and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-		local pos = LocalPlayer.Character.HumanoidRootPart.Position
-		cam.CFrame = CFrame.new(pos + Vector3.new(0, 2, -6), pos)
-	else
-		followCamConn:Disconnect()
-	end
-end)
-
--- 🎬 Restore camera after 5s
-task.delay(5, function()
-	cam.CameraType = originalCameraType
-	cam.CameraSubject = originalSubject
-end)
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
