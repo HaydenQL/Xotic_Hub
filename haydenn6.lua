@@ -539,6 +539,11 @@ missileInput.Parent = VisualFrame
 makeRounded(missileInput, 6)
 
 -- 🚀 Missile Button
+local cam = workspace.CurrentCamera
+local originalCameraType = cam.CameraType
+local originalSubject = cam.CameraSubject
+
+
 local missileLaunchBtn = Instance.new("TextButton")
 missileLaunchBtn.Size = UDim2.new(0, 200, 0, 30)
 missileLaunchBtn.BackgroundColor3 = Color3.fromRGB(20, 100, 200)
@@ -640,6 +645,43 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
+-- Missile cam shake and follow
+local cameraShake = coroutine.create(function()
+	local startTime = tick()
+	local duration = 1.5 -- Shake duration
+	while tick() - startTime < duration do
+		local offset = Vector3.new(
+			math.random(-2, 2) / 10,
+			math.random(-2, 2) / 10,
+			math.random(-2, 2) / 10
+		)
+		cam.CFrame = CFrame.new(root.Position + Vector3.new(0, 2, -6) + offset, root.Position)
+		task.wait()
+	end
+end)
+
+-- Switch camera to third-person missile view
+cam.CameraType = Enum.CameraType.Scriptable
+coroutine.resume(cameraShake)
+
+-- Smooth follow missile (after shake)
+task.delay(1.5, function()
+	local followConn
+	followConn = game:GetService("RunService").RenderStepped:Connect(function()
+		if root and cam.CameraType == Enum.CameraType.Scriptable then
+			local missilePos = root.Position
+			cam.CFrame = CFrame.new(missilePos + Vector3.new(0, 2, -6), missilePos)
+		else
+			if followConn then followConn:Disconnect() end
+		end
+	end)
+end)
+
+-- Revert camera after hit
+task.delay(3.2, function()
+	cam.CameraType = originalCameraType
+	cam.CameraSubject = originalSubject
+end)
 
 
 
