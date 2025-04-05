@@ -543,7 +543,6 @@ local cam = workspace.CurrentCamera
 local originalCameraType = cam.CameraType
 local originalSubject = cam.CameraSubject
 
-
 local missileLaunchBtn = Instance.new("TextButton")
 missileLaunchBtn.Size = UDim2.new(0, 200, 0, 30)
 missileLaunchBtn.BackgroundColor3 = Color3.fromRGB(20, 100, 200)
@@ -598,15 +597,11 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	liftForce:Destroy()
 
 	-- Ragdoll the character
-	if humanoid then
-		humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-	end
+	humanoid:ChangeState(Enum.HumanoidStateType.Physics)
 
 	-- Phase 3: Pause mid-air & face target
 	local headPos = target.Character.Head.Position
 	local lookVec = (headPos - root.Position).Unit
-
-	-- Align body with head facing the target
 	local rootOrientation = CFrame.lookAt(root.Position, headPos) * CFrame.Angles(math.rad(90), 0, 0)
 	root.CFrame = rootOrientation
 
@@ -615,7 +610,6 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	freeze.MaxForce = Vector3.new(1, 1, 1) * math.huge
 	freeze.P = 15000
 	freeze.Parent = root
-
 	task.wait(0.75)
 	freeze:Destroy()
 
@@ -626,7 +620,32 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	launchForce.P = 12500
 	launchForce.Parent = root
 
-	--- Impact detection: stop when close
+	-- Missile cam shake and follow
+	cam.CameraType = Enum.CameraType.Scriptable
+	local cameraShake = coroutine.create(function()
+		local startTime = tick()
+		local duration = 1.5
+		while tick() - startTime < duration do
+			local offset = Vector3.new(math.random(-2,2)/10, math.random(-2,2)/10, math.random(-2,2)/10)
+			cam.CFrame = CFrame.new(root.Position + Vector3.new(0,2,-6) + offset, root.Position)
+			task.wait()
+		end
+	end)
+	coroutine.resume(cameraShake)
+
+	task.delay(1.5, function()
+		local followConn
+		followConn = game:GetService("RunService").RenderStepped:Connect(function()
+			if root and cam.CameraType == Enum.CameraType.Scriptable then
+				local missilePos = root.Position
+				cam.CFrame = CFrame.new(missilePos + Vector3.new(0, 2, -6), missilePos)
+			else
+				if followConn then followConn:Disconnect() end
+			end
+		end)
+	end)
+
+	-- Restore camera after impact
 	local connection
 	connection = game:GetService("RunService").Heartbeat:Connect(function()
 		if target and target.Character and target.Character:FindFirstChild("Head") then
@@ -634,54 +653,17 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 			if distance <= 5 then
 				launchForce:Destroy()
 				connection:Disconnect()
-
-				-- Restore control
 				if humanoid then
 					humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 				end
+				cam.CameraType = originalCameraType
+				cam.CameraSubject = originalSubject
 				print("💥 Missile impact! Freed.")
 			end
 		end
 	end)
 end)
 
--- Missile cam shake and follow
-local cameraShake = coroutine.create(function()
-	local startTime = tick()
-	local duration = 1.5 -- Shake duration
-	while tick() - startTime < duration do
-		local offset = Vector3.new(
-			math.random(-2, 2) / 10,
-			math.random(-2, 2) / 10,
-			math.random(-2, 2) / 10
-		)
-		cam.CFrame = CFrame.new(root.Position + Vector3.new(0, 2, -6) + offset, root.Position)
-		task.wait()
-	end
-end)
-
--- Switch camera to third-person missile view
-cam.CameraType = Enum.CameraType.Scriptable
-coroutine.resume(cameraShake)
-
--- Smooth follow missile (after shake)
-task.delay(1.5, function()
-	local followConn
-	followConn = game:GetService("RunService").RenderStepped:Connect(function()
-		if root and cam.CameraType == Enum.CameraType.Scriptable then
-			local missilePos = root.Position
-			cam.CFrame = CFrame.new(missilePos + Vector3.new(0, 2, -6), missilePos)
-		else
-			if followConn then followConn:Disconnect() end
-		end
-	end)
-end)
-
--- Revert camera after hit
-task.delay(3.2, function()
-	cam.CameraType = originalCameraType
-	cam.CameraSubject = originalSubject
-end)
 
 
 
