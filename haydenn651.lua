@@ -114,7 +114,7 @@ versionLabel.Parent = mainFrame
 local tabInfo = {
 	{"🏠", "Home"},
 	{"🧍", "Player"},
-	{"🎨", "Visual"},
+	{"🎨", ""},
 	{"🎙️", "VoiceChat"},
 	{"⚙️", "Settings"},
 	{"📜", "Credits"},
@@ -636,46 +636,72 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 end)
 
 
--- 👥 Clone Mirage Button
-local cloneBtn = Instance.new("TextButton")
-cloneBtn.Size = UDim2.new(0, 200, 0, 30)
-cloneBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-cloneBtn.Text = "👥 Clone Mirage"
-cloneBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-cloneBtn.Font = Enum.Font.Gotham
-cloneBtn.TextSize = 14
-cloneBtn.LayoutOrder = 7
-cloneBtn.Parent = VisualFrame
-makeRounded(cloneBtn, 6)
+-- 🔮 Clone Mirage Illusion
+local mirageBtn = Instance.new("TextButton")
+mirageBtn.Size = UDim2.new(0, 200, 0, 30)
+mirageBtn.BackgroundColor3 = Color3.fromRGB(90, 30, 90)
+mirageBtn.Text = "🔮 Clone Mirage"
+mirageBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+mirageBtn.Font = Enum.Font.Gotham
+mirageBtn.TextSize = 14
+mirageBtn.LayoutOrder = 10
+mirageBtn.Parent = VisualFrame
+makeRounded(mirageBtn, 6)
 
-cloneBtn.MouseButton1Click:Connect(function()
+mirageBtn.MouseButton1Click:Connect(function()
 	local char = LocalPlayer.Character
-	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+	if not char then return end
 
-	for i = 1, 8 do
-		local clone = Instance.new("Model")
-		clone.Name = "MirageClone_" .. i
+	local root = char:FindFirstChild("HumanoidRootPart")
+	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
+	if not root or not humanoid then return end
 
+	-- Flicker effect (visible to others)
+	local flickerConn
+	local flickerStart = tick()
+	flickerConn = game:GetService("RunService").RenderStepped:Connect(function()
+		if tick() - flickerStart > 1.5 then
+			for _, part in ipairs(char:GetDescendants()) do
+				if part:IsA("BasePart") then
+					part.Transparency = 0
+				end
+			end
+			flickerConn:Disconnect()
+			return
+		end
 		for _, part in ipairs(char:GetDescendants()) do
-			if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-				local p = part:Clone()
-				p.Anchored = true
-				p.CanCollide = false
-				p.Transparency = 0.2
-				p.CFrame = part.CFrame * CFrame.new(math.random(-5, 5), 0, math.random(-5, 5))
-				p.Parent = clone
+			if part:IsA("BasePart") then
+				part.Transparency = math.random() < 0.5 and 1 or 0
 			end
 		end
+	end)
 
-		clone.Parent = workspace
-
-		task.delay(3, function()
-			if clone then clone:Destroy() end
-		end)
+	-- Mirage motion (visible teleport trail)
+	local steps = 8
+	local radius = 10
+	local delayPer = 0.06
+	for i = 1, steps do
+		local angle = (math.pi * 2) * (i / steps)
+		local offset = Vector3.new(math.cos(angle), 0, math.sin(angle)) * radius
+		root.CFrame = root.CFrame + offset
+		task.wait(delayPer)
 	end
 
-	char:FindFirstChild("HumanoidRootPart").CFrame = char.HumanoidRootPart.CFrame * CFrame.new(0, 25, 0)
+	-- Return to center
+	root.CFrame = root.CFrame * CFrame.new(0, 0, -radius)
+	task.wait(0.25)
+
+	-- Final flicker burst
+	for _, part in ipairs(char:GetDescendants()) do
+		if part:IsA("BasePart") then
+			part.Transparency = 0
+		end
+	end
+
+	-- Boom
+	humanoid:TakeDamage(999)
 end)
+
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
