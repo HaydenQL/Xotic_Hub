@@ -573,103 +573,103 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 		return
 	end
 
-	-- Phase 1: Spin in place
+	-- Phase 1: Spin in place for 2 seconds
 	local spin = Instance.new("BodyAngularVelocity")
 	spin.AngularVelocity = Vector3.new(0, 20, 0)
 	spin.MaxTorque = Vector3.new(0, math.huge, 0)
 	spin.P = 1000
 	spin.Parent = root
+
 	task.wait(2)
 	spin:Destroy()
 
-	-- Phase 2: Lift up
-	local lift = Instance.new("BodyVelocity")
-	lift.Velocity = Vector3.new(0, 55, 0)
-	lift.MaxForce = Vector3.new(0, math.huge, 0)
-	lift.P = 10000
-	lift.Parent = root
-	task.wait(1.25)
-	lift:Destroy()
+	-- Phase 2: Lift up slowly
+	local liftForce = Instance.new("BodyVelocity")
+	liftForce.Velocity = Vector3.new(0, 25, 0)
+	liftForce.MaxForce = Vector3.new(0, math.huge, 0)
+	liftForce.P = 5000
+	liftForce.Parent = root
+	task.wait(1)
+	liftForce:Destroy()
 
-	-- Phase 3: Freeze and spin slowly, radar ping
-	local pause = Instance.new("BodyPosition")
-	pause.Position = root.Position
-	pause.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-	pause.P = 30000
-	pause.Parent = root
+	-- Phase 3: Pause mid-air & face target
+	local headPos = target.Character.Head.Position
+	local lookVec = (headPos - root.Position).Unit
+	local newCFrame = CFrame.new(root.Position, root.Position + lookVec)
+	root.CFrame = newCFrame
 
-	if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Physics) end
+	-- Freeze moment before launch
+	local freeze = Instance.new("BodyPosition")
+	freeze.Position = root.Position
+	freeze.MaxForce = Vector3.new(1, 1, 1) * math.huge
+	freeze.P = 15000
+	freeze.Parent = root
 
-	local radarSpin = Instance.new("BodyAngularVelocity")
-	radarSpin.AngularVelocity = Vector3.new(0, 2, 0)
-	radarSpin.MaxTorque = Vector3.new(0, math.huge, 0)
-	radarSpin.P = 1000
-	radarSpin.Parent = root
+	task.wait(0.75)
+	freeze:Destroy()
 
-	-- Radar scanning and ping
-	local pingGui = Instance.new("BillboardGui")
-	pingGui.Size = UDim2.new(0, 100, 0, 40)
-	pingGui.StudsOffset = Vector3.new(0, 3, 0)
-	pingGui.AlwaysOnTop = true
-	pingGui.Name = "RadarPing"
+	-- Phase 4: Launch toward target
+	local launchForce = Instance.new("BodyVelocity")
+	launchForce.Velocity = lookVec * 200
+	launchForce.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+	launchForce.P = 12500
+	launchForce.Parent = root
 
-	local pingText = Instance.new("TextLabel")
-	pingText.Size = UDim2.new(1, 0, 1, 0)
-	pingText.BackgroundTransparency = 1
-	pingText.TextColor3 = Color3.new(1, 0, 0)
-	pingText.Text = "🎯 Target Locked"
-	pingText.Font = Enum.Font.GothamBold
-	pingText.TextScaled = true
-	pingText.Parent = pingGui
+	-- Freeze at target after 1.25s
+	task.delay(1.25, function()
+		launchForce:Destroy()
+		local freezeFinal = Instance.new("BodyPosition")
+		freezeFinal.Position = root.Position
+		freezeFinal.MaxForce = Vector3.new(1, 1, 1) * math.huge
+		freezeFinal.P = 15000
+		freezeFinal.Parent = root
+	end)
+end)
 
-	local foundTarget = false
-	for i = 1, 80 do -- 8 seconds max (80 steps @ 0.1s)
-		if not target or not target.Character or not target.Character:FindFirstChild("Head") then break end
+-- ☢️ Shrink to Atom Button
+local atomBtn = Instance.new("TextButton")
+atomBtn.Size = UDim2.new(0, 200, 0, 30)
+atomBtn.BackgroundColor3 = Color3.fromRGB(90, 0, 90)
+atomBtn.Text = "☢️ Atom Mode: OFF"
+atomBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+atomBtn.Font = Enum.Font.Gotham
+atomBtn.TextSize = 14
+atomBtn.LayoutOrder = 7
+atomBtn.Parent = VisualFrame
+makeRounded(atomBtn, 6)
 
-		local direction = (target.Character.Head.Position - root.Position).Unit
-		local angleDiff = math.abs(math.deg(math.acos(direction:Dot(root.CFrame.LookVector))))
+local atomMode = false
 
-		if angleDiff <= 10 then
-			pingGui.Parent = target.Character.Head
-			foundTarget = true
-			break
+atomBtn.MouseButton1Click:Connect(function()
+	atomMode = not atomMode
+	atomBtn.Text = atomMode and "☢️ Atom Mode: ON" or "☢️ Atom Mode: OFF"
+
+	local char = LocalPlayer.Character
+	if not char then return end
+
+	for _, part in ipairs(char:GetDescendants()) do
+		if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+			part.Size = atomMode and part.Size * 0.2 or part.Size * 5
+			part.Material = atomMode and Enum.Material.Neon or Enum.Material.Plastic
 		end
-		task.wait(0.1)
 	end
 
-	radarSpin:Destroy()
-	pause:Destroy()
-
-	-- Phase 4: Face target and launch
-	if foundTarget then
-		local dir = (target.Character.Head.Position - root.Position).Unit
-		root.CFrame = CFrame.lookAt(root.Position, root.Position + dir) * CFrame.Angles(math.rad(90), 0, 0)
-
-		local homing = true
-		local loop
-		loop = RunService.Heartbeat:Connect(function()
-			if not homing or not target.Character or not target.Character:FindFirstChild("Head") then
-				if loop then loop:Disconnect() end
-				return
-			end
-
-			local toTarget = target.Character.Head.Position - root.Position
-			local dist = toTarget.Magnitude
-			local direction = toTarget.Unit
-			root.Velocity = direction * 300
-
-			if dist < 5 then
-				homing = false
-				if loop then loop:Disconnect() end
-				root.Velocity = Vector3.zero
-				if humanoid then
-					humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-				end
-				pingGui:Destroy()
-			end
-		end)
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if root then
+		if atomMode then
+			local glow = Instance.new("PointLight")
+			glow.Color = Color3.fromRGB(255, 0, 255)
+			glow.Brightness = 10
+			glow.Range = 8
+			glow.Name = "AtomGlow"
+			glow.Parent = root
+		else
+			local glow = root:FindFirstChild("AtomGlow")
+			if glow then glow:Destroy() end
+		end
 	end
 end)
+
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
