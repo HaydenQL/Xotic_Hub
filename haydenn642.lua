@@ -636,48 +636,62 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 end)
 
 
--- ☢️ Shrink to Atom Button
-local atomBtn = Instance.new("TextButton")
-atomBtn.Size = UDim2.new(0, 200, 0, 30)
-atomBtn.BackgroundColor3 = Color3.fromRGB(90, 0, 90)
-atomBtn.Text = "☢️ Atom Mode: OFF"
-atomBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-atomBtn.Font = Enum.Font.Gotham
-atomBtn.TextSize = 14
-atomBtn.LayoutOrder = 7
-atomBtn.Parent = VisualFrame
-makeRounded(atomBtn, 6)
+-- 🌀 Portal Button
+local portalBtn = Instance.new("TextButton")
+portalBtn.Size = UDim2.new(0, 200, 0, 30)
+portalBtn.BackgroundColor3 = Color3.fromRGB(80, 0, 150)
+portalBtn.Text = "🌀 Enter Portal"
+portalBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+portalBtn.Font = Enum.Font.Gotham
+portalBtn.TextSize = 14
+portalBtn.LayoutOrder = 7
+portalBtn.Parent = VisualFrame
+makeRounded(portalBtn, 6)
 
-local atomMode = false
-
-atomBtn.MouseButton1Click:Connect(function()
-	atomMode = not atomMode
-	atomBtn.Text = atomMode and "☢️ Atom Mode: ON" or "☢️ Atom Mode: OFF"
-
+portalBtn.MouseButton1Click:Connect(function()
 	local char = LocalPlayer.Character
-	if not char then return end
+	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+	local hrp = char.HumanoidRootPart
 
-	for _, part in ipairs(char:GetDescendants()) do
-		if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-			part.Size = atomMode and part.Size * 0.2 or part.Size * 5
-			part.Material = atomMode and Enum.Material.Neon or Enum.Material.Plastic
+	-- Create portal part
+	local portal = Instance.new("Part")
+	portal.Size = Vector3.new(5, 0.2, 5)
+	portal.Position = hrp.Position - Vector3.new(0, 2, 0)
+	portal.Anchored = true
+	portal.CanCollide = false
+	portal.Material = Enum.Material.Neon
+	portal.Color = Color3.fromRGB(80, 0, 150)
+	portal.Shape = Enum.PartType.Cylinder
+	portal.Name = "PortalPart"
+	portal.Parent = workspace
+
+	local rot = Instance.new("BodyAngularVelocity")
+	rot.AngularVelocity = Vector3.new(0, 10, 0)
+	rot.MaxTorque = Vector3.new(0, math.huge, 0)
+	rot.P = 1000
+	rot.Parent = portal
+
+	-- Suck effect
+	local bv = Instance.new("BodyPosition")
+	bv.Position = portal.Position + Vector3.new(0, 2, 0)
+	bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+	bv.P = 10000
+	bv.Parent = hrp
+
+	local shrinkSteps = 20
+	for i = 1, shrinkSteps do
+		for _, part in ipairs(char:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.Size = part.Size * 0.9
+			end
 		end
+		task.wait(0.05)
 	end
 
-	local root = char:FindFirstChild("HumanoidRootPart")
-	if root then
-		if atomMode then
-			local glow = Instance.new("PointLight")
-			glow.Color = Color3.fromRGB(255, 0, 255)
-			glow.Brightness = 10
-			glow.Range = 8
-			glow.Name = "AtomGlow"
-			glow.Parent = root
-		else
-			local glow = root:FindFirstChild("AtomGlow")
-			if glow then glow:Destroy() end
-		end
-	end
+	-- Disappear effect
+	char:BreakJoints()
+	task.wait(1)
+	portal:Destroy()
 end)
 
 
