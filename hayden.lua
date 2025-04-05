@@ -875,20 +875,6 @@ local SettingsFrame = createTabFrame("Settings", "Settings Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
-local dexButton = Instance.new("TextButton")
-dexButton.Size = UDim2.new(0, 200, 0, 35)
-dexButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-dexButton.Text = "🧠 Open World Explorer"
-dexButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-dexButton.Font = Enum.Font.Gotham
-dexButton.TextSize = 14
-dexButton.LayoutOrder = 10
-dexButton.Parent = VisualFrame
-makeRounded(dexButton, 6)
-
-dexButton.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/peyton2465/Dex/master/out.lua"))()
-end)
 
 local CreditsFrame = createTabFrame("Credits", "Credits Tab")
 mainFrame.ClipsDescendants = true
