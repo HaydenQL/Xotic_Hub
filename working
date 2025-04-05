@@ -1,4 +1,4 @@
--- Remove existing GUIa
+-- Remove existing GUI
 for _, gui in pairs(game.CoreGui:GetChildren()) do
 	if gui.Name == "SigmaHub" then gui:Destroy() end
 end
@@ -110,6 +110,26 @@ versionLabel.Font = Enum.Font.Gotham
 versionLabel.TextXAlignment = Enum.TextXAlignment.Left
 versionLabel.Parent = mainFrame
 
+local shouldRejoinVC = false
+
+task.spawn(function()
+	while true do
+		task.wait(1)
+		if shouldRejoinVC then
+			shouldRejoinVC = false
+			local success, result = pcall(function()
+				game:GetService("VoiceChatService"):JoinVoice()
+			end)
+			if success then
+				print("✅ Attempted to rejoin VC.")
+			else
+				warn("❌ Failed to rejoin VC:", result)
+			end
+		end
+	end
+end)
+
+
 -- Tabs
 local tabInfo = {
 	{"🏠", "Home"},
@@ -214,6 +234,7 @@ makeRounded(infYieldBtn, 6)
 infYieldBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 end)
+
 
 -- Coming Soon Label
 local comingSoonLabel = Instance.new("TextLabel")
@@ -573,30 +594,7 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 		return
 	end
 
-	-- Radar ping
-	local radarPart = Instance.new("Part")
-	radarPart.Anchored = true
-	radarPart.CanCollide = false
-	radarPart.Size = Vector3.new(1,1,1)
-	radarPart.Shape = Enum.PartType.Ball
-	radarPart.Material = Enum.Material.Neon
-	radarPart.Color = Color3.fromRGB(0, 255, 0)
-	radarPart.Position = target.Character.Head.Position + Vector3.new(0, 2, 0)
-	radarPart.Transparency = 0.25
-	radarPart.Parent = workspace
-
-	local pulse = Instance.new("ParticleEmitter")
-	pulse.Texture = "rbxassetid://284205403"
-	pulse.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 5)})
-	pulse.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)})
-	pulse.Rate = 3
-	pulse.Lifetime = NumberRange.new(1)
-	pulse.Speed = NumberRange.new(0)
-	pulse.Parent = radarPart
-
-	game:GetService("Debris"):AddItem(radarPart, 2)
-
-	-- Phase 1: Spin in place for 2 seconds
+	-- Spin in place for 2 seconds
 	local spin = Instance.new("BodyAngularVelocity")
 	spin.AngularVelocity = Vector3.new(0, 20, 0)
 	spin.MaxTorque = Vector3.new(0, math.huge, 0)
@@ -606,7 +604,7 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	task.wait(2)
 	spin:Destroy()
 
-	-- Phase 2: Lift up
+	-- Lift upward
 	local lift = Instance.new("BodyVelocity")
 	lift.Velocity = Vector3.new(0, 55, 0)
 	lift.MaxForce = Vector3.new(0, math.huge, 0)
@@ -615,47 +613,49 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	task.wait(1.25)
 	lift:Destroy()
 
-	-- Phase 3: Pause in air
+	-- Pause mid-air
 	local pause = Instance.new("BodyPosition")
 	pause.Position = root.Position
 	pause.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
 	pause.P = 30000
 	pause.Parent = root
+
 	task.wait(0.5)
 
-	-- Phase 4: Ragdoll & rotate to face target head-first
+	-- Ragdoll and rotate to face head-first toward target
 	if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Physics) end
 	local direction = (target.Character.Head.Position - root.Position).Unit
 	local look = CFrame.lookAt(root.Position, root.Position + direction) * CFrame.Angles(math.rad(90), 0, 0)
 	root.CFrame = look
+
 	task.wait(0.3)
 	pause:Destroy()
 
-	-- Phase 5: Follow target dynamically
+	-- Dynamic homing
 	local homing = true
 	local followLoop
+
 	followLoop = game:GetService("RunService").Heartbeat:Connect(function()
 		if not homing or not target.Character or not target.Character:FindFirstChild("Head") then
-			if followLoop then followLoop:Disconnect() end
+			followLoop:Disconnect()
 			return
 		end
 
 		local toTarget = (target.Character.Head.Position - root.Position)
-		local dist = toTarget.Magnitude
-		local dir = toTarget.Unit
-		root.Velocity = dir * 300
+		local distance = toTarget.Magnitude
 
-		if dist < 5 then
+		-- If close enough to target, stop and free
+		if distance <= 5 then
 			homing = false
-			if followLoop then followLoop:Disconnect() end
+			followLoop:Disconnect()
 			root.Velocity = Vector3.zero
-			if humanoid then
-				humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-			end
+			if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.GettingUp) end
+			return
 		end
+
+		root.Velocity = toTarget.Unit * 300
 	end)
 end)
-
 
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
@@ -691,7 +691,7 @@ vcTitle.TextXAlignment = Enum.TextXAlignment.Left
 vcTitle.LayoutOrder = 0
 vcTitle.Parent = VoiceChatFrame
 
--- 🔓 Rejoin VC Button
+-- 🔓 Rejoin VC Button (Raw, No Wrappers)
 local unbanVCBtn = Instance.new("TextButton")
 unbanVCBtn.Size = UDim2.new(0, 200, 0, 35)
 unbanVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -704,15 +704,9 @@ unbanVCBtn.Parent = VoiceChatFrame
 makeRounded(unbanVCBtn, 6)
 
 unbanVCBtn.MouseButton1Click:Connect(function()
-	local success, result = pcall(function()
-		game:GetService("VoiceChatService"):JoinVoice()
-	end)
-	if success then
-		print("✅ Attempted to rejoin VC.")
-	else
-		warn("❌ Failed to rejoin VC:", result)
-	end
+	shouldRejoinVC = true
 end)
+
 
 -- 🔴 Disconnect VC Button
 local disconnectVCBtn = Instance.new("TextButton")
