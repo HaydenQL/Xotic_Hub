@@ -666,13 +666,36 @@ end)
 
 -- Ensures you don’t fall through the floor
 game:GetService("RunService").Heartbeat:Connect(function()
-	if not noclipActive or not LocalPlayer.Character then return end
-	local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-	if root then
-		local downRay = Ray.new(root.Position, Vector3.new(0, -3, 0))
-		local hit = workspace:FindPartOnRayWithIgnoreList(downRay, {LocalPlayer.Character})
-		if not hit then
-			root.Velocity = Vector3.new(0, -50, 0) -- force down
+	if not noclipAct-- 🛸 Forceful Noclip Toggle
+local noclipBtn = Instance.new("TextButton")
+noclipBtn.Size = UDim2.new(0, 200, 0, 30)
+noclipBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 90)
+noclipBtn.Text = "🛸 Noclip: OFF"
+noclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+noclipBtn.Font = Enum.Font.Gotham
+noclipBtn.TextSize = 14
+noclipBtn.LayoutOrder = 13
+noclipBtn.Parent = VisualFrame
+makeRounded(noclipBtn, 6)
+
+local noclip = false
+local RunService = game:GetService("RunService")
+
+noclipBtn.MouseButton1Click:Connect(function()
+	noclip = not noclip
+	noclipBtn.Text = noclip and "🛸 Noclip: ON" or "🛸 Noclip: OFF"
+	if noclip and LocalPlayer.Character then
+		local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+		if hum then hum:ChangeState(Enum.HumanoidStateType.Physics) end
+	end
+end)
+
+RunService.Stepped:Connect(function()
+	if noclip and LocalPlayer.Character then
+		for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.CanCollide = false
+			end
 		end
 	end
 end)
