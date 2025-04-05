@@ -573,6 +573,29 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 		return
 	end
 
+	-- Radar ping
+	local radarPart = Instance.new("Part")
+	radarPart.Anchored = true
+	radarPart.CanCollide = false
+	radarPart.Size = Vector3.new(1,1,1)
+	radarPart.Shape = Enum.PartType.Ball
+	radarPart.Material = Enum.Material.Neon
+	radarPart.Color = Color3.fromRGB(0, 255, 0)
+	radarPart.Position = target.Character.Head.Position + Vector3.new(0, 2, 0)
+	radarPart.Transparency = 0.25
+	radarPart.Parent = workspace
+
+	local pulse = Instance.new("ParticleEmitter")
+	pulse.Texture = "rbxassetid://284205403"
+	pulse.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 5)})
+	pulse.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)})
+	pulse.Rate = 3
+	pulse.Lifetime = NumberRange.new(1)
+	pulse.Speed = NumberRange.new(0)
+	pulse.Parent = radarPart
+
+	game:GetService("Debris"):AddItem(radarPart, 2)
+
 	-- Phase 1: Spin in place for 2 seconds
 	local spin = Instance.new("BodyAngularVelocity")
 	spin.AngularVelocity = Vector3.new(0, 20, 0)
