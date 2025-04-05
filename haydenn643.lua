@@ -636,11 +636,11 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 end)
 
 
--- 🌀 Portal Button
+-- ☄️ Enter Portal Button
 local portalBtn = Instance.new("TextButton")
 portalBtn.Size = UDim2.new(0, 200, 0, 30)
-portalBtn.BackgroundColor3 = Color3.fromRGB(80, 0, 150)
-portalBtn.Text = "🌀 Enter Portal"
+portalBtn.BackgroundColor3 = Color3.fromRGB(100, 20, 150)
+portalBtn.Text = "☄️ Enter Portal"
 portalBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 portalBtn.Font = Enum.Font.Gotham
 portalBtn.TextSize = 14
@@ -650,48 +650,50 @@ makeRounded(portalBtn, 6)
 
 portalBtn.MouseButton1Click:Connect(function()
 	local char = LocalPlayer.Character
-	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
-	local hrp = char.HumanoidRootPart
+	if not char then return end
 
-	-- Create portal part
-	local portal = Instance.new("Part")
-	portal.Size = Vector3.new(5, 0.2, 5)
-	portal.Position = hrp.Position - Vector3.new(0, 2, 0)
-	portal.Anchored = true
-	portal.CanCollide = false
-	portal.Material = Enum.Material.Neon
-	portal.Color = Color3.fromRGB(80, 0, 150)
-	portal.Shape = Enum.PartType.Cylinder
-	portal.Name = "PortalPart"
-	portal.Parent = workspace
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if not root then return end
 
-	local rot = Instance.new("BodyAngularVelocity")
-	rot.AngularVelocity = Vector3.new(0, 10, 0)
-	rot.MaxTorque = Vector3.new(0, math.huge, 0)
-	rot.P = 1000
-	rot.Parent = portal
+	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
+	if humanoid then
+		humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+	end
 
-	-- Suck effect
-	local bv = Instance.new("BodyPosition")
-	bv.Position = portal.Position + Vector3.new(0, 2, 0)
-	bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-	bv.P = 10000
-	bv.Parent = hrp
+	-- Spin
+	local spin = Instance.new("BodyAngularVelocity")
+	spin.AngularVelocity = Vector3.new(0, 20, 0)
+	spin.MaxTorque = Vector3.new(0, math.huge, 0)
+	spin.P = 1000
+	spin.Parent = root
 
-	local shrinkSteps = 20
-	for i = 1, shrinkSteps do
+	-- Rise
+	local rise = Instance.new("BodyVelocity")
+	rise.Velocity = Vector3.new(0, 50, 0)
+	rise.MaxForce = Vector3.new(0, math.huge, 0)
+	rise.P = 5000
+	rise.Parent = root
+
+	-- Shrink & fade
+	for i = 1, 15 do
+		task.wait(0.1)
 		for _, part in ipairs(char:GetDescendants()) do
 			if part:IsA("BasePart") then
 				part.Size = part.Size * 0.9
+				part.Transparency = math.clamp(part.Transparency + 0.06, 0, 1)
 			end
 		end
-		task.wait(0.05)
 	end
 
-	-- Disappear effect
-	char:BreakJoints()
-	task.wait(1)
-	portal:Destroy()
+	spin:Destroy()
+	rise:Destroy()
+
+	-- Final vanish
+	for _, part in ipairs(char:GetDescendants()) do
+		if part:IsA("BasePart") then
+			part:Destroy()
+		end
+	end
 end)
 
 
