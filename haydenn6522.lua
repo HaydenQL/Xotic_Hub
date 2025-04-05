@@ -461,7 +461,7 @@ end)
 local VisualFrame = Instance.new("ScrollingFrame")
 VisualFrame.Name = "VisualFrame"
 VisualFrame.Size = UDim2.new(1, 0, 1, 0)
-VisualFrame.CanvasSize = UDim2.new(0, 0, 0, 200)
+VisualFrame.CanvasSize = UDim2.new(0, 0, 0, 200) -- Expand as needed
 VisualFrame.ScrollBarThickness = 4
 VisualFrame.BackgroundTransparency = 1
 VisualFrame.Visible = false
@@ -473,11 +473,6 @@ local visualLayout = Instance.new("UIListLayout")
 visualLayout.Padding = UDim.new(0, 6)
 visualLayout.SortOrder = Enum.SortOrder.LayoutOrder
 visualLayout.Parent = VisualFrame
-
--- Auto-resize scroll area based on content
-visualLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-	VisualFrame.CanvasSize = UDim2.new(0, 0, 0, visualLayout.AbsoluteContentSize.Y + 20)
-end)
 
 -- Optional padding
 local visualPadding = Instance.new("UIPadding")
@@ -543,6 +538,7 @@ missileInput.LayoutOrder = 5
 missileInput.ClearTextOnFocus = false
 missileInput.Parent = VisualFrame
 makeRounded(missileInput, 6)
+
 -- 🚀 Missile Button
 local missileLaunchBtn = Instance.new("TextButton")
 missileLaunchBtn.Size = UDim2.new(0, 200, 0, 30)
@@ -650,7 +646,7 @@ mirageBtn.Text = "🔮 Clone Mirage"
 mirageBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 mirageBtn.Font = Enum.Font.Gotham
 mirageBtn.TextSize = 14
-mirageBtn.LayoutOrder = 999  -- very last
+mirageBtn.LayoutOrder = 20  -- very last
 mirageBtn.Parent = VisualFrame
 makeRounded(mirageBtn, 6)
 
