@@ -537,7 +537,6 @@ missileInput.LayoutOrder = 5
 missileInput.ClearTextOnFocus = false
 missileInput.Parent = VisualFrame
 makeRounded(missileInput, 6)
-
 -- 🚀 Missile Button
 local missileLaunchBtn = Instance.new("TextButton")
 missileLaunchBtn.Size = UDim2.new(0, 200, 0, 30)
@@ -573,7 +572,7 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 		return
 	end
 
-	-- Phase 1: Spin in place for 2 seconds
+	-- Spin in place for 2 seconds
 	local spin = Instance.new("BodyAngularVelocity")
 	spin.AngularVelocity = Vector3.new(0, 20, 0)
 	spin.MaxTorque = Vector3.new(0, math.huge, 0)
@@ -583,48 +582,59 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	task.wait(2)
 	spin:Destroy()
 
-	-- Phase 2: Lift up slowly
-	local liftForce = Instance.new("BodyVelocity")
-	liftForce.Velocity = Vector3.new(0, 25, 0)
-	liftForce.MaxForce = Vector3.new(0, math.huge, 0)
-	liftForce.P = 5000
-	liftForce.Parent = root
-	task.wait(1)
-	liftForce:Destroy()
+	-- Lift upward
+	local lift = Instance.new("BodyVelocity")
+	lift.Velocity = Vector3.new(0, 55, 0)
+	lift.MaxForce = Vector3.new(0, math.huge, 0)
+	lift.P = 10000
+	lift.Parent = root
+	task.wait(1.25)
+	lift:Destroy()
 
-	-- Phase 3: Pause mid-air & face target
-	local headPos = target.Character.Head.Position
-	local lookVec = (headPos - root.Position).Unit
-	local newCFrame = CFrame.new(root.Position, root.Position + lookVec)
-	root.CFrame = newCFrame
+	-- Pause mid-air
+	local pause = Instance.new("BodyPosition")
+	pause.Position = root.Position
+	pause.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+	pause.P = 30000
+	pause.Parent = root
 
-	-- Freeze moment before launch
-	local freeze = Instance.new("BodyPosition")
-	freeze.Position = root.Position
-	freeze.MaxForce = Vector3.new(1, 1, 1) * math.huge
-	freeze.P = 15000
-	freeze.Parent = root
+	task.wait(0.5)
 
-	task.wait(0.75)
-	freeze:Destroy()
+	-- Ragdoll and rotate to face head-first toward target
+	if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Physics) end
+	local direction = (target.Character.Head.Position - root.Position).Unit
+	local look = CFrame.lookAt(root.Position, root.Position + direction) * CFrame.Angles(math.rad(90), 0, 0)
+	root.CFrame = look
 
-	-- Phase 4: Launch toward target
-	local launchForce = Instance.new("BodyVelocity")
-	launchForce.Velocity = lookVec * 200
-	launchForce.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-	launchForce.P = 12500
-	launchForce.Parent = root
+	task.wait(0.3)
+	pause:Destroy()
 
-	-- Freeze at target after 1.25s
-	task.delay(1.25, function()
-		launchForce:Destroy()
-		local freezeFinal = Instance.new("BodyPosition")
-		freezeFinal.Position = root.Position
-		freezeFinal.MaxForce = Vector3.new(1, 1, 1) * math.huge
-		freezeFinal.P = 15000
-		freezeFinal.Parent = root
+	-- Dynamic homing
+	local homing = true
+	local followLoop
+
+	followLoop = game:GetService("RunService").Heartbeat:Connect(function()
+		if not homing or not target.Character or not target.Character:FindFirstChild("Head") then
+			followLoop:Disconnect()
+			return
+		end
+
+		local toTarget = (target.Character.Head.Position - root.Position)
+		local distance = toTarget.Magnitude
+
+		-- If close enough to target, stop and free
+		if distance <= 5 then
+			homing = false
+			followLoop:Disconnect()
+			root.Velocity = Vector3.zero
+			if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.GettingUp) end
+			return
+		end
+
+		root.Velocity = toTarget.Unit * 300
 	end)
 end)
+
 
 -- ☢️ Shrink to Atom Button
 local atomBtn = Instance.new("TextButton")
