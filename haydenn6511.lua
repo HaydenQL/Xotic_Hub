@@ -636,7 +636,7 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 end)
 
 
--- 🔮 Clone Mirage Illusion
+-- 🔮 Clone Mirage Illusion Button
 local mirageBtn = Instance.new("TextButton")
 mirageBtn.Size = UDim2.new(0, 200, 0, 30)
 mirageBtn.BackgroundColor3 = Color3.fromRGB(90, 30, 90)
@@ -644,7 +644,7 @@ mirageBtn.Text = "🔮 Clone Mirage"
 mirageBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 mirageBtn.Font = Enum.Font.Gotham
 mirageBtn.TextSize = 14
-mirageBtn.LayoutOrder = 10
+mirageBtn.LayoutOrder = 999  -- very last
 mirageBtn.Parent = VisualFrame
 makeRounded(mirageBtn, 6)
 
@@ -656,15 +656,13 @@ mirageBtn.MouseButton1Click:Connect(function()
 	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
 	if not root or not humanoid then return end
 
-	-- Flicker effect (visible to others)
+	-- Flicker
 	local flickerConn
 	local flickerStart = tick()
 	flickerConn = game:GetService("RunService").RenderStepped:Connect(function()
 		if tick() - flickerStart > 1.5 then
 			for _, part in ipairs(char:GetDescendants()) do
-				if part:IsA("BasePart") then
-					part.Transparency = 0
-				end
+				if part:IsA("BasePart") then part.Transparency = 0 end
 			end
 			flickerConn:Disconnect()
 			return
@@ -676,10 +674,8 @@ mirageBtn.MouseButton1Click:Connect(function()
 		end
 	end)
 
-	-- Mirage motion (visible teleport trail)
-	local steps = 8
-	local radius = 10
-	local delayPer = 0.06
+	-- Spin teleport illusion
+	local steps, radius, delayPer = 8, 10, 0.06
 	for i = 1, steps do
 		local angle = (math.pi * 2) * (i / steps)
 		local offset = Vector3.new(math.cos(angle), 0, math.sin(angle)) * radius
@@ -687,22 +683,16 @@ mirageBtn.MouseButton1Click:Connect(function()
 		task.wait(delayPer)
 	end
 
-	-- Return to center
+	-- Reset position
 	root.CFrame = root.CFrame * CFrame.new(0, 0, -radius)
 	task.wait(0.25)
 
-	-- Final flicker burst
 	for _, part in ipairs(char:GetDescendants()) do
-		if part:IsA("BasePart") then
-			part.Transparency = 0
-		end
+		if part:IsA("BasePart") then part.Transparency = 0 end
 	end
 
-	-- Boom
 	humanoid:TakeDamage(999)
 end)
-
-
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
 VoiceChatFrame.Name = "VoiceChatFrame"
