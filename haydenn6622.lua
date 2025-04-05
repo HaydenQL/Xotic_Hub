@@ -635,14 +635,15 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
+-- Black Hole
 local blackHoleBtn = Instance.new("TextButton")
 blackHoleBtn.Size = UDim2.new(0, 200, 0, 30)
 blackHoleBtn.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-blackHoleBtn.Text = "🕳️ Black Hole Implosion"
+blackHoleBtn.Text = "🕳️ Black Hole Implode"
 blackHoleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 blackHoleBtn.Font = Enum.Font.Gotham
 blackHoleBtn.TextSize = 14
-blackHoleBtn.LayoutOrder = 10
+blackHoleBtn.LayoutOrder = 11
 blackHoleBtn.Parent = VisualFrame
 makeRounded(blackHoleBtn, 6)
 
@@ -651,52 +652,46 @@ blackHoleBtn.MouseButton1Click:Connect(function()
 	if not char then return end
 
 	local root = char:FindFirstChild("HumanoidRootPart")
-	if not root then return end
+	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
+	if not root or not humanoid then return end
 
-	-- Phase 1: Vibrate violently
+	-- Step 1: Pull inwards (suction simulation)
+	local pulling = true
+	task.spawn(function()
+		while pulling do
+			root.Velocity = (root.Position - root.Position + Vector3.new(
+				math.random(-5, 5), math.random(-2, 2), math.random(-5, 5)
+			)) * -10
+			task.wait(0.05)
+		end
+	end)
+
+	-- Step 2: Vibrate & spin
 	local spin = Instance.new("BodyAngularVelocity")
-	spin.AngularVelocity = Vector3.new(100, 100, 100)
-	spin.MaxTorque = Vector3.new(1, 1, 1) * math.huge
+	spin.AngularVelocity = Vector3.new(20, 100, 20)
+	spin.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
 	spin.P = 3000
 	spin.Parent = root
 
-	local pulse = Instance.new("BodyVelocity")
-	pulse.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-	pulse.P = 9000
-	pulse.Velocity = Vector3.new(0, 0, 0)
-	pulse.Parent = root
+	-- Step 3: Implosion pause and lift
+	task.wait(2)
+	pulling = false
+	spin:Destroy()
 
-	local time = 0
-	local total = 2
-	local rs = game:GetService("RunService").Heartbeat
+	local lift = Instance.new("BodyVelocity")
+	lift.Velocity = Vector3.new(0, 60, 0)
+	lift.MaxForce = Vector3.new(0, math.huge, 0)
+	lift.P = 9000
+	lift.Parent = root
 
-	local conn
-	conn = rs:Connect(function(dt)
-		time += dt
-		local strength = math.sin(time * 40) * 25
-		pulse.Velocity = Vector3.new(strength, strength * 0.5, strength)
-		if time >= total then
-			conn:Disconnect()
-			pulse:Destroy()
+	task.wait(0.7)
+	lift:Destroy()
 
-			-- Phase 2: Suck down into nothing
-			local suck = Instance.new("BodyVelocity")
-			suck.Velocity = Vector3.new(0, -150, 0)
-			suck.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-			suck.P = 10000
-			suck.Parent = root
-
-			task.delay(1.5, function()
-				suck:Destroy()
-				spin:Destroy()
-				local humanoid = char:FindFirstChildOfClass("Humanoid")
-				if humanoid then
-					humanoid.Health = 0
-				end
-			end)
-		end
-	end)
+	-- Step 4: Pop effect
+	root.Velocity = Vector3.new(0, 200, 0)
+	humanoid.Health = 0
 end)
+
 
 
 
