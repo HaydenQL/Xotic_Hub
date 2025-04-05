@@ -670,7 +670,7 @@ vcTitle.TextXAlignment = Enum.TextXAlignment.Left
 vcTitle.LayoutOrder = 0
 vcTitle.Parent = VoiceChatFrame
 
--- 🔓 Rejoin VC Button
+-- 🔓 Rejoin VC Button (Updated)
 local unbanVCBtn = Instance.new("TextButton")
 unbanVCBtn.Size = UDim2.new(0, 200, 0, 35)
 unbanVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -683,13 +683,40 @@ unbanVCBtn.Parent = VoiceChatFrame
 makeRounded(unbanVCBtn, 6)
 
 unbanVCBtn.MouseButton1Click:Connect(function()
-	local success, result = pcall(function()
-		game:GetService("VoiceChatService"):JoinVoice()
-	end)
-	if success then
-		print("✅ Attempted to rejoin VC.")
+	local VoiceChatService = game:GetService("VoiceChatService")
+
+	local function attemptRejoin()
+		local success, result = pcall(function()
+			-- Try leaving first just in case
+			pcall(function() VoiceChatService:Leave() end)
+			wait(0.2)
+			return VoiceChatService:JoinVoice()
+		end)
+
+		if success then
+			print("✅ Attempted to rejoin VC.")
+		else
+			warn("❌ Failed to rejoin VC:", result)
+		end
+	end
+
+	-- Full reset attempt with a slight character refresh
+	local char = LocalPlayer.Character
+	if char then
+		local hrp = char:FindFirstChild("HumanoidRootPart")
+		if hrp then
+			-- Temporarily teleport to reset voice state
+			local pos = hrp.Position
+			hrp.CFrame = hrp.CFrame + Vector3.new(0, 5, 0)
+			task.delay(0.5, function()
+				hrp.CFrame = CFrame.new(pos)
+				attemptRejoin()
+			end)
+		else
+			attemptRejoin()
+		end
 	else
-		warn("❌ Failed to rejoin VC:", result)
+		attemptRejoin()
 	end
 end)
 
