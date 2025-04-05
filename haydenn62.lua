@@ -577,13 +577,16 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 		return
 	end
 
+	-- Switch camera to third-person missile view
+	cam.CameraType = Enum.CameraType.Scriptable
+	local followConn
+
 	-- Phase 1: Spin in place for 2 seconds
 	local spin = Instance.new("BodyAngularVelocity")
 	spin.AngularVelocity = Vector3.new(0, 20, 0)
 	spin.MaxTorque = Vector3.new(0, math.huge, 0)
 	spin.P = 1000
 	spin.Parent = root
-
 	task.wait(2)
 	spin:Destroy()
 
@@ -600,72 +603,94 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	humanoid:ChangeState(Enum.HumanoidStateType.Physics)
 
 	-- Phase 3: Pause mid-air & face target
-	local headPos = target.Character.Head.Position
-	local lookVec = (headPos - root.Position).Unit
-	local rootOrientation = CFrame.lookAt(root.Position, headPos) * CFrame.Angles(math.rad(90), 0, 0)
-	root.CFrame = rootOrientation
-
 	local freeze = Instance.new("BodyPosition")
 	freeze.Position = root.Position
 	freeze.MaxForce = Vector3.new(1, 1, 1) * math.huge
 	freeze.P = 15000
 	freeze.Parent = root
+
+	local align = Instance.new("BodyGyro")
+	align.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+	align.P = 10000
+	align.CFrame = CFrame.lookAt(root.Position, target.Character.Head.Position) * CFrame.Angles(math.rad(90), 0, 0)
+	align.Parent = root
+
 	task.wait(0.75)
 	freeze:Destroy()
 
-	-- Phase 4: Launch toward target head-first
+	-- Phase 4: Launch toward target with homing
 	local launchForce = Instance.new("BodyVelocity")
-	launchForce.Velocity = lookVec * 200
+	launchForce.Velocity = (target.Character.Head.Position - root.Position).Unit * 200
 	launchForce.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
 	launchForce.P = 12500
 	launchForce.Parent = root
 
-	-- Missile cam shake and follow
-	cam.CameraType = Enum.CameraType.Scriptable
-	local cameraShake = coroutine.create(function()
-		local startTime = tick()
-		local duration = 1.5
-		while tick() - startTime < duration do
-			local offset = Vector3.new(math.random(-2,2)/10, math.random(-2,2)/10, math.random(-2,2)/10)
-			cam.CFrame = CFrame.new(root.Position + Vector3.new(0,2,-6) + offset, root.Position)
-			task.wait()
+	-- Track and adjust direction
+	local trackingConn
+	trackingConn = game:GetService("RunService").Heartbeat:Connect(function()
+		if not target or not target.Character or not target.Character:FindFirstChild("Head") then
+			trackingConn:Disconnect()
+			return
 		end
-	end)
-	coroutine.resume(cameraShake)
-
-	task.delay(1.5, function()
-		local followConn
-		followConn = game:GetService("RunService").RenderStepped:Connect(function()
-			if root and cam.CameraType == Enum.CameraType.Scriptable then
-				local missilePos = root.Position
-				cam.CFrame = CFrame.new(missilePos + Vector3.new(0, 2, -6), missilePos)
-			else
-				if followConn then followConn:Disconnect() end
-			end
-		end)
+		local direction = (target.Character.Head.Position - root.Position).Unit
+		launchForce.Velocity = direction * 200
+		align.CFrame = CFrame.lookAt(root.Position, target.Character.Head.Position) * CFrame.Angles(math.rad(90), 0, 0)
 	end)
 
-	-- Restore camera after impact
-	local connection
-	connection = game:GetService("RunService").Heartbeat:Connect(function()
-		if target and target.Character and target.Character:FindFirstChild("Head") then
-			local distance = (root.Position - target.Character.Head.Position).Magnitude
-			if distance <= 5 then
-				launchForce:Destroy()
-				connection:Disconnect()
-				if humanoid then
-					humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-				end
-				cam.CameraType = originalCameraType
-				cam.CameraSubject = originalSubject
-				print("💥 Missile impact! Freed.")
+	-- Impact detection and retarget if missed
+	local impactConn
+	impactConn = game:GetService("RunService").Heartbeat:Connect(function()
+		if not target or not target.Character or not target.Character:FindFirstChild("Head") then
+			impactConn:Disconnect()
+			return
+		end
+		local distance = (root.Position - target.Character.Head.Position).Magnitude
+		if distance <= 5 then
+			launchForce:Destroy()
+			align:Destroy()
+			trackingConn:Disconnect()
+			impactConn:Disconnect()
+
+			if humanoid then
+				humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 			end
+
+			cam.CameraType = originalCameraType
+			cam.CameraSubject = originalSubject
+			print("💥 Missile impact! Freed.")
 		end
 	end)
 end)
 
+-- 📍 Missile Camera Shake
+local function missileCamShake()
+	local startTime = tick()
+	local duration = 1.5
+	while tick() - startTime < duration do
+		local offset = Vector3.new(math.random(-2,2)/10, math.random(-2,2)/10, math.random(-2,2)/10)
+		cam.CFrame = CFrame.new(cam.CFrame.Position + offset)
+		task.wait()
+	end
+end
 
+coroutine.wrap(missileCamShake)()
 
+-- 🎥 Smooth Follow Camera
+local followCamConn
+followCamConn = game:GetService("RunService").RenderStepped:Connect(function()
+	if cam.CameraType == Enum.CameraType.Scriptable and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+		local pos = LocalPlayer.Character.HumanoidRootPart.Position
+		cam.CFrame = CFrame.new(pos + Vector3.new(0, 2, -6), pos)
+	else
+		followCamConn:Disconnect()
+	end
+end)
+
+-- 🎬 Restore camera after 5s
+task.delay(5, function()
+	cam.CameraType = originalCameraType
+	cam.CameraSubject = originalSubject
+end)
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
