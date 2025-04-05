@@ -110,6 +110,26 @@ versionLabel.Font = Enum.Font.Gotham
 versionLabel.TextXAlignment = Enum.TextXAlignment.Left
 versionLabel.Parent = mainFrame
 
+local shouldRejoinVC = false
+
+task.spawn(function()
+	while true do
+		task.wait(1)
+		if shouldRejoinVC then
+			shouldRejoinVC = false
+			local success, result = pcall(function()
+				game:GetService("VoiceChatService"):JoinVoice()
+			end)
+			if success then
+				print("✅ Attempted to rejoin VC.")
+			else
+				warn("❌ Failed to rejoin VC:", result)
+			end
+		end
+	end
+end)
+
+
 -- Tabs
 local tabInfo = {
 	{"🏠", "Home"},
@@ -683,18 +703,7 @@ unbanVCBtn.Parent = VoiceChatFrame
 makeRounded(unbanVCBtn, 6)
 
 unbanVCBtn.MouseButton1Click:Connect(function()
-	task.defer(function()
-		local VoiceChatService = game:GetService("VoiceChatService")
-		local success, result = pcall(function()
-			return VoiceChatService:JoinVoice()
-		end)
-
-		if success then
-			print("✅ Rejoin VC success.")
-		else
-			warn("❌ Rejoin VC failed:", result)
-		end
-	end)
+	shouldRejoinVC = true
 end)
 
 
