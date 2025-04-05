@@ -458,7 +458,6 @@ end)
 
 
 -- 🎨 Visual Tab (Scrollable + Ordered Buttons)
--- 🎨 Visual Tab (Scrollable + Ordered Buttons)
 local VisualFrame = Instance.new("ScrollingFrame")
 VisualFrame.Name = "VisualFrame"
 VisualFrame.Size = UDim2.new(1, 0, 1, 0)
