@@ -636,66 +636,46 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 end)
 
 
--- ☄️ Enter Portal Button
-local portalBtn = Instance.new("TextButton")
-portalBtn.Size = UDim2.new(0, 200, 0, 30)
-portalBtn.BackgroundColor3 = Color3.fromRGB(100, 20, 150)
-portalBtn.Text = "☄️ Enter Portal"
-portalBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-portalBtn.Font = Enum.Font.Gotham
-portalBtn.TextSize = 14
-portalBtn.LayoutOrder = 7
-portalBtn.Parent = VisualFrame
-makeRounded(portalBtn, 6)
+-- 👥 Clone Mirage Button
+local cloneBtn = Instance.new("TextButton")
+cloneBtn.Size = UDim2.new(0, 200, 0, 30)
+cloneBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+cloneBtn.Text = "👥 Clone Mirage"
+cloneBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+cloneBtn.Font = Enum.Font.Gotham
+cloneBtn.TextSize = 14
+cloneBtn.LayoutOrder = 7
+cloneBtn.Parent = VisualFrame
+makeRounded(cloneBtn, 6)
 
-portalBtn.MouseButton1Click:Connect(function()
+cloneBtn.MouseButton1Click:Connect(function()
 	local char = LocalPlayer.Character
-	if not char then return end
+	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
 
-	local root = char:FindFirstChild("HumanoidRootPart")
-	if not root then return end
+	for i = 1, 8 do
+		local clone = Instance.new("Model")
+		clone.Name = "MirageClone_" .. i
 
-	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
-	if humanoid then
-		humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-	end
-
-	-- Spin
-	local spin = Instance.new("BodyAngularVelocity")
-	spin.AngularVelocity = Vector3.new(0, 20, 0)
-	spin.MaxTorque = Vector3.new(0, math.huge, 0)
-	spin.P = 1000
-	spin.Parent = root
-
-	-- Rise
-	local rise = Instance.new("BodyVelocity")
-	rise.Velocity = Vector3.new(0, 50, 0)
-	rise.MaxForce = Vector3.new(0, math.huge, 0)
-	rise.P = 5000
-	rise.Parent = root
-
-	-- Shrink & fade
-	for i = 1, 15 do
-		task.wait(0.1)
 		for _, part in ipairs(char:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.Size = part.Size * 0.9
-				part.Transparency = math.clamp(part.Transparency + 0.06, 0, 1)
+			if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+				local p = part:Clone()
+				p.Anchored = true
+				p.CanCollide = false
+				p.Transparency = 0.2
+				p.CFrame = part.CFrame * CFrame.new(math.random(-5, 5), 0, math.random(-5, 5))
+				p.Parent = clone
 			end
 		end
+
+		clone.Parent = workspace
+
+		task.delay(3, function()
+			if clone then clone:Destroy() end
+		end)
 	end
 
-	spin:Destroy()
-	rise:Destroy()
-
-	-- Final vanish
-	for _, part in ipairs(char:GetDescendants()) do
-		if part:IsA("BasePart") then
-			part:Destroy()
-		end
-	end
+	char:FindFirstChild("HumanoidRootPart").CFrame = char.HumanoidRootPart.CFrame * CFrame.new(0, 25, 0)
 end)
-
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
