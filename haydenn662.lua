@@ -635,6 +635,66 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
+-- 💥 Suction Implode Button
+local implodeBtn = Instance.new("TextButton")
+implodeBtn.Size = UDim2.new(0, 200, 0, 30)
+implodeBtn.BackgroundColor3 = Color3.fromRGB(100, 20, 120)
+implodeBtn.Text = "💥 Suction Implode"
+implodeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+implodeBtn.Font = Enum.Font.Gotham
+implodeBtn.TextSize = 14
+implodeBtn.LayoutOrder = 8
+implodeBtn.Parent = VisualFrame
+makeRounded(implodeBtn, 6)
+
+implodeBtn.MouseButton1Click:Connect(function()
+	local char = LocalPlayer.Character
+	if not char then return end
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	-- Create suction visual
+	for i = 1, 10 do
+		local orb = Instance.new("Part")
+		orb.Size = Vector3.new(1, 1, 1)
+		orb.Shape = Enum.PartType.Ball
+		orb.Anchored = true
+		orb.CanCollide = false
+		orb.Material = Enum.Material.Neon
+		orb.Color = Color3.fromRGB(170, 0, 255)
+		orb.Position = root.Position + Vector3.new(math.random(-10,10), math.random(1,5), math.random(-10,10))
+		orb.Parent = workspace
+
+		task.spawn(function()
+			for t = 0, 1, 0.05 do
+				orb.Position = orb.Position:Lerp(root.Position, t)
+				orb.Size = orb.Size:Lerp(Vector3.new(0.2, 0.2, 0.2), t)
+				task.wait()
+			end
+			orb:Destroy()
+		end)
+	end
+
+	-- Shrink player gradually then explode
+	task.spawn(function()
+		for i = 1, 20 do
+			char:ScaleTo(1 - i * 0.03)
+			task.wait(0.05)
+		end
+
+		-- Final pop
+		local boom = Instance.new("Explosion")
+		boom.Position = root.Position
+		boom.BlastRadius = 0 -- purely visual
+		boom.BlastPressure = 0
+		boom.ExplosionType = Enum.ExplosionType.NoCraters
+		boom.Parent = workspace
+
+		char:BreakJoints()
+	end)
+end)
+
+
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
 VoiceChatFrame.Name = "VoiceChatFrame"
