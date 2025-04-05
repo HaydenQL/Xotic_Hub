@@ -7,7 +7,31 @@ local UIS = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
+-- ScreenGui reassigned for stealth
+-- SECURE GUI INJECTION
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+
+-- Create stealthy GUI name and attach to CoreGui
 local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "HUI" .. tostring(math.random(10000,99999))
+ScreenGui.DisplayOrder = 999
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+-- Toggle visibility keybind (RightAlt)
+UIS.InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+    if input.KeyCode == Enum.KeyCode.Tab then
+        ScreenGui.Enabled = not ScreenGui.Enabled
+    end
+end)
+
+
 ScreenGui.Name = "SigmaHub"
 ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
