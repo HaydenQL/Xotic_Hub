@@ -537,6 +537,7 @@ missileInput.LayoutOrder = 5
 missileInput.ClearTextOnFocus = false
 missileInput.Parent = VisualFrame
 makeRounded(missileInput, 6)
+
 -- 🚀 Missile Button
 local missileLaunchBtn = Instance.new("TextButton")
 missileLaunchBtn.Size = UDim2.new(0, 200, 0, 30)
@@ -635,70 +636,6 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
--- 🛸 Noclip Toggle Button
-local noclipBtn = Instance.new("TextButton")
-noclipBtn.Size = UDim2.new(0, 200, 0, 30)
-noclipBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 90)
-noclipBtn.Text = "🛸 Noclip: OFF"
-noclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-noclipBtn.Font = Enum.Font.Gotham
-noclipBtn.TextSize = 14
-noclipBtn.LayoutOrder = 12
-noclipBtn.Parent = VisualFrame
-makeRounded(noclipBtn, 6)
-
-local noclipActive = false
-
-noclipBtn.MouseButton1Click:Connect(function()
-	noclipActive = not noclipActive
-	noclipBtn.Text = noclipActive and "🛸 Noclip: ON" or "🛸 Noclip: OFF"
-end)
-
-game:GetService("RunService").Stepped:Connect(function()
-	if noclipActive and LocalPlayer.Character then
-		for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-			if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-				part.CanCollide = false
-			end
-		end
-	end
-end)
-
--- Ensures you don’t fall through the floor
-game:GetService("RunService").Heartbeat:Connect(function()
-	if not noclipAct-- 🛸 Forceful Noclip Toggle
-local noclipBtn = Instance.new("TextButton")
-noclipBtn.Size = UDim2.new(0, 200, 0, 30)
-noclipBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 90)
-noclipBtn.Text = "🛸 Noclip: OFF"
-noclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-noclipBtn.Font = Enum.Font.Gotham
-noclipBtn.TextSize = 14
-noclipBtn.LayoutOrder = 13
-noclipBtn.Parent = VisualFrame
-makeRounded(noclipBtn, 6)
-
-local noclip = false
-local RunService = game:GetService("RunService")
-
-noclipBtn.MouseButton1Click:Connect(function()
-	noclip = not noclip
-	noclipBtn.Text = noclip and "🛸 Noclip: ON" or "🛸 Noclip: OFF"
-	if noclip and LocalPlayer.Character then
-		local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-		if hum then hum:ChangeState(Enum.HumanoidStateType.Physics) end
-	end
-end)
-
-RunService.Stepped:Connect(function()
-	if noclip and LocalPlayer.Character then
-		for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.CanCollide = false
-			end
-		end
-	end
-end)
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
