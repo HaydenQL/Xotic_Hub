@@ -638,63 +638,7 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 end)
 
 
--- 🔮 Clone Mirage Illusion Button
-local mirageBtn = Instance.new("TextButton")
-mirageBtn.Size = UDim2.new(0, 200, 0, 30)
-mirageBtn.BackgroundColor3 = Color3.fromRGB(90, 30, 90)
-mirageBtn.Text = "🔮 Clone Mirage"
-mirageBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-mirageBtn.Font = Enum.Font.Gotham
-mirageBtn.TextSize = 14
-mirageBtn.LayoutOrder = 20  -- very last
-mirageBtn.Parent = VisualFrame
-makeRounded(mirageBtn, 6)
 
-mirageBtn.MouseButton1Click:Connect(function()
-	local char = LocalPlayer.Character
-	if not char then return end
-
-	local root = char:FindFirstChild("HumanoidRootPart")
-	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
-	if not root or not humanoid then return end
-
-	-- Flicker
-	local flickerConn
-	local flickerStart = tick()
-	flickerConn = game:GetService("RunService").RenderStepped:Connect(function()
-		if tick() - flickerStart > 1.5 then
-			for _, part in ipairs(char:GetDescendants()) do
-				if part:IsA("BasePart") then part.Transparency = 0 end
-			end
-			flickerConn:Disconnect()
-			return
-		end
-		for _, part in ipairs(char:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.Transparency = math.random() < 0.5 and 1 or 0
-			end
-		end
-	end)
-
-	-- Spin teleport illusion
-	local steps, radius, delayPer = 8, 10, 0.06
-	for i = 1, steps do
-		local angle = (math.pi * 2) * (i / steps)
-		local offset = Vector3.new(math.cos(angle), 0, math.sin(angle)) * radius
-		root.CFrame = root.CFrame + offset
-		task.wait(delayPer)
-	end
-
-	-- Reset position
-	root.CFrame = root.CFrame * CFrame.new(0, 0, -radius)
-	task.wait(0.25)
-
-	for _, part in ipairs(char:GetDescendants()) do
-		if part:IsA("BasePart") then part.Transparency = 0 end
-	end
-
-	humanoid:TakeDamage(999)
-end)
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
 VoiceChatFrame.Name = "VoiceChatFrame"
