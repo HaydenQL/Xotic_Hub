@@ -573,7 +573,7 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 		return
 	end
 
-	-- Spin in place for 2 seconds
+	-- Phase 1: Spin in place for 2 seconds
 	local spin = Instance.new("BodyAngularVelocity")
 	spin.AngularVelocity = Vector3.new(0, 20, 0)
 	spin.MaxTorque = Vector3.new(0, math.huge, 0)
@@ -583,52 +583,53 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	task.wait(2)
 	spin:Destroy()
 
-	-- Lift upward
+	-- Phase 2: Lift up
 	local lift = Instance.new("BodyVelocity")
-	lift.Velocity = Vector3.new(0, 55, 0) -- Higher launch
+	lift.Velocity = Vector3.new(0, 55, 0)
 	lift.MaxForce = Vector3.new(0, math.huge, 0)
 	lift.P = 10000
 	lift.Parent = root
 	task.wait(1.25)
 	lift:Destroy()
 
-	-- Pause mid-air
+	-- Phase 3: Pause in air
 	local pause = Instance.new("BodyPosition")
 	pause.Position = root.Position
 	pause.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
 	pause.P = 30000
 	pause.Parent = root
-
 	task.wait(0.5)
 
-	-- Ragdoll and rotate to face head-first toward target
+	-- Phase 4: Ragdoll & rotate to face target head-first
 	if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Physics) end
 	local direction = (target.Character.Head.Position - root.Position).Unit
 	local look = CFrame.lookAt(root.Position, root.Position + direction) * CFrame.Angles(math.rad(90), 0, 0)
 	root.CFrame = look
-
 	task.wait(0.3)
 	pause:Destroy()
 
-	-- 🔁 Follow target dynamically
+	-- Phase 5: Follow target dynamically
 	local homing = true
 	local followLoop
 	followLoop = game:GetService("RunService").Heartbeat:Connect(function()
 		if not homing or not target.Character or not target.Character:FindFirstChild("Head") then
-			followLoop:Disconnect()
+			if followLoop then followLoop:Disconnect() end
 			return
 		end
 
-		local toTarget = (target.Character.Head.Position - root.Position).Unit
-		root.Velocity = toTarget * 300
-	end)
+		local toTarget = (target.Character.Head.Position - root.Position)
+		local dist = toTarget.Magnitude
+		local dir = toTarget.Unit
+		root.Velocity = dir * 300
 
-	-- Stop after 1.5s
-	task.delay(1.5, function()
-		homing = false
-		if followLoop then followLoop:Disconnect() end
-		if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.GettingUp) end
-		root.Velocity = Vector3.zero
+		if dist < 5 then
+			homing = false
+			if followLoop then followLoop:Disconnect() end
+			root.Velocity = Vector3.zero
+			if humanoid then
+				humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+			end
+		end
 	end)
 end)
 
