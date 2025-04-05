@@ -539,10 +539,6 @@ missileInput.Parent = VisualFrame
 makeRounded(missileInput, 6)
 
 -- 🚀 Missile Button
-local cam = workspace.CurrentCamera
-local originalCameraType = cam.CameraType
-local originalSubject = cam.CameraSubject
-
 local missileLaunchBtn = Instance.new("TextButton")
 missileLaunchBtn.Size = UDim2.new(0, 200, 0, 30)
 missileLaunchBtn.BackgroundColor3 = Color3.fromRGB(20, 100, 200)
@@ -577,110 +573,65 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 		return
 	end
 
-	-- Switch camera to third-person missile view
-	cam.CameraType = Enum.CameraType.Scriptable
-	local followConn
-
-	-- 📹 Missile Camera Shake
-	task.spawn(function()
-		local startTime = tick()
-		local duration = 1.5
-		while tick() - startTime < duration do
-			local offset = Vector3.new(math.random(-2,2)/10, math.random(-2,2)/10, math.random(-2,2)/10)
-			cam.CFrame = CFrame.new(cam.CFrame.Position + offset)
-			task.wait()
-		end
-	end)
-
-	-- 🎥 Smooth Follow Camera
-	followConn = game:GetService("RunService").RenderStepped:Connect(function()
-		if cam.CameraType == Enum.CameraType.Scriptable and root then
-			local pos = root.Position
-			cam.CFrame = CFrame.new(pos + Vector3.new(0, 2, -6), pos)
-		else
-			followConn:Disconnect()
-		end
-	end)
-
-	-- Phase 1: Spin in place for 2 seconds
+	-- Spin in place for 2 seconds
 	local spin = Instance.new("BodyAngularVelocity")
 	spin.AngularVelocity = Vector3.new(0, 20, 0)
 	spin.MaxTorque = Vector3.new(0, math.huge, 0)
 	spin.P = 1000
 	spin.Parent = root
+
 	task.wait(2)
 	spin:Destroy()
 
-	-- Phase 2: Lift up slowly
-	local liftForce = Instance.new("BodyVelocity")
-	liftForce.Velocity = Vector3.new(0, 100, 0)
-	liftForce.MaxForce = Vector3.new(0, math.huge, 0)
-	liftForce.P = 5000
-	liftForce.Parent = root
-	task.wait(1)
-	liftForce:Destroy()
+	-- Lift upward
+	local lift = Instance.new("BodyVelocity")
+	lift.Velocity = Vector3.new(0, 55, 0) -- Higher launch
+	lift.MaxForce = Vector3.new(0, math.huge, 0)
+	lift.P = 10000
+	lift.Parent = root
+	task.wait(1.25)
+	lift:Destroy()
 
-	-- Ragdoll the character
-	humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+	-- Pause mid-air
+	local pause = Instance.new("BodyPosition")
+	pause.Position = root.Position
+	pause.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+	pause.P = 30000
+	pause.Parent = root
 
-	-- Phase 3: Pause mid-air & face target
-	local freeze = Instance.new("BodyPosition")
-	freeze.Position = root.Position
-	freeze.MaxForce = Vector3.new(1, 1, 1) * math.huge
-	freeze.P = 15000
-	freeze.Parent = root
+	task.wait(0.5)
 
-	local align = Instance.new("BodyGyro")
-	align.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-	align.P = 10000
-	align.CFrame = CFrame.lookAt(root.Position, target.Character.Head.Position) * CFrame.Angles(math.rad(90), 0, 0)
-	align.Parent = root
-	task.wait(0.75)
-	freeze:Destroy()
+	-- Ragdoll and rotate to face head-first toward target
+	if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Physics) end
+	local direction = (target.Character.Head.Position - root.Position).Unit
+	local look = CFrame.lookAt(root.Position, root.Position + direction) * CFrame.Angles(math.rad(90), 0, 0)
+	root.CFrame = look
 
-	-- Phase 4: Launch toward target with homing
-	local launchForce = Instance.new("BodyVelocity")
-	launchForce.Velocity = (target.Character.Head.Position - root.Position).Unit * 200
-	launchForce.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-	launchForce.P = 12500
-	launchForce.Parent = root
+	task.wait(0.3)
+	pause:Destroy()
 
-	-- Track and adjust direction
-	local trackingConn
-	trackingConn = game:GetService("RunService").Heartbeat:Connect(function()
-		if not target or not target.Character or not target.Character:FindFirstChild("Head") then
-			trackingConn:Disconnect()
+	-- 🔁 Follow target dynamically
+	local homing = true
+	local followLoop
+	followLoop = game:GetService("RunService").Heartbeat:Connect(function()
+		if not homing or not target.Character or not target.Character:FindFirstChild("Head") then
+			followLoop:Disconnect()
 			return
 		end
-		local direction = (target.Character.Head.Position - root.Position).Unit
-		launchForce.Velocity = direction * 200
-		align.CFrame = CFrame.lookAt(root.Position, target.Character.Head.Position) * CFrame.Angles(math.rad(90), 0, 0)
+
+		local toTarget = (target.Character.Head.Position - root.Position).Unit
+		root.Velocity = toTarget * 300
 	end)
 
-	-- Impact detection and retarget if missed
-	local impactConn
-	impactConn = game:GetService("RunService").Heartbeat:Connect(function()
-		if not target or not target.Character or not target.Character:FindFirstChild("Head") then
-			impactConn:Disconnect()
-			return
-		end
-		local distance = (root.Position - target.Character.Head.Position).Magnitude
-		if distance <= 5 then
-			launchForce:Destroy()
-			align:Destroy()
-			trackingConn:Disconnect()
-			impactConn:Disconnect()
-
-			if humanoid then
-				humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-			end
-
-			cam.CameraType = originalCameraType
-			cam.CameraSubject = originalSubject
-			print("💥 Missile impact! Freed.")
-		end
+	-- Stop after 1.5s
+	task.delay(1.5, function()
+		homing = false
+		if followLoop then followLoop:Disconnect() end
+		if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.GettingUp) end
+		root.Velocity = Vector3.zero
 	end)
 end)
+
 
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
