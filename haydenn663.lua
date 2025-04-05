@@ -635,65 +635,47 @@ missileLaunchBtn.MouseButton1Click:Connect(function()
 	end)
 end)
 
--- Black Hole
-local blackHoleBtn = Instance.new("TextButton")
-blackHoleBtn.Size = UDim2.new(0, 200, 0, 30)
-blackHoleBtn.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-blackHoleBtn.Text = "🕳️ Black Hole Implode"
-blackHoleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-blackHoleBtn.Font = Enum.Font.Gotham
-blackHoleBtn.TextSize = 14
-blackHoleBtn.LayoutOrder = 11
-blackHoleBtn.Parent = VisualFrame
-makeRounded(blackHoleBtn, 6)
+-- 🛸 Noclip Toggle Button
+local noclipBtn = Instance.new("TextButton")
+noclipBtn.Size = UDim2.new(0, 200, 0, 30)
+noclipBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 90)
+noclipBtn.Text = "🛸 Noclip: OFF"
+noclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+noclipBtn.Font = Enum.Font.Gotham
+noclipBtn.TextSize = 14
+noclipBtn.LayoutOrder = 12
+noclipBtn.Parent = VisualFrame
+makeRounded(noclipBtn, 6)
 
-blackHoleBtn.MouseButton1Click:Connect(function()
-	local char = LocalPlayer.Character
-	if not char then return end
+local noclipActive = false
 
-	local root = char:FindFirstChild("HumanoidRootPart")
-	local humanoid = char:FindFirstChildWhichIsA("Humanoid")
-	if not root or not humanoid then return end
-
-	-- Step 1: Pull inwards (suction simulation)
-	local pulling = true
-	task.spawn(function()
-		while pulling do
-			root.Velocity = (root.Position - root.Position + Vector3.new(
-				math.random(-5, 5), math.random(-2, 2), math.random(-5, 5)
-			)) * -10
-			task.wait(0.05)
-		end
-	end)
-
-	-- Step 2: Vibrate & spin
-	local spin = Instance.new("BodyAngularVelocity")
-	spin.AngularVelocity = Vector3.new(20, 100, 20)
-	spin.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-	spin.P = 3000
-	spin.Parent = root
-
-	-- Step 3: Implosion pause and lift
-	task.wait(2)
-	pulling = false
-	spin:Destroy()
-
-	local lift = Instance.new("BodyVelocity")
-	lift.Velocity = Vector3.new(0, 60, 0)
-	lift.MaxForce = Vector3.new(0, math.huge, 0)
-	lift.P = 9000
-	lift.Parent = root
-
-	task.wait(0.7)
-	lift:Destroy()
-
-	-- Step 4: Pop effect
-	root.Velocity = Vector3.new(0, 200, 0)
-	humanoid.Health = 0
+noclipBtn.MouseButton1Click:Connect(function()
+	noclipActive = not noclipActive
+	noclipBtn.Text = noclipActive and "🛸 Noclip: ON" or "🛸 Noclip: OFF"
 end)
 
+game:GetService("RunService").Stepped:Connect(function()
+	if noclipActive and LocalPlayer.Character then
+		for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+			if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+				part.CanCollide = false
+			end
+		end
+	end
+end)
 
-
+-- Ensures you don’t fall through the floor
+game:GetService("RunService").Heartbeat:Connect(function()
+	if not noclipActive or not LocalPlayer.Character then return end
+	local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+	if root then
+		local downRay = Ray.new(root.Position, Vector3.new(0, -3, 0))
+		local hit = workspace:FindPartOnRayWithIgnoreList(downRay, {LocalPlayer.Character})
+		if not hit then
+			root.Velocity = Vector3.new(0, -50, 0) -- force down
+		end
+	end
+end)
 
 -- 🎙️ Voice Chat Controls (with fixes & scrollable)
 local VoiceChatFrame = Instance.new("ScrollingFrame")
