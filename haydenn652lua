@@ -458,10 +458,11 @@ end)
 
 
 -- 🎨 Visual Tab (Scrollable + Ordered Buttons)
+-- 🎨 Visual Tab (Scrollable + Ordered Buttons)
 local VisualFrame = Instance.new("ScrollingFrame")
 VisualFrame.Name = "VisualFrame"
 VisualFrame.Size = UDim2.new(1, 0, 1, 0)
-VisualFrame.CanvasSize = UDim2.new(0, 0, 0, 200) -- Expand as needed
+VisualFrame.CanvasSize = UDim2.new(0, 0, 0, 200)
 VisualFrame.ScrollBarThickness = 4
 VisualFrame.BackgroundTransparency = 1
 VisualFrame.Visible = false
@@ -474,11 +475,17 @@ visualLayout.Padding = UDim.new(0, 6)
 visualLayout.SortOrder = Enum.SortOrder.LayoutOrder
 visualLayout.Parent = VisualFrame
 
+-- Auto-resize scroll area based on content
+visualLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	VisualFrame.CanvasSize = UDim2.new(0, 0, 0, visualLayout.AbsoluteContentSize.Y + 20)
+end)
+
 -- Optional padding
 local visualPadding = Instance.new("UIPadding")
 visualPadding.PaddingTop = UDim.new(0, 10)
 visualPadding.PaddingLeft = UDim.new(0, 20)
 visualPadding.Parent = VisualFrame
+
 
 -- 💀 Spin and Die Button (softer fling)
 local spinDieBtn = Instance.new("TextButton")
