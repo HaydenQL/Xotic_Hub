@@ -1193,6 +1193,69 @@ spyBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/main/SimpleSpy_Secure.lua"))()
 end)
 
+local VoiceChatService = game:GetService("VoiceChatService")
+local Players = game:GetService("Players")
+
+-- 🔇 Toggle State
+local autoMuteMusic = false
+local talkingTimers = {}
+local trackedConnections = {}
+
+-- 🧠 Mute Logic
+local function trackVoiceActivity()
+	for _, plr in pairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer then
+			local uid = plr.UserId
+			if not talkingTimers[uid] then
+				talkingTimers[uid] = 0
+			end
+
+			-- Track if talking
+			local voiceSource = VoiceChatService:GetParticipant(plr.UserId)
+			if voiceSource and voiceSource.IsVoiceActive then
+				talkingTimers[uid] += 0.1
+				if talkingTimers[uid] >= 10 then
+					VoiceChatService:MuteUser(plr.UserId)
+					print("🔇 Auto-muted " .. plr.DisplayName)
+				end
+			else
+				talkingTimers[uid] = 0
+			end
+		end
+	end
+end
+
+-- 📌 Toggle Button
+local muteMusicBtn = Instance.new("TextButton")
+muteMusicBtn.Size = UDim2.new(0, 200, 0, 30)
+muteMusicBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+muteMusicBtn.Text = "🎵 Auto-Mute Music: OFF"
+muteMusicBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+muteMusicBtn.Font = Enum.Font.Gotham
+muteMusicBtn.TextSize = 14
+muteMusicBtn.LayoutOrder = 10
+muteMusicBtn.Parent = AdminFrame
+makeRounded(muteMusicBtn, 6)
+
+local connection
+
+muteMusicBtn.MouseButton1Click:Connect(function()
+	autoMuteMusic = not autoMuteMusic
+	muteMusicBtn.Text = autoMuteMusic and "🎵 Auto-Mute Music: ON" or "🎵 Auto-Mute Music: OFF"
+
+	if autoMuteMusic then
+		connection = game:GetService("RunService").RenderStepped:Connect(function()
+			trackVoiceActivity()
+		end)
+	else
+		if connection then
+			connection:Disconnect()
+		end
+		talkingTimers = {}
+	end
+end)
+
+
 -- Admin Info Message
 local adminMsg = Instance.new("TextLabel")
 adminMsg.Size = UDim2.new(1, -40, 0, 30)
