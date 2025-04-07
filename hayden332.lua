@@ -1128,10 +1128,16 @@ AdminFrame.Visible = false
 AdminFrame.Parent = contentFrame
 makeRounded(AdminFrame, 10)
 
-local homePadding = Instance.new("UIPadding")
-homePadding.PaddingTop = UDim.new(0, 10)
-homePadding.PaddingLeft = UDim.new(0, 20)
-homePadding.Parent = AdminFrame
+local adminLayout = Instance.new("UIListLayout")
+adminLayout.SortOrder = Enum.SortOrder.LayoutOrder
+adminLayout.Padding = UDim.new(0, 10)
+adminLayout.Parent = AdminFrame
+
+local adminPadding = Instance.new("UIPadding")
+adminPadding.PaddingTop = UDim.new(0, 50)
+adminPadding.PaddingLeft = UDim.new(0, 20)
+adminPadding.PaddingRight = UDim.new(0, 20)
+adminPadding.Parent = AdminFrame
 
 local adminTitle = Instance.new("TextLabel")
 adminTitle.Size = UDim2.new(1, 0, 0, 40)
