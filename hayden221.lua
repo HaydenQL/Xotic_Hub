@@ -547,7 +547,8 @@ tpDropdownFrame.Size = UDim2.new(0, 200, 0, 30)
 tpDropdownFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 tpDropdownFrame.BorderSizePixel = 0
 tpDropdownFrame.LayoutOrder = 11
-tpDropdownFrame.ClipsDescendants = true
+tpDropdownFrame.ClipsDescendants = false
+tpDropdownFrame.ZIndex = 40
 tpDropdownFrame.Parent = PlayerFrame
 makeRounded(tpDropdownFrame, 6)
 
@@ -562,14 +563,14 @@ tpBox.Font = Enum.Font.Gotham
 tpBox.TextSize = 14
 tpBox.ClearTextOnFocus = false
 tpBox.TextXAlignment = Enum.TextXAlignment.Left
-tpBox.ZIndex = 2
+tpBox.ZIndex = 41
 tpBox.Parent = tpDropdownFrame
 
 local dropArrow = Instance.new("TextButton")
 dropArrow.Size = UDim2.new(0, 30, 1, 0)
 dropArrow.Position = UDim2.new(1, -30, 0, 0)
 dropArrow.Text = "▼"
-dropArrow.ZIndex = 2
+dropArrow.ZIndex = 41
 dropArrow.TextColor3 = Color3.fromRGB(200, 200, 200)
 dropArrow.BackgroundTransparency = 1
 dropArrow.Font = Enum.Font.GothamBold
@@ -591,68 +592,66 @@ makeRounded(dropdown, 6)
 
 local listLayout = Instance.new("UIListLayout")
 listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.Padding = UDim.new(0, 2)
 listLayout.Parent = dropdown
 
--- ✅ Toggle and refresh dropdown on click
+-- ✅ Refresh dropdown on click
 dropArrow.MouseButton1Click:Connect(function()
-	if dropdown.Visible then
-		dropdown.Visible = false
-	else
-		dropdown.Visible = true
+	dropdown.Visible = not dropdown.Visible
+	if not dropdown.Visible then return end
 
-		-- Clear old
-		for _, child in ipairs(dropdown:GetChildren()) do
-			if child:IsA("TextButton") then
-				child:Destroy()
-			end
+	-- Clear options
+	for _, child in ipairs(dropdown:GetChildren()) do
+		if child:IsA("TextButton") then
+			child:Destroy()
 		end
-
-		-- Add new options
-		for _, plr in ipairs(Players:GetPlayers()) do
-			if plr ~= LocalPlayer then
-				local option = Instance.new("TextButton")
-				option.Size = UDim2.new(1, -4, 0, 25)
-				option.Text = plr.DisplayName
-				option.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-				option.TextColor3 = Color3.fromRGB(255, 255, 255)
-				option.Font = Enum.Font.Gotham
-				option.TextSize = 13
-				option.ZIndex = 51
-				option.Parent = dropdown
-				makeRounded(option, 4)
-				option.MouseButton1Click:Connect(function()
-					tpBox.Text = plr.DisplayName
-					dropdown.Visible = false
-				end)
-			end
-		end
-
-		task.wait()
-		local count = #dropdown:GetChildren() - 1 -- minus UIListLayout
-		dropdown.CanvasSize = UDim2.new(0, 0, 0, count * 27)
 	end
+
+	-- Add current players
+	for _, plr in ipairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer then
+			local option = Instance.new("TextButton")
+			option.Size = UDim2.new(1, -4, 0, 25)
+			option.Text = plr.DisplayName
+			option.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+			option.TextColor3 = Color3.fromRGB(255, 255, 255)
+			option.Font = Enum.Font.Gotham
+			option.TextSize = 13
+			option.ZIndex = 51
+			option.Parent = dropdown
+			makeRounded(option, 4)
+
+			option.MouseButton1Click:Connect(function()
+				tpBox.Text = plr.DisplayName
+				dropdown.Visible = false
+			end)
+		end
+	end
+
+	task.wait()
+	local count = #dropdown:GetChildren() - 1
+	dropdown.CanvasSize = UDim2.new(0, 0, 0, count * 27)
 end)
 
--- ❌ Close dropdown when clicking outside
+-- ❌ Hide dropdown when clicking outside
 UIS.InputBegan:Connect(function(input, gpe)
 	if gpe then return end
-	if dropdown.Visible then
-		local mousePos = UIS:GetMouseLocation()
-		local guiInset = game:GetService("GuiService"):GetGuiInset()
-		local adjustedY = mousePos.Y - guiInset.Y
-		local absPos = dropdown.AbsolutePosition
-		local absSize = dropdown.AbsoluteSize
+	if not dropdown.Visible then return end
 
-		local inside = mousePos.X >= absPos.X and mousePos.X <= absPos.X + absSize.X
-			and adjustedY >= absPos.Y and adjustedY <= absPos.Y + absSize.Y
+	local mousePos = UIS:GetMouseLocation()
+	local guiInset = game:GetService("GuiService"):GetGuiInset()
+	local y = mousePos.Y - guiInset.Y
+	local pos = dropdown.AbsolutePosition
+	local size = dropdown.AbsoluteSize
 
-		if not inside then
-			dropdown.Visible = false
-		end
+	local inside = mousePos.X >= pos.X and mousePos.X <= pos.X + size.X and y >= pos.Y and y <= pos.Y + size.Y
+
+	if not inside then
+		dropdown.Visible = false
 	end
 end)
 
--- 🚀 Teleport Button
+-- 🚀 Teleport to selected
 local tpButton = Instance.new("TextButton")
 tpButton.Size = UDim2.new(0, 200, 0, 30)
 tpButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
