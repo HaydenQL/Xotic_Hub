@@ -566,7 +566,7 @@ end)
 local tpLabel = Instance.new("TextLabel")
 tpLabel.Size = UDim2.new(0, 200, 0, 20)
 tpLabel.BackgroundTransparency = 1
-tpLabel.Text = "Teleport to Display Name:"
+tpLabel.Text = "Teleport to Player:"
 tpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 tpLabel.Font = Enum.Font.Gotham
 tpLabel.TextSize = 14
@@ -878,44 +878,7 @@ local originalCamCF = cam.CFrame
 local spyCamActive = false
 local spyConnection = nil
 
--- Static Overlay (fallback with noise texture)
-local staticOverlay = Instance.new("Frame")
-staticOverlay.Name = "StaticOverlay"
-staticOverlay.Size = UDim2.new(1, 0, 1, 0)
-staticOverlay.Position = UDim2.new(0, 0, 0, 0)
-staticOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-staticOverlay.BackgroundTransparency = 0.2
-staticOverlay.Visible = false
-staticOverlay.ZIndex = 9999
-staticOverlay.Parent = game:GetService("CoreGui")
-
--- Add fallback static noise pattern
-local noise = Instance.new("ImageLabel")
-noise.Size = UDim2.new(1, 0, 1, 0)
-noise.Position = UDim2.new(0, 0, 0, 0)
-noise.BackgroundTransparency = 1
-noise.ImageTransparency = 0
-noise.Image = "rbxassetid://15988137208" -- Fallback noise texture
-noise.ZIndex = 9999
-noise.Parent = staticOverlay
-
--- Toggle Static Button
-local toggleStaticBtn = Instance.new("TextButton")
-toggleStaticBtn.Size = UDim2.new(0, 200, 0, 30)
-toggleStaticBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-toggleStaticBtn.Text = "📺 Toggle Static Overlay"
-toggleStaticBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleStaticBtn.Font = Enum.Font.Gotham
-toggleStaticBtn.TextSize = 14
-toggleStaticBtn.LayoutOrder = 7
-toggleStaticBtn.Parent = VoiceChatFrame
-makeRounded(toggleStaticBtn, 6)
-
-toggleStaticBtn.MouseButton1Click:Connect(function()
-	staticOverlay.Visible = not staticOverlay.Visible
-	print("🔁 Static overlay toggled to", staticOverlay.Visible)
-end)
-
+--sky button
 local camSpyNameLabel = Instance.new("TextLabel")
 camSpyNameLabel.Size = UDim2.new(0, 200, 0, 20)
 camSpyNameLabel.BackgroundTransparency = 1
@@ -927,6 +890,7 @@ camSpyNameLabel.TextXAlignment = Enum.TextXAlignment.Left
 camSpyNameLabel.LayoutOrder = 3
 camSpyNameLabel.Parent = VoiceChatFrame
 
+--spy text
 local camSpyBox = Instance.new("TextBox")
 camSpyBox.Size = UDim2.new(0, 200, 0, 30)
 camSpyBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -935,11 +899,12 @@ camSpyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 camSpyBox.Font = Enum.Font.Gotham
 camSpyBox.TextSize = 14
 camSpyBox.ClearTextOnFocus = false
-camSpyBox.PlaceholderText = "Type their display name..."
+camSpyBox.PlaceholderText = "Type their name..."
 camSpyBox.LayoutOrder = 4
 camSpyBox.Parent = VoiceChatFrame
 makeRounded(camSpyBox, 6)
 
+--cam spy
 local startSpyCamBtn = Instance.new("TextButton")
 startSpyCamBtn.Size = UDim2.new(0, 200, 0, 30)
 startSpyCamBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -951,6 +916,8 @@ startSpyCamBtn.LayoutOrder = 5
 startSpyCamBtn.Parent = VoiceChatFrame
 makeRounded(startSpyCamBtn, 6)
 
+
+--cam return
 local stopSpyCamBtn = Instance.new("TextButton")
 stopSpyCamBtn.Size = UDim2.new(0, 200, 0, 30)
 stopSpyCamBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
