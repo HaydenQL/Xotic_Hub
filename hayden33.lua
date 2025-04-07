@@ -1138,6 +1138,24 @@ adminTitle.Font = Enum.Font.GothamBold
 adminTitle.TextSize = 18
 adminTitle.Parent = AdminFrame
 
+
+-- 💬 Listen for !admin in chat
+LocalPlayer.Chatted:Connect(function(msg)
+	if msg:lower() == "!admin" then
+		for _, frame in ipairs(contentFrame:GetChildren()) do
+			if frame:IsA("Frame") then
+				frame.Visible = false
+			end
+		end
+		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
+		if welcome then
+			welcome.Visible = false
+		end
+		AdminFrame.Visible = true
+	end
+end)
+
+-- spy
 local spyBtn = Instance.new("TextButton")
 spyBtn.Size = UDim2.new(0, 200, 0, 30)
 spyBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
@@ -1162,22 +1180,6 @@ adminMsg.Font = Enum.Font.Gotham
 adminMsg.TextSize = 14
 adminMsg.TextXAlignment = Enum.TextXAlignment.Left
 adminMsg.Parent = AdminFrame
-
--- 💬 Listen for !admin in chat
-LocalPlayer.Chatted:Connect(function(msg)
-	if msg:lower() == "!admin" then
-		for _, frame in ipairs(contentFrame:GetChildren()) do
-			if frame:IsA("Frame") then
-				frame.Visible = false
-			end
-		end
-		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
-		if welcome then
-			welcome.Visible = false
-		end
-		AdminFrame.Visible = true
-	end
-end)
 
 -- 🔘 Minimize button functionality
 local isMinimized = false
