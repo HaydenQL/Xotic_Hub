@@ -1068,6 +1068,32 @@ local SettingsFrame = createTabFrame("Settings", "Settings Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
+local SettingsFrame = Instance.new("ScrollingFrame")
+SettingsFrame.Name = "SettingsFrame"
+SettingsFrame.Size = UDim2.new(1, 0, 1, 0)
+SettingsFrame.CanvasSize = UDim2.new(0, 0, 0, 600)
+SettingsFrame.ScrollBarThickness = 4
+SettingsFrame.BackgroundTransparency = 1
+SettingsFrame.Visible = false
+SettingsFrame.Parent = contentFrame
+makeRounded(SettingsFrame, 10)
+
+local extendBaseBtn = Instance.new("TextButton")
+extendBaseBtn.Size = UDim2.new(0, 200, 0, 30)
+extendBaseBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+extendBaseBtn.Text = "🧱 Extend Baseplate"
+extendBaseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+extendBaseBtn.Font = Enum.Font.Gotham
+extendBaseBtn.TextSize = 14
+extendBaseBtn.LayoutOrder = 2
+extendBaseBtn.Parent = SettingsFrame
+makeRounded(extendBaseBtn, 6)
+
+extendBaseBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/8973951821973068216/11374577211057006363/refs/heads/main/Baseplat"))()
+end)
+
+
 
 local CreditsFrame = createTabFrame("Credits", "Credits Tab")
 mainFrame.ClipsDescendants = true
