@@ -8,6 +8,34 @@
         Frosty - GUI to Lua
 ]]
 
+local cloneref = cloneref or function(x) return x end
+local getsynasset = getsynasset or getcustomasset or function() return "" end
+local setreadonly = setreadonly or function(tbl, bool) end
+local makewriteable = makewriteable or function(tbl) end
+local makereadonly = makereadonly or function(tbl) end
+local isreadonly = isreadonly or function(tbl) return false end
+local request = request or function(...) return nil end
+local decompile = nil -- Not supported in Xeno
+
+-- Synapse-specific checks removed
+local get_thread_identity = getidentity or getthreadidentity
+local set_thread_identity = setidentity
+
+-- HttpService fallback
+local http = game:GetService("HttpService")
+local jsone = function(str) return http:JSONEncode(str) end
+local jsond = function(str)
+    local suc, result = pcall(function() return http:JSONDecode(str) end)
+    return suc and result or {}
+end
+
+-- GUI protection workaround
+local function protect_gui(gui)
+    pcall(function()
+        gui.Parent = game:GetService("CoreGui")
+    end)
+end
+
 -- shuts down the previous instance of SimpleSpy
 if shared.SimpleSpyExecuted and type(shared.SimpleSpyShutdown) == "function" then
 	print(pcall(shared.SimpleSpyShutdown))
