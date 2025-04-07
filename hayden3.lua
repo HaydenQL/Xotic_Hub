@@ -253,7 +253,7 @@ title.Font = Enum.Font.GothamBold
 title.TextSize = 16
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.LayoutOrder = 0
-title.Parent = PlayerFrame
+title.Parent = HomeFrame
 
 -- Infinite Yield Button
 local infYieldBtn = Instance.new("TextButton")
@@ -725,7 +725,7 @@ title.Font = Enum.Font.GothamBold
 title.TextSize = 16
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.LayoutOrder = 0
-title.Parent = PlayerFrame
+title.Parent = VisualFrame
 
 -- 💀 Spin and Die Button (softer fling)
 local spinDieBtn = Instance.new("TextButton")
