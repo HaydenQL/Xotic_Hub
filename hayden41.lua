@@ -1128,17 +1128,7 @@ AdminFrame.Visible = false
 AdminFrame.Parent = contentFrame
 makeRounded(AdminFrame, 10)
 
-local adminLayout = Instance.new("UIListLayout")
-adminLayout.SortOrder = Enum.SortOrder.LayoutOrder
-adminLayout.Padding = UDim.new(0, 10)
-adminLayout.Parent = AdminFrame
-
-local adminPadding = Instance.new("UIPadding")
-adminPadding.PaddingTop = UDim.new(0, 50)
-adminPadding.PaddingLeft = UDim.new(0, 20)
-adminPadding.PaddingRight = UDim.new(0, 20)
-adminPadding.Parent = AdminFrame
-
+-- Admin Title (stays top-left)
 local adminTitle = Instance.new("TextLabel")
 adminTitle.Size = UDim2.new(1, 0, 0, 40)
 adminTitle.Position = UDim2.new(0, 0, 0, 0)
@@ -1147,8 +1137,29 @@ adminTitle.Text = "🔧 Admin Panel"
 adminTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 adminTitle.Font = Enum.Font.GothamBold
 adminTitle.TextSize = 18
+adminTitle.TextXAlignment = Enum.TextXAlignment.Left
 adminTitle.Parent = AdminFrame
 
+-- Content container below title
+local adminContent = Instance.new("Frame")
+adminContent.Name = "AdminContent"
+adminContent.Size = UDim2.new(1, 0, 1, -40)
+adminContent.Position = UDim2.new(0, 0, 0, 40)
+adminContent.BackgroundTransparency = 1
+adminContent.Parent = AdminFrame
+
+-- Layout for tools
+local adminLayout = Instance.new("UIListLayout")
+adminLayout.SortOrder = Enum.SortOrder.LayoutOrder
+adminLayout.Padding = UDim.new(0, 10)
+adminLayout.Parent = adminContent
+
+local adminPadding = Instance.new("UIPadding")
+adminPadding.PaddingTop = UDim.new(0, 10)
+adminPadding.PaddingLeft = UDim.new(0, 20)
+adminPadding.PaddingRight = UDim.new(0, 20)
+adminPadding.PaddingBottom = UDim.new(0, 10)
+adminPadding.Parent = adminContent
 
 -- 💬 Listen for !admin in chat
 LocalPlayer.Chatted:Connect(function(msg)
@@ -1166,7 +1177,7 @@ LocalPlayer.Chatted:Connect(function(msg)
 	end
 end)
 
--- spy
+-- Spy Button
 local spyBtn = Instance.new("TextButton")
 spyBtn.Size = UDim2.new(0, 200, 0, 30)
 spyBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
@@ -1174,23 +1185,26 @@ spyBtn.Text = "🕵️ Launch SimpleSpy"
 spyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 spyBtn.Font = Enum.Font.Gotham
 spyBtn.TextSize = 14
-spyBtn.Parent = AdminFrame
+spyBtn.LayoutOrder = 1
+spyBtn.Parent = adminContent
 makeRounded(spyBtn, 6)
 
 spyBtn.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/main/SimpleSpy_Secure.lua"))() -- or paste the code directly here
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/main/SimpleSpy_Secure.lua"))()
 end)
 
+-- Admin Info Message
 local adminMsg = Instance.new("TextLabel")
 adminMsg.Size = UDim2.new(1, -40, 0, 30)
-adminMsg.Position = UDim2.new(0, 20, 0, 50)
 adminMsg.BackgroundTransparency = 1
 adminMsg.Text = "Admin tools will go here soon..."
 adminMsg.TextColor3 = Color3.fromRGB(200, 200, 200)
 adminMsg.Font = Enum.Font.Gotham
 adminMsg.TextSize = 14
 adminMsg.TextXAlignment = Enum.TextXAlignment.Left
-adminMsg.Parent = AdminFrame
+adminMsg.LayoutOrder = 2
+adminMsg.Parent = adminContent
+
 
 -- 🔘 Minimize button functionality
 local isMinimized = false
