@@ -1203,12 +1203,49 @@ local function trackVoiceActivity()
 					VoiceChatService:MuteUser(plr.UserId)
 					print("🔇 Auto-muted " .. plr.DisplayName)
 				end
-			else
-				talkingTimers[uid] = 0
-			end
-		end
+		local VoiceChatService = game:GetService("VoiceChatService")
+local Players = game:GetService("Players")
+
+local function mutePlayer(uid)
+	local success, err = pcall(function()
+		VoiceChatService:MuteUser(uid)
+	end)
+	if not success then
+		warn("Failed to mute: ", err)
 	end
 end
+
+-- Button connection
+autoMuteMusic = not autoMuteMusic
+muteMusicBtn.Text = autoMuteMusic and "🎵 Auto-Mute Music: ON" or "🎵 Auto-Mute Music: OFF"
+
+if autoMuteMusic then
+	if connection then connection:Disconnect() end
+	connection = game:GetService("RunService").RenderStepped:Connect(function()
+		for _, plr in ipairs(Players:GetPlayers()) do
+			if plr ~= LocalPlayer then
+				local uid = plr.UserId
+				talkingTimers[uid] = talkingTimers[uid] or 0
+
+				local participant = VoiceChatService:GetParticipant(uid)
+				if participant and participant.IsVoiceActive then
+					talkingTimers[uid] += 0.1
+					if talkingTimers[uid] >= 10 then
+						mutePlayer(uid)
+						print("🔇 Muted " .. plr.DisplayName)
+						talkingTimers[uid] = -999 -- prevent spam
+					end
+				else
+					talkingTimers[uid] = 0
+				end
+			end
+		end
+	end)
+else
+	if connection then connection:Disconnect() end
+	talkingTimers = {}
+end
+
 
 -- 📦 UI Button
 local muteMusicBtn = Instance.new("TextButton")
