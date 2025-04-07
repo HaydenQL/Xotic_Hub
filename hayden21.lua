@@ -626,6 +626,35 @@ end
 -- Refresh when opened
 dropArrow.MouseButton1Click:Connect(updateDropdown)
 
+-- Button to execute teleport
+local tpButton = Instance.new("TextButton")
+tpButton.Size = UDim2.new(0, 200, 0, 30)
+tpButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+tpButton.Text = "🚀 Teleport to Player"
+tpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+tpButton.Font = Enum.Font.Gotham
+tpButton.TextSize = 14
+tpButton.LayoutOrder = 12
+tpButton.Parent = PlayerFrame
+makeRounded(tpButton, 6)
+
+tpButton.MouseButton1Click:Connect(function()
+	local inputName = tpBox.Text:lower()
+	for _, plr in ipairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer and plr.DisplayName:lower() == inputName then
+			local targetChar = plr.Character
+			local myChar = LocalPlayer.Character
+			if targetChar and targetChar:FindFirstChild("HumanoidRootPart") and myChar and myChar:FindFirstChild("HumanoidRootPart") then
+				myChar:MoveTo(targetChar.HumanoidRootPart.Position + Vector3.new(0, 3, 0))
+				print("✅ Teleported to " .. plr.DisplayName)
+			else
+				warn("❌ Could not find player or their character.")
+			end
+			break
+		end
+	end
+end)
+
 
 -- 🎨 Visual Tab (Scrollable + Ordered Buttons)
 local VisualFrame = Instance.new("ScrollingFrame")
