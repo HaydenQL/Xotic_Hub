@@ -314,9 +314,10 @@ local function addSpacer(order)
 	spacer.Parent = PlayerFrame
 end
 
--- WalkSpeed Slider
+-- Shared drag state
 local draggingSlider = nil
 
+-- 🏃 WalkSpeed Slider
 local walkSpeedLabel = Instance.new("TextLabel")
 walkSpeedLabel.Size = UDim2.new(0, 200, 0, 20)
 walkSpeedLabel.BackgroundTransparency = 1
@@ -360,9 +361,7 @@ walkSlider.InputBegan:Connect(function(input)
 end)
 
 
--- JumpPower Slider
-local draggingSlider = nil
-
+-- 🦘 JumpPower Slider
 local jumpLabel = Instance.new("TextLabel")
 jumpLabel.Size = UDim2.new(0, 200, 0, 20)
 jumpLabel.BackgroundTransparency = 1
@@ -413,10 +412,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
 end)
 
 
-
--- Gravity Slider
-local draggingSlider = nil
-
+-- 🌌 Gravity Slider
 local gravLabel = Instance.new("TextLabel")
 gravLabel.Size = UDim2.new(0, 200, 0, 20)
 gravLabel.BackgroundTransparency = 1
@@ -456,7 +452,8 @@ gravSlider.InputBegan:Connect(function(input)
 	end
 end)
 
--- Global Mouse Tracking Logic
+
+-- 🖱️ Global Mouse Tracking for all sliders
 UIS.InputChanged:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseMovement then
 		local mouseX = UIS:GetMouseLocation().X
