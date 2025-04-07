@@ -59,16 +59,16 @@ topBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 topBar.Parent = mainFrame
 makeRounded(topBar, 8)
 
-local usernametitle = Instance.new("TextLabel")
-usernametitle.Size = UDim2.new(1, -180, 1, 0)
-usernametitle.Position = UDim2.new(0, 10, 0, 0)
-usernametitle.BackgroundTransparency = 1
-usernametitle.Text = "👑 Sigma Hub"
-usernametitle.TextSize = 16
-usernametitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-usernametitle.Font = Enum.Font.GothamBold
-usernametitle.TextXAlignment = Enum.TextXAlignment.Left
-usernametitle.Parent = topBar
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -180, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "👑 Sigma Hub"
+title.TextSize = 16
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = topBar
 
 local usernameLabel = Instance.new("TextLabel")
 usernameLabel.Size = UDim2.new(0, 100, 1, 0)
@@ -244,16 +244,16 @@ homePadding.PaddingLeft = UDim.new(0, 20)
 homePadding.Parent = HomeFrame
 
 -- Title
-local hometitle = Instance.new("TextLabel")
-hometitle.Size = UDim2.new(1, -20, 0, 30)
-hometitle.BackgroundTransparency = 1
-hometitle.Text = "Home"
-hometitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-hometitle.Font = Enum.Font.GothamBold
-hometitle.TextSize = 16
-hometitle.TextXAlignment = Enum.TextXAlignment.Left
-hometitle.LayoutOrder = 0
-hometitle.Parent = HomeFrame
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -20, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "Home"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.LayoutOrder = 0
+title.Parent = HomeFrame
 
 -- Infinite Yield Button
 local infYieldBtn = Instance.new("TextButton")
@@ -306,16 +306,16 @@ playerPadding.PaddingLeft = UDim.new(0, 20)
 playerPadding.Parent = PlayerFrame
 
 -- Title
-local playertitle = Instance.new("TextLabel")
-playertitle.Size = UDim2.new(1, -20, 0, 30)
-playertitle.BackgroundTransparency = 1
-playertitle.Text = "Player Tab"
-playertitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-playertitle.Font = Enum.Font.GothamBold
-playertitle.TextSize = 16
-playertitle.TextXAlignment = Enum.TextXAlignment.Left
-playertitle.LayoutOrder = 0
-playertitle.Parent = PlayerFrame
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -20, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "Player Tab"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.LayoutOrder = 0
+title.Parent = PlayerFrame
 
 -- Helper: Spacer
 local function addSpacer(order)
@@ -716,16 +716,16 @@ visualPadding.PaddingLeft = UDim.new(0, 20)
 visualPadding.Parent = VisualFrame
 
 -- Title
-local visualtitle = Instance.new("TextLabel")
-visualtitle.Size = UDim2.new(1, -20, 0, 30)
-visualtitle.BackgroundTransparency = 1
-visualtitle.Text = "Visual Tab"
-visualtitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-visualtitle.Font = Enum.Font.GothamBold
-visualtitle.TextSize = 16
-visualtitle.TextXAlignment = Enum.TextXAlignment.Left
-visualtitle.LayoutOrder = 0
-visualtitle.Parent = VisualFrame
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -20, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "Visual Tab"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.LayoutOrder = 0
+title.Parent = VisualFrame
 
 -- 💀 Spin and Die Button (softer fling)
 local spinDieBtn = Instance.new("TextButton")
@@ -1063,115 +1063,28 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 end)
 
 
--- 🛠️ Settings Tab (Fixed & Scrollable)
-local SettingsFrame = Instance.new("ScrollingFrame")
-SettingsFrame.Name = "SettingsFrame"
-SettingsFrame.Size = UDim2.new(1, 0, 1, 0)
-SettingsFrame.CanvasSize = UDim2.new(0, 0, 0, 300)
-SettingsFrame.ScrollBarThickness = 4
-SettingsFrame.BackgroundTransparency = 1
-SettingsFrame.Visible = false
-SettingsFrame.Parent = contentFrame
-makeRounded(SettingsFrame, 10)
-
-local settingsLayout = Instance.new("UIListLayout")
-settingsLayout.Padding = UDim.new(0, 8)
-settingsLayout.SortOrder = Enum.SortOrder.LayoutOrder
-settingsLayout.Parent = SettingsFrame
-
-local settingsPadding = Instance.new("UIPadding")
-settingsPadding.PaddingTop = UDim.new(0, 10)
-settingsPadding.PaddingLeft = UDim.new(0, 20)
-settingsPadding.PaddingRight = UDim.new(0, 20)
-settingsPadding.PaddingBottom = UDim.new(0, 10)
-settingsPadding.Parent = SettingsFrame
-
--- Title
-local settingsTitle = Instance.new("TextLabel")
-settingsTitle.Size = UDim2.new(1, -20, 0, 30)
-settingsTitle.BackgroundTransparency = 1
-settingsTitle.Text = "Settings Tab"
-settingsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-settingsTitle.Font = Enum.Font.GothamBold
-settingsTitle.TextSize = 16
-settingsTitle.TextXAlignment = Enum.TextXAlignment.Left
-settingsTitle.LayoutOrder = 0
-settingsTitle.Parent = SettingsFrame
-
--- 🌗 Theme Toggle
-themeToggle.MouseButton1Click:Connect(function()
-	isDark = not isDark
-	themeToggle.Text = isDark and "🌓 Toggle Theme: Dark" or "🌓 Toggle Theme: Light"
-
-	local dark = {
-		main = Color3.fromRGB(20, 20, 20),
-		content = Color3.fromRGB(15, 15, 15),
-		tab = Color3.fromRGB(25, 25, 25),
-		topBar = Color3.fromRGB(30, 30, 30),
-		text = Color3.fromRGB(255, 255, 255),
-		textDim = Color3.fromRGB(150, 150, 150)
-	}
-
-	local light = {
-		main = Color3.fromRGB(240, 240, 240),
-		content = Color3.fromRGB(230, 230, 230),
-		tab = Color3.fromRGB(210, 210, 210),
-		topBar = Color3.fromRGB(255, 255, 255),
-		text = Color3.fromRGB(0, 0, 0),
-		textDim = Color3.fromRGB(80, 80, 80)
-	}
-
-	local palette = isDark and dark or light
-
-	mainFrame.BackgroundColor3 = palette.main
-	contentFrame.BackgroundColor3 = palette.content
-	tabFrame.BackgroundColor3 = palette.tab
-	topBar.BackgroundColor3 = palette.topBar
-
-	-- Update top bar texts
-	if topBar:FindFirstChild("title") then
-		topBar.title.TextColor3 = palette.text
-	end
-	if topBar:FindFirstChild("usernameLabel") then
-		topBar.usernameLabel.TextColor3 = palette.textDim
-	end
-
-	-- Update all tab buttons
-	for _, btn in pairs(tabButtons) do
-		if btn and btn:IsA("TextButton") then
-			btn.BackgroundColor3 = palette.tab
-			btn.TextColor3 = palette.text
-		end
-	end
-
-	-- Update all TextLabels (safely)
-	for _, obj in ipairs(mainFrame:GetDescendants()) do
-		if obj:IsA("TextLabel") and not obj:IsDescendantOf(tabFrame) then
-			obj.TextColor3 = palette.text
-		end
-	end
-
-	-- Update specific known labels
-	versionLabel.TextColor3 = palette.textDim
-	walkLabel.TextColor3 = palette.text
-	jumpLabel.TextColor3 = palette.text
-	gravLabel.TextColor3 = palette.text
-	settingsTitle.TextColor3 = palette.text
-end)
+-- settings
+local SettingsFrame = createTabFrame("Settings", "Settings Tab")
+mainFrame.ClipsDescendants = true
+contentFrame.ClipsDescendants = true
 
 
+local CreditsFrame = createTabFrame("Credits", "Credits Tab")
+mainFrame.ClipsDescendants = true
+contentFrame.ClipsDescendants = true
 
 
--- 📜 Credits Tab
-local CreditsFrame = Instance.new("ScrollingFrame")
-CreditsFrame.Name = "CreditsFrame"
-CreditsFrame.Size = UDim2.new(1, 0, 1, 0)
-CreditsFrame.CanvasSize = UDim2.new(0, 0, 0, 150)
-CreditsFrame.ScrollBarThickness = 4
-CreditsFrame.BackgroundTransparency = 1
-CreditsFrame.Visible = false
-CreditsFrame.Parent = contentFrame
-makeRounded(CreditsFrame, 10)
+-- Add credit labels
+local creditsText = Instance.new("TextLabel")
+creditsText.Size = UDim2.new(1, -40, 0, 30)
+creditsText.Position = UDim2.new(0, 20, 0, 50)
+creditsText.BackgroundTransparency = 1
+creditsText.Text = "Made by Hayden"
+creditsText.TextColor3 = Color3.fromRGB(200, 200, 200)
+creditsText.Font = Enum.Font.Gotham
+creditsText.TextSize = 14
+creditsText.TextXAlignment = Enum.TextXAlignment.Left
+creditsText.Parent = CreditsFrame
 
 local creditsNote = Instance.new("TextLabel")
 creditsNote.Size = UDim2.new(1, -40, 0, 30)
@@ -1189,25 +1102,20 @@ creditsNote.Parent = CreditsFrame
 for tabName, button in pairs(tabButtons) do
 	button.MouseButton1Click:Connect(function()
 		for _, child in ipairs(contentFrame:GetChildren()) do
-			if child:IsA("Frame") or child:IsA("ScrollingFrame") then
+			if child:IsA("Frame") or child:IsA("ScrollingFrame") then -- ✅ hides both
 				child.Visible = false
 			end
 		end
-
 		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
 		if welcome then
 			welcome.Visible = false
 		end
-
 		local tabFrame = contentFrame:FindFirstChild(tabName .. "Frame")
 		if tabFrame then
 			tabFrame.Visible = true
-		else
-			warn("⚠️ Tab frame not found:", tabName .. "Frame")
 		end
 	end)
 end
-
 
 
 -- 🔐 Admin Panel (hidden unless !admin is typed)
