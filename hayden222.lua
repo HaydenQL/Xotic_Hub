@@ -243,6 +243,18 @@ homePadding.PaddingTop = UDim.new(0, 10)
 homePadding.PaddingLeft = UDim.new(0, 20)
 homePadding.Parent = HomeFrame
 
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -20, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "Home"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.LayoutOrder = 0
+title.Parent = PlayerFrame
+
 -- Infinite Yield Button
 local infYieldBtn = Instance.new("TextButton")
 infYieldBtn.Size = UDim2.new(0, 180, 0, 35)
@@ -702,6 +714,18 @@ local visualPadding = Instance.new("UIPadding")
 visualPadding.PaddingTop = UDim.new(0, 10)
 visualPadding.PaddingLeft = UDim.new(0, 20)
 visualPadding.Parent = VisualFrame
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -20, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "Visual Tab"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.LayoutOrder = 0
+title.Parent = PlayerFrame
 
 -- 💀 Spin and Die Button (softer fling)
 local spinDieBtn = Instance.new("TextButton")
