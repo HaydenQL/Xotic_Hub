@@ -1073,6 +1073,27 @@ local CreditsFrame = createTabFrame("Credits", "Credits Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
+-- Toggle theme button
+local themeToggle = Instance.new("TextButton")
+themeToggle.Size = UDim2.new(0, 200, 0, 30)
+themeToggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+themeToggle.Text = "🌓 Toggle Theme: Dark"
+themeToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+themeToggle.Font = Enum.Font.Gotham
+themeToggle.TextSize = 14
+themeToggle.LayoutOrder = 1
+themeToggle.Parent = SettingsFrame
+makeRounded(themeToggle, 6)
+
+local isDark = true
+themeToggle.MouseButton1Click:Connect(function()
+	isDark = not isDark
+	themeToggle.Text = isDark and "🌓 Toggle Theme: Dark" or "🌓 Toggle Theme: Light"
+	mainFrame.BackgroundColor3 = isDark and Color3.fromRGB(20, 20, 20) or Color3.fromRGB(230, 230, 230)
+	-- You can update other elements too if you want
+end)
+
+
 
 -- Add credit labels
 local creditsText = Instance.new("TextLabel")
