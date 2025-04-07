@@ -1118,18 +1118,38 @@ themeToggle.MouseButton1Click:Connect(function()
 	local dark = {
 		main = Color3.fromRGB(20, 20, 20),
 		content = Color3.fromRGB(15, 15, 15),
-		tab = Color3.fromRGB(25, 25, 25)
+		tab = Color3.fromRGB(25, 25, 25),
+		topBar = Color3.fromRGB(30, 30, 30),
+		text = Color3.fromRGB(255, 255, 255),
+		textDim = Color3.fromRGB(150, 150, 150)
 	}
+
 	local light = {
 		main = Color3.fromRGB(240, 240, 240),
 		content = Color3.fromRGB(230, 230, 230),
-		tab = Color3.fromRGB(210, 210, 210)
+		tab = Color3.fromRGB(210, 210, 210),
+		topBar = Color3.fromRGB(255, 255, 255),
+		text = Color3.fromRGB(0, 0, 0),
+		textDim = Color3.fromRGB(80, 80, 80)
 	}
 
 	local palette = isDark and dark or light
+
 	mainFrame.BackgroundColor3 = palette.main
 	contentFrame.BackgroundColor3 = palette.content
 	tabFrame.BackgroundColor3 = palette.tab
+	topBar.BackgroundColor3 = palette.topBar
+	title.TextColor3 = palette.text
+	usernameLabel.TextColor3 = palette.textDim
+	versionLabel.TextColor3 = palette.textDim
+
+	-- Apply to all tab buttons
+	for _, btn in pairs(tabFrame:GetChildren()) do
+		if btn:IsA("TextButton") then
+			btn.BackgroundColor3 = palette.tab
+			btn.TextColor3 = palette.text
+		end
+	end
 end)
 
 
