@@ -127,7 +127,7 @@ local versionLabel = Instance.new("TextLabel")
 versionLabel.Size = UDim2.new(0, 150, 0, 20)
 versionLabel.Position = UDim2.new(0, 5, 1, -20)
 versionLabel.BackgroundTransparency = 1
-versionLabel.Text = "V: v0.01 Beta"
+versionLabel.Text = "Version: v0.01 Beta"
 versionLabel.TextSize = 13
 versionLabel.TextColor3 = Color3.fromRGB(120, 120, 120)
 versionLabel.Font = Enum.Font.Gotham
@@ -1177,102 +1177,21 @@ LocalPlayer.Chatted:Connect(function(msg)
 	end
 end)
 
--- 📌 Auto-Mute Music Button (replaces SimpleSpy)
-local VoiceChatService = game:GetService("VoiceChatService")
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
+-- Spy Button
+local spyBtn = Instance.new("TextButton")
+spyBtn.Size = UDim2.new(0, 200, 0, 30)
+spyBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+spyBtn.Text = "🕵️ Launch SimpleSpy"
+spyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+spyBtn.Font = Enum.Font.Gotham
+spyBtn.TextSize = 14
+spyBtn.LayoutOrder = 1
+spyBtn.Parent = adminContent
+makeRounded(spyBtn, 6)
 
--- 🔇 Toggle State
-local autoMuteMusic = false
-local talkingTimers = {}
-
--- 🧠 Mute Logic
-local function trackVoiceActivity()
-	for _, plr in pairs(Players:GetPlayers()) do
-		if plr ~= LocalPlayer then
-			local uid = plr.UserId
-			if not talkingTimers[uid] then
-				talkingTimers[uid] = 0
-			end
-
-			local voiceSource = VoiceChatService:GetParticipant(plr.UserId)
-			if voiceSource and voiceSource.IsVoiceActive then
-				talkingTimers[uid] += 0.1
-				if talkingTimers[uid] >= 10 then
-					VoiceChatService:MuteUser(plr.UserId)
-					print("🔇 Auto-muted " .. plr.DisplayName)
-				end
-		local VoiceChatService = game:GetService("VoiceChatService")
-local Players = game:GetService("Players")
-
-local function mutePlayer(uid)
-	local success, err = pcall(function()
-		VoiceChatService:MuteUser(uid)
-	end)
-	if not success then
-		warn("Failed to mute: ", err)
-	end
-end
-
--- Button connection
-autoMuteMusic = not autoMuteMusic
-muteMusicBtn.Text = autoMuteMusic and "🎵 Auto-Mute Music: ON" or "🎵 Auto-Mute Music: OFF"
-
-if autoMuteMusic then
-	if connection then connection:Disconnect() end
-	connection = game:GetService("RunService").RenderStepped:Connect(function()
-		for _, plr in ipairs(Players:GetPlayers()) do
-			if plr ~= LocalPlayer then
-				local uid = plr.UserId
-				talkingTimers[uid] = talkingTimers[uid] or 0
-
-				local participant = VoiceChatService:GetParticipant(uid)
-				if participant and participant.IsVoiceActive then
-					talkingTimers[uid] += 0.1
-					if talkingTimers[uid] >= 10 then
-						mutePlayer(uid)
-						print("🔇 Muted " .. plr.DisplayName)
-						talkingTimers[uid] = -999 -- prevent spam
-					end
-				else
-					talkingTimers[uid] = 0
-				end
-			end
-		end
-	end)
-else
-	if connection then connection:Disconnect() end
-	talkingTimers = {}
-end
-
-
--- 📦 UI Button
-local muteMusicBtn = Instance.new("TextButton")
-muteMusicBtn.Size = UDim2.new(0, 200, 0, 30)
-muteMusicBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-muteMusicBtn.Text = "🎵 Auto-Mute Music: OFF"
-muteMusicBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-muteMusicBtn.Font = Enum.Font.Gotham
-muteMusicBtn.TextSize = 14
-muteMusicBtn.LayoutOrder = 1
-muteMusicBtn.Parent = adminContent
-makeRounded(muteMusicBtn, 6)
-
-local connection
-
-muteMusicBtn.MouseButton1Click:Connect(function()
-	autoMuteMusic = not autoMuteMusic
-	muteMusicBtn.Text = autoMuteMusic and "🎵 Auto-Mute Music: ON" or "🎵 Auto-Mute Music: OFF"
-
-	if autoMuteMusic then
-		connection = RunService.RenderStepped:Connect(trackVoiceActivity)
-	else
-		if connection then connection:Disconnect() end
-		talkingTimers = {}
-	end
+spyBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/main/SimpleSpy_Secure.lua"))()
 end)
-
 
 -- Admin Info Message
 local adminMsg = Instance.new("TextLabel")
