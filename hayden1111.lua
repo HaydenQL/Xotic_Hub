@@ -566,7 +566,8 @@ tpBox.Parent = tpDropdownFrame
 local dropArrow = Instance.new("TextButton")
 dropArrow.Size = UDim2.new(0, 30, 1, 0)
 dropArrow.Position = UDim2.new(1, -30, 0, 0)
-dropArrow.Text = "⏷"
+dropArrow.Text = "▼"
+dropArrow.ZIndex = 2
 dropArrow.TextColor3 = Color3.fromRGB(200, 200, 200)
 dropArrow.BackgroundTransparency = 1
 dropArrow.Font = Enum.Font.GothamBold
@@ -594,8 +595,11 @@ end)
 
 -- 👥 Populate names
 local function updateDropdown()
-	dropdown:ClearAllChildren()
-	listLayout.Parent = dropdown
+	for _, child in ipairs(dropdown:GetChildren()) do
+		if child:IsA("TextButton") then
+			child:Destroy()
+		end
+	end
 
 	for _, plr in ipairs(Players:GetPlayers()) do
 		if plr ~= LocalPlayer then
@@ -606,6 +610,7 @@ local function updateDropdown()
 			option.TextColor3 = Color3.fromRGB(255, 255, 255)
 			option.Font = Enum.Font.Gotham
 			option.TextSize = 13
+			option.ZIndex = 2
 			option.Parent = dropdown
 			option.MouseButton1Click:Connect(function()
 				tpBox.Text = plr.DisplayName
@@ -614,8 +619,8 @@ local function updateDropdown()
 		end
 	end
 
-	wait() -- Let it layout first
-	dropdown.CanvasSize = UDim2.new(0, 0, 0, #Players:GetPlayers() * 25)
+	task.wait() -- Wait for layout
+	dropdown.CanvasSize = UDim2.new(0, 0, 0, #dropdown:GetChildren() * 25)
 end
 
 -- Refresh when opened
