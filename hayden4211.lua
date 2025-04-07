@@ -1256,14 +1256,14 @@ close.MouseButton1Click:Connect(function()
 	loggerGui.Visible = false
 end)
 
--- Remote Logger
-local function logRemote(remote, ...)
-	local args = {...}
+-- Function to create a log entry in the scroll UI
+local function logRemote(remote, args)
 	local argStrings = {}
-	for i, v in ipairs(args) do
+	for _, v in ipairs(args) do
 		local str = typeof(v) == "string" and ('"%s"'):format(v) or tostring(v)
 		table.insert(argStrings, str)
 	end
+
 	local call = ('game:GetService("ReplicatedStorage"):FindFirstChild("%s"):FireServer(%s)')
 		:format(remote.Name, table.concat(argStrings, ", "))
 
@@ -1281,23 +1281,28 @@ local function logRemote(remote, ...)
 	makeRounded(line, 4)
 end
 
--- Hook all existing Remotes
-for _, inst in ipairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
-	if inst:IsA("RemoteEvent") then
-		inst.OnClientEvent:Connect(function(...)
-			logRemote(inst, ...)
-		end)
+-- Override FireServer on all RemoteEvents
+for _, obj in ipairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+	if obj:IsA("RemoteEvent") then
+		local original = obj.FireServer
+		obj.FireServer = function(self, ...)
+			logRemote(self, {...})
+			return original(self, ...)
+		end
 	end
 end
 
--- Detect new remotes
+-- New remote hooking
 game:GetService("ReplicatedStorage").DescendantAdded:Connect(function(inst)
 	if inst:IsA("RemoteEvent") then
-		inst.OnClientEvent:Connect(function(...)
-			logRemote(inst, ...)
-		end)
+		local original = inst.FireServer
+		inst.FireServer = function(self, ...)
+			logRemote(self, {...})
+			return original(self, ...)
+		end
 	end
 end)
+
 
 
 -- Admin Info Message
