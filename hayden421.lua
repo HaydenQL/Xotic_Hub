@@ -1193,6 +1193,113 @@ spyBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/main/SimpleSpy_Secure.lua"))()
 end)
 
+-- 🛰️ Remote Logger Button
+local remoteLogBtn = Instance.new("TextButton")
+remoteLogBtn.Size = UDim2.new(0, 180, 0, 30)
+remoteLogBtn.Position = UDim2.new(0, 20, 0, 90)
+remoteLogBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+remoteLogBtn.Text = "🛰️ Remote Logger"
+remoteLogBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+remoteLogBtn.Font = Enum.Font.Gotham
+remoteLogBtn.TextSize = 14
+remoteLogBtn.Parent = AdminFrame
+makeRounded(remoteLogBtn, 6)
+
+-- Logger GUI
+local loggerGui = Instance.new("Frame")
+loggerGui.Size = UDim2.new(0, 400, 0, 250)
+loggerGui.Position = UDim2.new(0.5, -200, 0.5, -125)
+loggerGui.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+loggerGui.Visible = false
+loggerGui.Parent = ScreenGui
+makeRounded(loggerGui, 10)
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "🛰️ Remote Logger"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.Parent = loggerGui
+
+local close = Instance.new("TextButton")
+close.Size = UDim2.new(0, 30, 0, 30)
+close.Position = UDim2.new(1, -30, 0, 0)
+close.BackgroundTransparency = 1
+close.Text = "❌"
+close.Font = Enum.Font.GothamBold
+close.TextSize = 16
+close.TextColor3 = Color3.fromRGB(255, 100, 100)
+close.Parent = loggerGui
+
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1, -20, 1, -40)
+scroll.Position = UDim2.new(0, 10, 0, 35)
+scroll.CanvasSize = UDim2.new(0, 0, 0, 500)
+scroll.ScrollBarThickness = 4
+scroll.BackgroundTransparency = 1
+scroll.Parent = loggerGui
+
+local uiList = Instance.new("UIListLayout")
+uiList.Padding = UDim.new(0, 5)
+uiList.SortOrder = Enum.SortOrder.LayoutOrder
+uiList.Parent = scroll
+
+-- Button toggles logger GUI
+remoteLogBtn.MouseButton1Click:Connect(function()
+	loggerGui.Visible = not loggerGui.Visible
+end)
+
+-- Close button
+close.MouseButton1Click:Connect(function()
+	loggerGui.Visible = false
+end)
+
+-- Remote Logger
+local function logRemote(remote, ...)
+	local args = {...}
+	local argStrings = {}
+	for i, v in ipairs(args) do
+		local str = typeof(v) == "string" and ('"%s"'):format(v) or tostring(v)
+		table.insert(argStrings, str)
+	end
+	local call = ('game:GetService("ReplicatedStorage"):FindFirstChild("%s"):FireServer(%s)')
+		:format(remote.Name, table.concat(argStrings, ", "))
+
+	local line = Instance.new("TextBox")
+	line.Size = UDim2.new(1, 0, 0, 30)
+	line.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	line.Text = call
+	line.TextWrapped = true
+	line.ClearTextOnFocus = false
+	line.TextXAlignment = Enum.TextXAlignment.Left
+	line.Font = Enum.Font.Code
+	line.TextColor3 = Color3.fromRGB(0, 255, 0)
+	line.TextSize = 13
+	line.Parent = scroll
+	makeRounded(line, 4)
+end
+
+-- Hook all existing Remotes
+for _, inst in ipairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+	if inst:IsA("RemoteEvent") then
+		inst.OnClientEvent:Connect(function(...)
+			logRemote(inst, ...)
+		end)
+	end
+end
+
+-- Detect new remotes
+game:GetService("ReplicatedStorage").DescendantAdded:Connect(function(inst)
+	if inst:IsA("RemoteEvent") then
+		inst.OnClientEvent:Connect(function(...)
+			logRemote(inst, ...)
+		end)
+	end
+end)
+
+
 -- Admin Info Message
 local adminMsg = Instance.new("TextLabel")
 adminMsg.Size = UDim2.new(1, -40, 0, 30)
