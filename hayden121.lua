@@ -317,140 +317,110 @@ end
 -- Shared drag state
 local draggingSlider = nil
 
+
+--reset
+local function makeResetButton(defaultVal, resetFunc)
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(0, 60, 0, 20)
+	button.Text = "Reset"
+	button.Font = Enum.Font.Gotham
+	button.TextSize = 12
+	button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	makeRounded(button, 4)
+	button.MouseButton1Click:Connect(function()
+		resetFunc(defaultVal)
+	end)
+	return button
+end
+
+
 -- 🏃 WalkSpeed Slider
+local walkRow = Instance.new("Frame")
+walkRow.Size = UDim2.new(0, 270, 0, 20)
+walkRow.BackgroundTransparency = 1
+walkRow.LayoutOrder = 1
+walkRow.Parent = PlayerFrame
+
 local walkSpeedLabel = Instance.new("TextLabel")
-walkSpeedLabel.Size = UDim2.new(0, 200, 0, 20)
+walkSpeedLabel.Size = UDim2.new(1, -70, 1, 0)
+walkSpeedLabel.Position = UDim2.new(0, 0, 0, 0)
 walkSpeedLabel.BackgroundTransparency = 1
 walkSpeedLabel.Text = "WalkSpeed: 16"
 walkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 walkSpeedLabel.Font = Enum.Font.Gotham
 walkSpeedLabel.TextSize = 14
 walkSpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
-walkSpeedLabel.LayoutOrder = 1
-walkSpeedLabel.Parent = PlayerFrame
+walkSpeedLabel.Parent = walkRow
 
-local walkSlider = Instance.new("Frame")
-walkSlider.Size = UDim2.new(0, 200, 0, 8)
-walkSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-walkSlider.LayoutOrder = 2
-walkSlider.Parent = PlayerFrame
-makeRounded(walkSlider, 4)
 
-local walkFill = Instance.new("Frame")
-walkFill.Size = UDim2.new(0.032, 0, 1, 0)
-walkFill.BackgroundColor3 = Color3.fromRGB(120, 120, 255)
-walkFill.Parent = walkSlider
-makeRounded(walkFill, 4)
-
-local function updateWalkSpeed(px)
-	local percent = math.clamp(px / walkSlider.AbsoluteSize.X, 0, 1)
-	local value = math.floor(percent * 500)
-	walkFill.Size = UDim2.new(percent, 0, 1, 0)
-	walkSpeedLabel.Text = "WalkSpeed: " .. value
+--reset
+makeResetButton(16, function(val)
 	local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	if humanoid then
-		humanoid.WalkSpeed = value
+		humanoid.WalkSpeed = val
 	end
-end
+	walkFill.Size = UDim2.new(val / 500, 0, 1, 0)
+	walkSpeedLabel.Text = "WalkSpeed: " .. val
+end).Parent = walkRow
 
-walkSlider.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		draggingSlider = "walk"
-		updateWalkSpeed(input.Position.X - walkSlider.AbsolutePosition.X)
-	end
-end)
 
 
 -- 🦘 JumpPower Slider
+local jumpRow = Instance.new("Frame")
+jumpRow.Size = UDim2.new(0, 270, 0, 20)
+jumpRow.BackgroundTransparency = 1
+jumpRow.LayoutOrder = 4
+jumpRow.Parent = PlayerFrame
+
 local jumpLabel = Instance.new("TextLabel")
-jumpLabel.Size = UDim2.new(0, 200, 0, 20)
+jumpLabel.Size = UDim2.new(1, -70, 1, 0)
+jumpLabel.Position = UDim2.new(0, 0, 0, 0)
 jumpLabel.BackgroundTransparency = 1
 jumpLabel.Text = "JumpPower: 50"
 jumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 jumpLabel.Font = Enum.Font.Gotham
 jumpLabel.TextSize = 14
 jumpLabel.TextXAlignment = Enum.TextXAlignment.Left
-jumpLabel.LayoutOrder = 4
-jumpLabel.Parent = PlayerFrame
+jumpLabel.Parent = jumpRow
 
-local jumpSlider = Instance.new("Frame")
-jumpSlider.Size = UDim2.new(0, 200, 0, 8)
-jumpSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-jumpSlider.LayoutOrder = 5
-jumpSlider.Parent = PlayerFrame
-makeRounded(jumpSlider, 4)
-
-local jumpFill = Instance.new("Frame")
-jumpFill.Size = UDim2.new(0.1, 0, 1, 0)
-jumpFill.BackgroundColor3 = Color3.fromRGB(255, 180, 80)
-jumpFill.Parent = jumpSlider
-makeRounded(jumpFill, 4)
-
-local function updateJumpPower(px)
-	local percent = math.clamp(px / jumpSlider.AbsoluteSize.X, 0, 1)
-	local value = math.floor(percent * 500)
-	jumpFill.Size = UDim2.new(percent, 0, 1, 0)
-	jumpLabel.Text = "JumpPower: " .. value
+--reset
+makeResetButton(50, function(val)
 	local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	if humanoid then
 		humanoid.UseJumpPower = true
-		humanoid.JumpPower = value
+		humanoid.JumpPower = val
 	end
-end
+	jumpFill.Size = UDim2.new(val / 500, 0, 1, 0)
+	jumpLabel.Text = "JumpPower: " .. val
+end).Parent = jumpRow
 
-jumpSlider.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		draggingSlider = "jump"
-		updateJumpPower(input.Position.X - jumpSlider.AbsolutePosition.X)
-	end
-end)
-
-LocalPlayer.CharacterAdded:Connect(function(char)
-	char:WaitForChild("Humanoid")
-	task.wait(0.2)
-	updateJumpPower(jumpSlider.AbsoluteSize.X * jumpFill.Size.X.Scale)
-end)
 
 
 -- 🌌 Gravity Slider
+local gravRow = Instance.new("Frame")
+gravRow.Size = UDim2.new(0, 270, 0, 20)
+gravRow.BackgroundTransparency = 1
+gravRow.LayoutOrder = 7
+gravRow.Parent = PlayerFrame
+
 local gravLabel = Instance.new("TextLabel")
-gravLabel.Size = UDim2.new(0, 200, 0, 20)
+gravLabel.Size = UDim2.new(1, -70, 1, 0)
+gravLabel.Position = UDim2.new(0, 0, 0, 0)
 gravLabel.BackgroundTransparency = 1
 gravLabel.Text = "Gravity: " .. tostring(workspace.Gravity)
 gravLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 gravLabel.Font = Enum.Font.Gotham
 gravLabel.TextSize = 14
 gravLabel.TextXAlignment = Enum.TextXAlignment.Left
-gravLabel.LayoutOrder = 7
-gravLabel.Parent = PlayerFrame
+gravLabel.Parent = gravRow
 
-local gravSlider = Instance.new("Frame")
-gravSlider.Size = UDim2.new(0, 200, 0, 8)
-gravSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-gravSlider.LayoutOrder = 8
-gravSlider.Parent = PlayerFrame
-makeRounded(gravSlider, 4)
+makeResetButton(196.2, function(val)
+	workspace.Gravity = val
+	gravFill.Size = UDim2.new(val / 10000, 0, 1, 0)
+	gravLabel.Text = "Gravity: " .. val
+end).Parent = gravRow
 
-local gravFill = Instance.new("Frame")
-gravFill.Size = UDim2.new(workspace.Gravity / 10000, 0, 1, 0)
-gravFill.BackgroundColor3 = Color3.fromRGB(200, 80, 200)
-gravFill.Parent = gravSlider
-makeRounded(gravFill, 4)
-
-local function updateGravity(px)
-	local percent = math.clamp(px / gravSlider.AbsoluteSize.X, 0, 1)
-	local value = math.floor(percent * 10000)
-	gravFill.Size = UDim2.new(percent, 0, 1, 0)
-	gravLabel.Text = "Gravity: " .. value
-	workspace.Gravity = value
-end
-
-gravSlider.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		draggingSlider = "grav"
-		updateGravity(input.Position.X - gravSlider.AbsolutePosition.X)
-	end
-end)
 
 
 -- 🖱️ Global Mouse Tracking for all sliders
