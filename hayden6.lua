@@ -1099,18 +1099,6 @@ settingsTitle.LayoutOrder = 0
 settingsTitle.Parent = SettingsFrame
 
 -- 🌗 Theme Toggle
-local themeToggle = Instance.new("TextButton")
-themeToggle.Size = UDim2.new(0, 200, 0, 30)
-themeToggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-themeToggle.Text = "🌓 Toggle Theme: Dark"
-themeToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-themeToggle.Font = Enum.Font.Gotham
-themeToggle.TextSize = 14
-themeToggle.LayoutOrder = 1
-themeToggle.Parent = SettingsFrame
-makeRounded(themeToggle, 6)
-
-local isDark = true
 themeToggle.MouseButton1Click:Connect(function()
 	isDark = not isDark
 	themeToggle.Text = isDark and "🌓 Toggle Theme: Dark" or "🌓 Toggle Theme: Light"
@@ -1142,28 +1130,41 @@ themeToggle.MouseButton1Click:Connect(function()
 	title.TextColor3 = palette.text
 	usernameLabel.TextColor3 = palette.textDim
 	versionLabel.TextColor3 = palette.textDim
+	settingsTitle.TextColor3 = palette.text
 
-	-- Apply to all tab buttons
+	-- Update all tab buttons
 	for _, btn in pairs(tabFrame:GetChildren()) do
 		if btn:IsA("TextButton") then
 			btn.BackgroundColor3 = palette.tab
 			btn.TextColor3 = palette.text
 		end
 	end
+
+	-- Update all TextLabels in mainFrame
+	for _, obj in ipairs(mainFrame:GetDescendants()) do
+		if obj:IsA("TextLabel") then
+			obj.TextColor3 = palette.text
+		end
+	end
+
+	-- Optional: update text in sliders (walk, jump, gravity)
+	walkLabel.TextColor3 = palette.text
+	jumpLabel.TextColor3 = palette.text
+	gravLabel.TextColor3 = palette.text
 end)
 
 
--- Add credit labels
-local creditsText = Instance.new("TextLabel")
-creditsText.Size = UDim2.new(1, -40, 0, 30)
-creditsText.Position = UDim2.new(0, 20, 0, 50)
-creditsText.BackgroundTransparency = 1
-creditsText.Text = "Made by Hayden"
-creditsText.TextColor3 = Color3.fromRGB(200, 200, 200)
-creditsText.Font = Enum.Font.Gotham
-creditsText.TextSize = 14
-creditsText.TextXAlignment = Enum.TextXAlignment.Left
-creditsText.Parent = CreditsFrame
+
+-- 📜 Credits Tab
+local CreditsFrame = Instance.new("ScrollingFrame")
+CreditsFrame.Name = "CreditsFrame"
+CreditsFrame.Size = UDim2.new(1, 0, 1, 0)
+CreditsFrame.CanvasSize = UDim2.new(0, 0, 0, 150)
+CreditsFrame.ScrollBarThickness = 4
+CreditsFrame.BackgroundTransparency = 1
+CreditsFrame.Visible = false
+CreditsFrame.Parent = contentFrame
+makeRounded(CreditsFrame, 10)
 
 local creditsNote = Instance.new("TextLabel")
 creditsNote.Size = UDim2.new(1, -40, 0, 30)
