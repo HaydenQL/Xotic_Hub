@@ -547,6 +547,7 @@ tpDropdownFrame.Size = UDim2.new(0, 200, 0, 30)
 tpDropdownFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 tpDropdownFrame.BorderSizePixel = 0
 tpDropdownFrame.LayoutOrder = 11
+tpDropdownFrame.ClipsDescendants = true
 tpDropdownFrame.Parent = PlayerFrame
 makeRounded(tpDropdownFrame, 6)
 
@@ -561,6 +562,7 @@ tpBox.Font = Enum.Font.Gotham
 tpBox.TextSize = 14
 tpBox.ClearTextOnFocus = false
 tpBox.TextXAlignment = Enum.TextXAlignment.Left
+tpBox.ZIndex = 2
 tpBox.Parent = tpDropdownFrame
 
 local dropArrow = Instance.new("TextButton")
@@ -576,11 +578,14 @@ dropArrow.Parent = tpDropdownFrame
 
 local dropdown = Instance.new("ScrollingFrame")
 dropdown.Size = UDim2.new(0, 200, 0, 100)
-dropdown.Position = UDim2.new(0, 0, 1, 0)
+dropdown.Position = UDim2.new(0, 0, 1, 2)
 dropdown.CanvasSize = UDim2.new(0, 0, 0, 0)
 dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 dropdown.BorderSizePixel = 0
 dropdown.Visible = false
+dropdown.ZIndex = 50
+dropdown.ScrollBarThickness = 4
+dropdown.ClipsDescendants = true
 dropdown.Parent = tpDropdownFrame
 makeRounded(dropdown, 6)
 
@@ -588,45 +593,65 @@ local listLayout = Instance.new("UIListLayout")
 listLayout.Parent = dropdown
 listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
--- 🔽 Toggle dropdown
+-- 🔽 Toggle + Refresh dropdown
 dropArrow.MouseButton1Click:Connect(function()
-	dropdown.Visible = not dropdown.Visible
+	if dropdown.Visible then
+		dropdown.Visible = false
+	else
+		for _, child in ipairs(dropdown:GetChildren()) do
+			if child:IsA("TextButton") then
+				child:Destroy()
+			end
+		end
+
+		for _, plr in ipairs(Players:GetPlayers()) do
+			if plr ~= LocalPlayer then
+				local option = Instance.new("TextButton")
+				option.Size = UDim2.new(1, -4, 0, 25)
+				option.Text = plr.DisplayName
+				option.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+				option.TextColor3 = Color3.fromRGB(255, 255, 255)
+				option.Font = Enum.Font.Gotham
+				option.TextSize = 13
+				option.ZIndex = 51
+				option.Parent = dropdown
+				makeRounded(option, 4)
+				option.MouseButton1Click:Connect(function()
+					tpBox.Text = plr.DisplayName
+					dropdown.Visible = false
+				end)
+			end
+		end
+
+		task.wait()
+		local count = #dropdown:GetChildren() - 1 -- minus UIListLayout
+		dropdown.CanvasSize = UDim2.new(0, 0, 0, count * 27)
+
+		dropdown.Visible = true
+	end
 end)
 
--- 👥 Populate names
-local function updateDropdown()
-	for _, child in ipairs(dropdown:GetChildren()) do
-		if child:IsA("TextButton") then
-			child:Destroy()
+-- ❌ Close dropdown when clicking elsewhere
+UIS.InputBegan:Connect(function(input, gpe)
+	if gpe then return end
+	if dropdown.Visible then
+		local mousePos = UIS:GetMouseLocation()
+		local guiInset = game:GetService("GuiService"):GetGuiInset()
+		local adjustedY = mousePos.Y - guiInset.Y
+
+		local absPos = dropdown.AbsolutePosition
+		local absSize = dropdown.AbsoluteSize
+
+		local inside = mousePos.X >= absPos.X and mousePos.X <= absPos.X + absSize.X
+			and adjustedY >= absPos.Y and adjustedY <= absPos.Y + absSize.Y
+
+		if not inside then
+			dropdown.Visible = false
 		end
 	end
+end)
 
-	for _, plr in ipairs(Players:GetPlayers()) do
-		if plr ~= LocalPlayer then
-			local option = Instance.new("TextButton")
-			option.Size = UDim2.new(1, 0, 0, 25)
-			option.Text = plr.DisplayName
-			option.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-			option.TextColor3 = Color3.fromRGB(255, 255, 255)
-			option.Font = Enum.Font.Gotham
-			option.TextSize = 13
-			option.ZIndex = 2
-			option.Parent = dropdown
-			option.MouseButton1Click:Connect(function()
-				tpBox.Text = plr.DisplayName
-				dropdown.Visible = false
-			end)
-		end
-	end
-
-	task.wait() -- Wait for layout
-	dropdown.CanvasSize = UDim2.new(0, 0, 0, #dropdown:GetChildren() * 25)
-end
-
--- Refresh when opened
-dropArrow.MouseButton1Click:Connect(updateDropdown)
-
--- Button to execute teleport
+-- 🚀 Teleport Button
 local tpButton = Instance.new("TextButton")
 tpButton.Size = UDim2.new(0, 200, 0, 30)
 tpButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -654,6 +679,7 @@ tpButton.MouseButton1Click:Connect(function()
 		end
 	end
 end)
+
 
 
 -- 🎨 Visual Tab (Scrollable + Ordered Buttons)
