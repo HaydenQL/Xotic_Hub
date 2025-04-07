@@ -1063,17 +1063,39 @@ stopSpyCamBtn.MouseButton1Click:Connect(function()
 end)
 
 
--- settings
-local SettingsFrame = createTabFrame("Settings", "Settings Tab")
-mainFrame.ClipsDescendants = true
-contentFrame.ClipsDescendants = true
+-- 🛠️ Settings Tab (Fixed & Scrollable)
+local SettingsFrame = Instance.new("ScrollingFrame")
+SettingsFrame.Name = "SettingsFrame"
+SettingsFrame.Size = UDim2.new(1, 0, 1, 0)
+SettingsFrame.CanvasSize = UDim2.new(0, 0, 0, 300)
+SettingsFrame.ScrollBarThickness = 4
+SettingsFrame.BackgroundTransparency = 1
+SettingsFrame.Visible = false
+SettingsFrame.Parent = contentFrame
+makeRounded(SettingsFrame, 10)
 
+local settingsLayout = Instance.new("UIListLayout")
+settingsLayout.Padding = UDim.new(0, 8)
+settingsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+settingsLayout.Parent = SettingsFrame
 
-local CreditsFrame = createTabFrame("Credits", "Credits Tab")
-mainFrame.ClipsDescendants = true
-contentFrame.ClipsDescendants = true
+local settingsPadding = Instance.new("UIPadding")
+settingsPadding.PaddingTop = UDim.new(0, 10)
+settingsPadding.PaddingLeft = UDim.new(0, 20)
+settingsFrame.Padding = settingsPadding
 
--- Toggle theme button
+-- Title
+local settingsTitle = Instance.new("TextLabel")
+settingsTitle.Size = UDim2.new(1, -20, 0, 30)
+settingsTitle.BackgroundTransparency = 1
+settingsTitle.Text = "Settings Tab"
+settingsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+settingsTitle.Font = Enum.Font.GothamBold
+settingsTitle.TextSize = 16
+settingsTitle.TextXAlignment = Enum.TextXAlignment.Left
+settingsTitle.LayoutOrder = 0
+settingsTitle.Parent = SettingsFrame
+
 local themeToggle = Instance.new("TextButton")
 themeToggle.Size = UDim2.new(0, 200, 0, 30)
 themeToggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -1089,10 +1111,23 @@ local isDark = true
 themeToggle.MouseButton1Click:Connect(function()
 	isDark = not isDark
 	themeToggle.Text = isDark and "🌓 Toggle Theme: Dark" or "🌓 Toggle Theme: Light"
-	mainFrame.BackgroundColor3 = isDark and Color3.fromRGB(20, 20, 20) or Color3.fromRGB(230, 230, 230)
-	-- You can update other elements too if you want
-end)
 
+	local dark = {
+		main = Color3.fromRGB(20, 20, 20),
+		content = Color3.fromRGB(15, 15, 15),
+		tab = Color3.fromRGB(25, 25, 25)
+	}
+	local light = {
+		main = Color3.fromRGB(240, 240, 240),
+		content = Color3.fromRGB(230, 230, 230),
+		tab = Color3.fromRGB(210, 210, 210)
+	}
+
+	local palette = isDark and dark or light
+	mainFrame.BackgroundColor3 = palette.main
+	contentFrame.BackgroundColor3 = palette.content
+	tabFrame.BackgroundColor3 = palette.tab
+end)
 
 
 -- Add credit labels
