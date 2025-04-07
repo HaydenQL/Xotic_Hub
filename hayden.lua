@@ -315,6 +315,8 @@ local function addSpacer(order)
 end
 
 -- WalkSpeed Slider
+local draggingSlider = nil
+
 local walkSpeedLabel = Instance.new("TextLabel")
 walkSpeedLabel.Size = UDim2.new(0, 200, 0, 20)
 walkSpeedLabel.BackgroundTransparency = 1
@@ -334,7 +336,7 @@ walkSlider.Parent = PlayerFrame
 makeRounded(walkSlider, 4)
 
 local walkFill = Instance.new("Frame")
-walkFill.Size = UDim2.new(0.032, 0, 1, 0) -- 16/500
+walkFill.Size = UDim2.new(0.032, 0, 1, 0)
 walkFill.BackgroundColor3 = Color3.fromRGB(120, 120, 255)
 walkFill.Parent = walkSlider
 makeRounded(walkFill, 4)
@@ -352,17 +354,15 @@ end
 
 walkSlider.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		draggingSlider = "walk"
 		updateWalkSpeed(input.Position.X - walkSlider.AbsolutePosition.X)
 	end
 end)
 
-walkSlider.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement and UIS:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
-		updateWalkSpeed(input.Position.X - walkSlider.AbsolutePosition.X)
-	end
-end)
 
 -- JumpPower Slider
+local draggingSlider = nil
+
 local jumpLabel = Instance.new("TextLabel")
 jumpLabel.Size = UDim2.new(0, 200, 0, 20)
 jumpLabel.BackgroundTransparency = 1
@@ -382,7 +382,7 @@ jumpSlider.Parent = PlayerFrame
 makeRounded(jumpSlider, 4)
 
 local jumpFill = Instance.new("Frame")
-jumpFill.Size = UDim2.new(0.1, 0, 1, 0) -- 50/500
+jumpFill.Size = UDim2.new(0.1, 0, 1, 0)
 jumpFill.BackgroundColor3 = Color3.fromRGB(255, 180, 80)
 jumpFill.Parent = jumpSlider
 makeRounded(jumpFill, 4)
@@ -401,12 +401,7 @@ end
 
 jumpSlider.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		updateJumpPower(input.Position.X - jumpSlider.AbsolutePosition.X)
-	end
-end)
-
-jumpSlider.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement and UIS:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+		draggingSlider = "jump"
 		updateJumpPower(input.Position.X - jumpSlider.AbsolutePosition.X)
 	end
 end)
@@ -418,7 +413,10 @@ LocalPlayer.CharacterAdded:Connect(function(char)
 end)
 
 
+
 -- Gravity Slider
+local draggingSlider = nil
+
 local gravLabel = Instance.new("TextLabel")
 gravLabel.Size = UDim2.new(0, 200, 0, 20)
 gravLabel.BackgroundTransparency = 1
@@ -453,13 +451,28 @@ end
 
 gravSlider.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		draggingSlider = "grav"
 		updateGravity(input.Position.X - gravSlider.AbsolutePosition.X)
 	end
 end)
 
-gravSlider.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement and UIS:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
-		updateGravity(input.Position.X - gravSlider.AbsolutePosition.X)
+-- Global Mouse Tracking Logic
+UIS.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		local mouseX = UIS:GetMouseLocation().X
+		if draggingSlider == "walk" then
+			updateWalkSpeed(mouseX - walkSlider.AbsolutePosition.X)
+		elseif draggingSlider == "jump" then
+			updateJumpPower(mouseX - jumpSlider.AbsolutePosition.X)
+		elseif draggingSlider == "grav" then
+			updateGravity(mouseX - gravSlider.AbsolutePosition.X)
+		end
+	end
+end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		draggingSlider = nil
 	end
 end)
 
