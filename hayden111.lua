@@ -541,151 +541,86 @@ end)
 
 
 
--- 🖱️ Global Mouse Tracking for all sliders
-UIS.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement then
-		local mouseX = UIS:GetMouseLocation().X
-		if draggingSlider == "walk" then
-			updateWalkSpeed(mouseX - walkSlider.AbsolutePosition.X)
-		elseif draggingSlider == "jump" then
-			updateJumpPower(mouseX - jumpSlider.AbsolutePosition.X)
-		elseif draggingSlider == "grav" then
-			updateGravity(mouseX - gravSlider.AbsolutePosition.X)
-		end
-	end
-end)
+-- 📍 Teleport Input With Dropdown
+local tpDropdownFrame = Instance.new("Frame")
+tpDropdownFrame.Size = UDim2.new(0, 200, 0, 30)
+tpDropdownFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+tpDropdownFrame.BorderSizePixel = 0
+tpDropdownFrame.LayoutOrder = 11
+tpDropdownFrame.Parent = PlayerFrame
+makeRounded(tpDropdownFrame, 6)
 
-UIS.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		draggingSlider = nil
-	end
-end)
-
-
--- Label
-local tpLabel = Instance.new("TextLabel")
-tpLabel.Size = UDim2.new(0, 200, 0, 20)
-tpLabel.BackgroundTransparency = 1
-tpLabel.Text = "Teleport to Player:"
-tpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-tpLabel.Font = Enum.Font.Gotham
-tpLabel.TextSize = 14
-tpLabel.TextXAlignment = Enum.TextXAlignment.Left
-tpLabel.LayoutOrder = 10
-tpLabel.Parent = PlayerFrame
-
--- Container for box + dropdown
-local tpDropdownContainer = Instance.new("Frame")
-tpDropdownContainer.Size = UDim2.new(0, 200, 0, 30)
-tpDropdownContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-tpDropdownContainer.LayoutOrder = 11
-tpDropdownContainer.ClipsDescendants = true
-tpDropdownContainer.Parent = PlayerFrame
-makeRounded(tpDropdownContainer, 6)
-
--- Input Box
 local tpBox = Instance.new("TextBox")
 tpBox.Size = UDim2.new(1, -30, 1, 0)
-tpBox.Position = UDim2.new(0, 5, 0, 0)
+tpBox.Position = UDim2.new(0, 0, 0, 0)
 tpBox.BackgroundTransparency = 1
 tpBox.Text = ""
 tpBox.PlaceholderText = "Type a display name..."
 tpBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 tpBox.Font = Enum.Font.Gotham
 tpBox.TextSize = 14
-tpBox.TextXAlignment = Enum.TextXAlignment.Left
 tpBox.ClearTextOnFocus = false
-tpBox.Parent = tpDropdownContainer
+tpBox.TextXAlignment = Enum.TextXAlignment.Left
+tpBox.Parent = tpDropdownFrame
 
--- Down Arrow
-local arrow = Instance.new("ImageButton")
-arrow.Size = UDim2.new(0, 20, 0, 20)
-arrow.Position = UDim2.new(1, -25, 0.5, -10)
-arrow.BackgroundTransparency = 1
-arrow.Image = "rbxassetid://3926305904"
-arrow.ImageRectOffset = Vector2.new(884, 284)
-arrow.ImageRectSize = Vector2.new(36, 36)
-arrow.Parent = tpDropdownContainer
+local dropArrow = Instance.new("TextButton")
+dropArrow.Size = UDim2.new(0, 30, 1, 0)
+dropArrow.Position = UDim2.new(1, -30, 0, 0)
+dropArrow.Text = "⏷"
+dropArrow.TextColor3 = Color3.fromRGB(200, 200, 200)
+dropArrow.BackgroundTransparency = 1
+dropArrow.Font = Enum.Font.GothamBold
+dropArrow.TextSize = 14
+dropArrow.Parent = tpDropdownFrame
 
--- Dropdown List
 local dropdown = Instance.new("ScrollingFrame")
 dropdown.Size = UDim2.new(0, 200, 0, 100)
-dropdown.Position = UDim2.new(0, 0, 1, 2)
-dropdown.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-dropdown.Visible = false
+dropdown.Position = UDim2.new(0, 0, 1, 0)
+dropdown.CanvasSize = UDim2.new(0, 0, 0, 0)
+dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 dropdown.BorderSizePixel = 0
-dropdown.ScrollBarThickness = 4
-dropdown.ZIndex = 10
-dropdown.ClipsDescendants = true
-dropdown.Parent = tpDropdownContainer
+dropdown.Visible = false
+dropdown.Parent = tpDropdownFrame
 makeRounded(dropdown, 6)
 
-local layout = Instance.new("UIListLayout")
-layout.Padding = UDim.new(0, 2)
-layout.SortOrder = Enum.SortOrder.LayoutOrder
-layout.Parent = dropdown
+local listLayout = Instance.new("UIListLayout")
+listLayout.Parent = dropdown
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
--- Populate dropdown
-local function refreshDropdown()
+-- 🔽 Toggle dropdown
+dropArrow.MouseButton1Click:Connect(function()
+	dropdown.Visible = not dropdown.Visible
+end)
+
+-- 👥 Populate names
+local function updateDropdown()
 	dropdown:ClearAllChildren()
-	layout.Parent = dropdown
+	listLayout.Parent = dropdown
+
 	for _, plr in ipairs(Players:GetPlayers()) do
 		if plr ~= LocalPlayer then
-			local btn = Instance.new("TextButton")
-			btn.Size = UDim2.new(1, -4, 0, 24)
-			btn.Text = plr.DisplayName
-			btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-			btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-			btn.Font = Enum.Font.Gotham
-			btn.TextSize = 13
-			btn.Parent = dropdown
-			makeRounded(btn, 4)
-			btn.MouseButton1Click:Connect(function()
+			local option = Instance.new("TextButton")
+			option.Size = UDim2.new(1, 0, 0, 25)
+			option.Text = plr.DisplayName
+			option.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+			option.TextColor3 = Color3.fromRGB(255, 255, 255)
+			option.Font = Enum.Font.Gotham
+			option.TextSize = 13
+			option.Parent = dropdown
+			option.MouseButton1Click:Connect(function()
 				tpBox.Text = plr.DisplayName
 				dropdown.Visible = false
 			end)
 		end
 	end
+
+	wait() -- Let it layout first
+	dropdown.CanvasSize = UDim2.new(0, 0, 0, #Players:GetPlayers() * 25)
 end
 
--- Toggle dropdown on click
-arrow.MouseButton1Click:Connect(function()
-	if dropdown.Visible then
-		dropdown.Visible = false
-	else
-		refreshDropdown()
-		dropdown.Visible = true
-	end
-end)
+-- Refresh when opened
+dropArrow.MouseButton1Click:Connect(updateDropdown)
 
--- Button to execute teleport
-local tpButton = Instance.new("TextButton")
-tpButton.Size = UDim2.new(0, 200, 0, 30)
-tpButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-tpButton.Text = "🚀 Teleport to Player"
-tpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-tpButton.Font = Enum.Font.Gotham
-tpButton.TextSize = 14
-tpButton.LayoutOrder = 12
-tpButton.Parent = PlayerFrame
-makeRounded(tpButton, 6)
-
-tpButton.MouseButton1Click:Connect(function()
-	local inputName = tpBox.Text:lower()
-	for _, plr in ipairs(Players:GetPlayers()) do
-		if plr ~= LocalPlayer and plr.DisplayName:lower() == inputName then
-			local targetChar = plr.Character
-			local myChar = LocalPlayer.Character
-			if targetChar and targetChar:FindFirstChild("HumanoidRootPart") and myChar and myChar:FindFirstChild("HumanoidRootPart") then
-				myChar:MoveTo(targetChar.HumanoidRootPart.Position + Vector3.new(0, 3, 0))
-				print("✅ Teleported to " .. plr.DisplayName)
-			else
-				warn("❌ Could not find player or their character.")
-			end
-			break
-		end
-	end
-end)
 
 -- 🎨 Visual Tab (Scrollable + Ordered Buttons)
 local VisualFrame = Instance.new("ScrollingFrame")
