@@ -562,7 +562,7 @@ UIS.InputEnded:Connect(function(input)
 end)
 
 
--- Teleport to Display Name Dropdown
+-- Label
 local tpLabel = Instance.new("TextLabel")
 tpLabel.Size = UDim2.new(0, 200, 0, 20)
 tpLabel.BackgroundTransparency = 1
@@ -574,15 +574,16 @@ tpLabel.TextXAlignment = Enum.TextXAlignment.Left
 tpLabel.LayoutOrder = 10
 tpLabel.Parent = PlayerFrame
 
-local tpContainer = Instance.new("Frame")
-tpContainer.Size = UDim2.new(0, 200, 0, 30)
-tpContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-tpContainer.BorderSizePixel = 0
-tpContainer.Parent = PlayerFrame
-makeRounded(tpContainer, 6)
-tpContainer.LayoutOrder = 11
-tpContainer.ClipsDescendants = true
+-- Container for box + dropdown
+local tpDropdownContainer = Instance.new("Frame")
+tpDropdownContainer.Size = UDim2.new(0, 200, 0, 30)
+tpDropdownContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+tpDropdownContainer.LayoutOrder = 11
+tpDropdownContainer.ClipsDescendants = true
+tpDropdownContainer.Parent = PlayerFrame
+makeRounded(tpDropdownContainer, 6)
 
+-- Input Box
 local tpBox = Instance.new("TextBox")
 tpBox.Size = UDim2.new(1, -30, 1, 0)
 tpBox.Position = UDim2.new(0, 5, 0, 0)
@@ -594,26 +595,29 @@ tpBox.Font = Enum.Font.Gotham
 tpBox.TextSize = 14
 tpBox.TextXAlignment = Enum.TextXAlignment.Left
 tpBox.ClearTextOnFocus = false
-tpBox.Parent = tpContainer
+tpBox.Parent = tpDropdownContainer
 
-local dropArrow = Instance.new("ImageButton")
-dropArrow.Size = UDim2.new(0, 20, 0, 20)
-dropArrow.Position = UDim2.new(1, -25, 0.5, -10)
-dropArrow.BackgroundTransparency = 1
-dropArrow.Image = "rbxassetid://3926305904" -- arrow down
-dropArrow.ImageRectOffset = Vector2.new(884, 284)
-dropArrow.ImageRectSize = Vector2.new(36, 36)
-dropArrow.Parent = tpContainer
+-- Down Arrow
+local arrow = Instance.new("ImageButton")
+arrow.Size = UDim2.new(0, 20, 0, 20)
+arrow.Position = UDim2.new(1, -25, 0.5, -10)
+arrow.BackgroundTransparency = 1
+arrow.Image = "rbxassetid://3926305904"
+arrow.ImageRectOffset = Vector2.new(884, 284)
+arrow.ImageRectSize = Vector2.new(36, 36)
+arrow.Parent = tpDropdownContainer
 
+-- Dropdown List
 local dropdown = Instance.new("ScrollingFrame")
 dropdown.Size = UDim2.new(0, 200, 0, 100)
 dropdown.Position = UDim2.new(0, 0, 1, 2)
 dropdown.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-dropdown.BorderSizePixel = 0
 dropdown.Visible = false
-dropdown.ZIndex = 10
+dropdown.BorderSizePixel = 0
 dropdown.ScrollBarThickness = 4
-dropdown.Parent = tpContainer
+dropdown.ZIndex = 10
+dropdown.ClipsDescendants = true
+dropdown.Parent = tpDropdownContainer
 makeRounded(dropdown, 6)
 
 local layout = Instance.new("UIListLayout")
@@ -621,15 +625,15 @@ layout.Padding = UDim.new(0, 2)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Parent = dropdown
 
--- Populate dropdown list
+-- Populate dropdown
 local function refreshDropdown()
 	dropdown:ClearAllChildren()
 	layout.Parent = dropdown
-	for _, player in ipairs(Players:GetPlayers()) do
-		if player ~= LocalPlayer then
+	for _, plr in ipairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer then
 			local btn = Instance.new("TextButton")
 			btn.Size = UDim2.new(1, -4, 0, 24)
-			btn.Text = player.DisplayName
+			btn.Text = plr.DisplayName
 			btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 			btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 			btn.Font = Enum.Font.Gotham
@@ -637,20 +641,24 @@ local function refreshDropdown()
 			btn.Parent = dropdown
 			makeRounded(btn, 4)
 			btn.MouseButton1Click:Connect(function()
-				tpBox.Text = player.DisplayName
+				tpBox.Text = plr.DisplayName
 				dropdown.Visible = false
 			end)
 		end
 	end
 end
 
--- Toggle dropdown
-dropArrow.MouseButton1Click:Connect(function()
-	refreshDropdown()
-	dropdown.Visible = not dropdown.Visible
+-- Toggle dropdown on click
+arrow.MouseButton1Click:Connect(function()
+	if dropdown.Visible then
+		dropdown.Visible = false
+	else
+		refreshDropdown()
+		dropdown.Visible = true
+	end
 end)
 
--- 🧭 Teleport Button
+-- Button to execute teleport
 local tpButton = Instance.new("TextButton")
 tpButton.Size = UDim2.new(0, 200, 0, 30)
 tpButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -664,8 +672,8 @@ makeRounded(tpButton, 6)
 
 tpButton.MouseButton1Click:Connect(function()
 	local inputName = tpBox.Text:lower()
-	for _, plr in pairs(game.Players:GetPlayers()) do
-		if plr.DisplayName:lower() == inputName and plr ~= LocalPlayer then
+	for _, plr in ipairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer and plr.DisplayName:lower() == inputName then
 			local targetChar = plr.Character
 			local myChar = LocalPlayer.Character
 			if targetChar and targetChar:FindFirstChild("HumanoidRootPart") and myChar and myChar:FindFirstChild("HumanoidRootPart") then
@@ -678,9 +686,6 @@ tpButton.MouseButton1Click:Connect(function()
 		end
 	end
 end)
-
-
-
 
 -- 🎨 Visual Tab (Scrollable + Ordered Buttons)
 local VisualFrame = Instance.new("ScrollingFrame")
