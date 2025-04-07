@@ -314,11 +314,11 @@ local function addSpacer(order)
 	spacer.Parent = PlayerFrame
 end
 
--- WalkSpeed
+-- WalkSpeed Slider
 local walkSpeedLabel = Instance.new("TextLabel")
 walkSpeedLabel.Size = UDim2.new(0, 200, 0, 20)
 walkSpeedLabel.BackgroundTransparency = 1
-walkSpeedLabel.Text = "WalkSpeed (Max 500):"
+walkSpeedLabel.Text = "WalkSpeed: 16"
 walkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 walkSpeedLabel.Font = Enum.Font.Gotham
 walkSpeedLabel.TextSize = 14
@@ -326,125 +326,143 @@ walkSpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
 walkSpeedLabel.LayoutOrder = 1
 walkSpeedLabel.Parent = PlayerFrame
 
-local walkSpeedBox = Instance.new("TextBox")
-walkSpeedBox.Size = UDim2.new(0, 200, 0, 30)
-walkSpeedBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-walkSpeedBox.Text = "16"
-walkSpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-walkSpeedBox.Font = Enum.Font.Gotham
-walkSpeedBox.TextSize = 14
-walkSpeedBox.ClearTextOnFocus = false
-walkSpeedBox.PlaceholderText = "Enter speed"
-walkSpeedBox.TextXAlignment = Enum.TextXAlignment.Center
-walkSpeedBox.LayoutOrder = 2
-walkSpeedBox.Parent = PlayerFrame
-makeRounded(walkSpeedBox, 6)
+local walkSlider = Instance.new("Frame")
+walkSlider.Size = UDim2.new(0, 200, 0, 8)
+walkSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+walkSlider.LayoutOrder = 2
+walkSlider.Parent = PlayerFrame
+makeRounded(walkSlider, 4)
 
-addSpacer(3)
+local walkFill = Instance.new("Frame")
+walkFill.Size = UDim2.new(0.032, 0, 1, 0) -- 16/500
+walkFill.BackgroundColor3 = Color3.fromRGB(120, 120, 255)
+walkFill.Parent = walkSlider
+makeRounded(walkFill, 4)
 
-walkSpeedBox.FocusLost:Connect(function(enterPressed)
-	if enterPressed then
-		local num = tonumber(walkSpeedBox.Text)
-		if num and num >= 0 and num <= 500 then
-			local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-			if humanoid then
-				humanoid.WalkSpeed = num
-			end
-		else
-			walkSpeedBox.Text = "16"
-		end
-	end
-end)
-
--- JumpPower
-local jumpPowerLabel = Instance.new("TextLabel")
-jumpPowerLabel.Size = UDim2.new(0, 200, 0, 20)
-jumpPowerLabel.BackgroundTransparency = 1
-jumpPowerLabel.Text = "JumpPower:"
-jumpPowerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-jumpPowerLabel.Font = Enum.Font.Gotham
-jumpPowerLabel.TextSize = 14
-jumpPowerLabel.TextXAlignment = Enum.TextXAlignment.Left
-jumpPowerLabel.LayoutOrder = 4
-jumpPowerLabel.Parent = PlayerFrame
-
-local jumpPowerBox = Instance.new("TextBox")
-jumpPowerBox.Size = UDim2.new(0, 200, 0, 30)
-jumpPowerBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-jumpPowerBox.Text = "50"
-jumpPowerBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-jumpPowerBox.Font = Enum.Font.Gotham
-jumpPowerBox.TextSize = 14
-jumpPowerBox.ClearTextOnFocus = false
-jumpPowerBox.PlaceholderText = "Enter jump"
-jumpPowerBox.LayoutOrder = 5
-jumpPowerBox.Parent = PlayerFrame
-makeRounded(jumpPowerBox, 6)
-
-addSpacer(6)
-
-local function setJumpPower(amount)
-	amount = tonumber(amount)
-	if amount and amount >= 1 and amount <= 500 then
-		local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-		if humanoid then
-			humanoid.UseJumpPower = true
-			humanoid.JumpPower = amount
-		end
+local function updateWalkSpeed(px)
+	local percent = math.clamp(px / walkSlider.AbsoluteSize.X, 0, 1)
+	local value = math.floor(percent * 500)
+	walkFill.Size = UDim2.new(percent, 0, 1, 0)
+	walkSpeedLabel.Text = "WalkSpeed: " .. value
+	local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+	if humanoid then
+		humanoid.WalkSpeed = value
 	end
 end
 
-jumpPowerBox.FocusLost:Connect(function(enterPressed)
-	if enterPressed then
-		setJumpPower(jumpPowerBox.Text)
+walkSlider.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		updateWalkSpeed(input.Position.X - walkSlider.AbsolutePosition.X)
+	end
+end)
+
+walkSlider.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement and UIS:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+		updateWalkSpeed(input.Position.X - walkSlider.AbsolutePosition.X)
+	end
+end)
+
+-- JumpPower Slider
+local jumpLabel = Instance.new("TextLabel")
+jumpLabel.Size = UDim2.new(0, 200, 0, 20)
+jumpLabel.BackgroundTransparency = 1
+jumpLabel.Text = "JumpPower: 50"
+jumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+jumpLabel.Font = Enum.Font.Gotham
+jumpLabel.TextSize = 14
+jumpLabel.TextXAlignment = Enum.TextXAlignment.Left
+jumpLabel.LayoutOrder = 4
+jumpLabel.Parent = PlayerFrame
+
+local jumpSlider = Instance.new("Frame")
+jumpSlider.Size = UDim2.new(0, 200, 0, 8)
+jumpSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+jumpSlider.LayoutOrder = 5
+jumpSlider.Parent = PlayerFrame
+makeRounded(jumpSlider, 4)
+
+local jumpFill = Instance.new("Frame")
+jumpFill.Size = UDim2.new(0.1, 0, 1, 0) -- 50/500
+jumpFill.BackgroundColor3 = Color3.fromRGB(255, 180, 80)
+jumpFill.Parent = jumpSlider
+makeRounded(jumpFill, 4)
+
+local function updateJumpPower(px)
+	local percent = math.clamp(px / jumpSlider.AbsoluteSize.X, 0, 1)
+	local value = math.floor(percent * 500)
+	jumpFill.Size = UDim2.new(percent, 0, 1, 0)
+	jumpLabel.Text = "JumpPower: " .. value
+	local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+	if humanoid then
+		humanoid.UseJumpPower = true
+		humanoid.JumpPower = value
+	end
+end
+
+jumpSlider.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		updateJumpPower(input.Position.X - jumpSlider.AbsolutePosition.X)
+	end
+end)
+
+jumpSlider.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement and UIS:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+		updateJumpPower(input.Position.X - jumpSlider.AbsolutePosition.X)
 	end
 end)
 
 LocalPlayer.CharacterAdded:Connect(function(char)
 	char:WaitForChild("Humanoid")
-	wait(0.2)
-	setJumpPower(jumpPowerBox.Text)
+	task.wait(0.2)
+	updateJumpPower(jumpSlider.AbsoluteSize.X * jumpFill.Size.X.Scale)
 end)
 
--- Gravity
-local gravityLabel = Instance.new("TextLabel")
-gravityLabel.Size = UDim2.new(0, 200, 0, 20)
-gravityLabel.BackgroundTransparency = 1
-gravityLabel.Text = "Gravity (0–10000):"
-gravityLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-gravityLabel.Font = Enum.Font.Gotham
-gravityLabel.TextSize = 14
-gravityLabel.TextXAlignment = Enum.TextXAlignment.Left
-gravityLabel.LayoutOrder = 7
-gravityLabel.Parent = PlayerFrame
 
-local gravityBox = Instance.new("TextBox")
-gravityBox.Size = UDim2.new(0, 200, 0, 30)
-gravityBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-gravityBox.Text = tostring(workspace.Gravity)
-gravityBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-gravityBox.Font = Enum.Font.Gotham
-gravityBox.TextSize = 14
-gravityBox.ClearTextOnFocus = false
-gravityBox.PlaceholderText = "Enter gravity"
-gravityBox.LayoutOrder = 8
-gravityBox.Parent = PlayerFrame
-makeRounded(gravityBox, 6)
+-- Gravity Slider
+local gravLabel = Instance.new("TextLabel")
+gravLabel.Size = UDim2.new(0, 200, 0, 20)
+gravLabel.BackgroundTransparency = 1
+gravLabel.Text = "Gravity: " .. tostring(workspace.Gravity)
+gravLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+gravLabel.Font = Enum.Font.Gotham
+gravLabel.TextSize = 14
+gravLabel.TextXAlignment = Enum.TextXAlignment.Left
+gravLabel.LayoutOrder = 7
+gravLabel.Parent = PlayerFrame
 
-addSpacer(9)
+local gravSlider = Instance.new("Frame")
+gravSlider.Size = UDim2.new(0, 200, 0, 8)
+gravSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+gravSlider.LayoutOrder = 8
+gravSlider.Parent = PlayerFrame
+makeRounded(gravSlider, 4)
 
-local function setGravity(amount)
-	amount = tonumber(amount)
-	if amount and amount >= 0 and amount <= 10000 then
-		workspace.Gravity = amount
-	end
+local gravFill = Instance.new("Frame")
+gravFill.Size = UDim2.new(workspace.Gravity / 10000, 0, 1, 0)
+gravFill.BackgroundColor3 = Color3.fromRGB(200, 80, 200)
+gravFill.Parent = gravSlider
+makeRounded(gravFill, 4)
+
+local function updateGravity(px)
+	local percent = math.clamp(px / gravSlider.AbsoluteSize.X, 0, 1)
+	local value = math.floor(percent * 10000)
+	gravFill.Size = UDim2.new(percent, 0, 1, 0)
+	gravLabel.Text = "Gravity: " .. value
+	workspace.Gravity = value
 end
 
-gravityBox.FocusLost:Connect(function(enterPressed)
-	if enterPressed then
-		setGravity(gravityBox.Text)
+gravSlider.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		updateGravity(input.Position.X - gravSlider.AbsolutePosition.X)
 	end
 end)
+
+gravSlider.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement and UIS:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+		updateGravity(input.Position.X - gravSlider.AbsolutePosition.X)
+	end
+end)
+
 
 -- Teleport to Display Name
 local tpLabel = Instance.new("TextLabel")
