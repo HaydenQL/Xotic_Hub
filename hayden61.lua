@@ -1127,31 +1127,38 @@ themeToggle.MouseButton1Click:Connect(function()
 	contentFrame.BackgroundColor3 = palette.content
 	tabFrame.BackgroundColor3 = palette.tab
 	topBar.BackgroundColor3 = palette.topBar
-	title.TextColor3 = palette.text
-	usernameLabel.TextColor3 = palette.textDim
-	versionLabel.TextColor3 = palette.textDim
-	settingsTitle.TextColor3 = palette.text
+
+	-- Update top bar texts
+	if topBar:FindFirstChild("title") then
+		topBar.title.TextColor3 = palette.text
+	end
+	if topBar:FindFirstChild("usernameLabel") then
+		topBar.usernameLabel.TextColor3 = palette.textDim
+	end
 
 	-- Update all tab buttons
-	for _, btn in pairs(tabFrame:GetChildren()) do
-		if btn:IsA("TextButton") then
+	for _, btn in pairs(tabButtons) do
+		if btn and btn:IsA("TextButton") then
 			btn.BackgroundColor3 = palette.tab
 			btn.TextColor3 = palette.text
 		end
 	end
 
-	-- Update all TextLabels in mainFrame
+	-- Update all TextLabels (safely)
 	for _, obj in ipairs(mainFrame:GetDescendants()) do
-		if obj:IsA("TextLabel") then
+		if obj:IsA("TextLabel") and not obj:IsDescendantOf(tabFrame) then
 			obj.TextColor3 = palette.text
 		end
 	end
 
-	-- Optional: update text in sliders (walk, jump, gravity)
+	-- Update specific known labels
+	versionLabel.TextColor3 = palette.textDim
 	walkLabel.TextColor3 = palette.text
 	jumpLabel.TextColor3 = palette.text
 	gravLabel.TextColor3 = palette.text
+	settingsTitle.TextColor3 = palette.text
 end)
+
 
 
 
