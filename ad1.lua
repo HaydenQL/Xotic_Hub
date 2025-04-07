@@ -183,6 +183,8 @@ local function animate(isAlreadyLoaded, callback)
         tween(progress, { Size = UDim2.new(1, 0, 1, 0) }, 0.8)
         tween(progress, { BackgroundColor3 = Color3.fromRGB(100, 255, 150) }, 0.4)
 
+        -- Ensure the callback is always called after animation
+        task.wait(1) -- Give enough time for animations to complete
         if callback then
             callback() -- Proceed with loading
         end
