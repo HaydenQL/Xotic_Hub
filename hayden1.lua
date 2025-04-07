@@ -1109,7 +1109,7 @@ extendBaseBtn.Parent = SettingsFrame
 makeRounded(extendBaseBtn, 6)
 
 extendBaseBtn.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/8973951821973068216/11374577211057006363/refs/heads/main/Baseplat"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/8973951821973068216/11374577211057006363/refs/heads/main/Baseplate"))()
 end)
 
 
