@@ -772,110 +772,18 @@ spinDieBtn.MouseButton1Click:Connect(function()
 end)
 
 -- 📍 Target Name Input
-local msDropdownFrame = Instance.new("Frame")
-msDropdownFrame.Size = UDim2.new(0, 200, 0, 30)
-msDropdownFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-msDropdownFrame.BorderSizePixel = 0
-msDropdownFrame.LayoutOrder = 11
-msDropdownFrame.ClipsDescendants = false
-msDropdownFrame.ZIndex = 40
-msDropdownFrame.Parent = PlayerFrame
-makeRounded(msDropdownFrame, 6)
-
-local msBox = Instance.new("TextBox")
-msBox.Size = UDim2.new(1, -30, 1, 0)
-msBox.Position = UDim2.new(0, 0, 0, 0)
-msBox.BackgroundTransparency = 1
-msBox.Text = ""
-msBox.PlaceholderText = "Type a display name..."
-msBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-msBox.Font = Enum.Font.Gotham
-msBox.TextSize = 14
-msBox.ClearTextOnFocus = false
-msBox.TextXAlignment = Enum.TextXAlignment.Left
-msBox.ZIndex = 41
-msBox.Parent = msDropdownFrame
-
-local dropArrow = Instance.new("TextButton")
-dropArrow.Size = UDim2.new(0, 30, 1, 0)
-dropArrow.Position = UDim2.new(1, -30, 0, 0)
-dropArrow.Text = "▼"
-dropArrow.ZIndex = 41
-dropArrow.TextColor3 = Color3.fromRGB(200, 200, 200)
-dropArrow.BackgroundTransparency = 1
-dropArrow.Font = Enum.Font.GothamBold
-dropArrow.TextSize = 14
-dropArrow.Parent = tpDropdownFrame
-
-local dropdown = Instance.new("ScrollingFrame")
-dropdown.Size = UDim2.new(0, 200, 0, 100)
-dropdown.Position = UDim2.new(0, 0, 1, 2)
-dropdown.CanvasSize = UDim2.new(0, 0, 0, 0)
-dropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-dropdown.BorderSizePixel = 0
-dropdown.Visible = false
-dropdown.ZIndex = 50
-dropdown.ScrollBarThickness = 4
-dropdown.ClipsDescendants = true
-dropdown.Parent = msDropdownFrame
-makeRounded(dropdown, 6)
-
-
--- ✅ Refresh dropdown on click
-dropArrow.MouseButton1Click:Connect(function()
-	dropdown.Visible = not dropdown.Visible
-	if not dropdown.Visible then return end
-
-	-- Clear options
-	for _, child in ipairs(dropdown:GetChildren()) do
-		if child:IsA("TextButton") then
-			child:Destroy()
-		end
-	end
-
-	-- Add current players
-	for _, plr in ipairs(Players:GetPlayers()) do
-		if plr ~= LocalPlayer then
-			local option = Instance.new("TextButton")
-			option.Size = UDim2.new(1, -4, 0, 25)
-			option.Text = plr.DisplayName
-			option.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-			option.TextColor3 = Color3.fromRGB(255, 255, 255)
-			option.Font = Enum.Font.Gotham
-			option.TextSize = 13
-			option.ZIndex = 51
-			option.Parent = dropdown
-			makeRounded(option, 4)
-
-			option.MouseButton1Click:Connect(function()
-				tpBox.Text = plr.DisplayName
-				dropdown.Visible = false
-			end)
-		end
-	end
-
-	task.wait()
-	local count = #dropdown:GetChildren() - 1
-	dropdown.CanvasSize = UDim2.new(0, 0, 0, count * 27)
-end)
-
--- ❌ Hide dropdown when clicking outside
-UIS.InputBegan:Connect(function(input, gpe)
-	if gpe then return end
-	if not dropdown.Visible then return end
-
-	local mousePos = UIS:GetMouseLocation()
-	local guiInset = game:GetService("GuiService"):GetGuiInset()
-	local y = mousePos.Y - guiInset.Y
-	local pos = dropdown.AbsolutePosition
-	local size = dropdown.AbsoluteSize
-
-	local inside = mousePos.X >= pos.X and mousePos.X <= pos.X + size.X and y >= pos.Y and y <= pos.Y + size.Y
-
-	if not inside then
-		dropdown.Visible = false
-	end
-end)
+local missileInput = Instance.new("TextBox")
+missileInput.Size = UDim2.new(0, 200, 0, 30)
+missileInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+missileInput.Text = ""
+missileInput.PlaceholderText = "Display Name..."
+missileInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+missileInput.Font = Enum.Font.Gotham
+missileInput.TextSize = 14
+missileInput.LayoutOrder = 5
+missileInput.ClearTextOnFocus = false
+missileInput.Parent = VisualFrame
+makeRounded(missileInput, 6)
 
 -- 🚀 Missile Button
 local missileLaunchBtn = Instance.new("TextButton")
