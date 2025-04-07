@@ -1073,61 +1073,7 @@ local CreditsFrame = createTabFrame("Credits", "Credits Tab")
 mainFrame.ClipsDescendants = true
 contentFrame.ClipsDescendants = true
 
--- UI Elements
-local settingsTab = script.Parent  -- Assuming settings tab is the parent of this script
-local toggleKeyButton = settingsTab:WaitForChild("ToggleKeyButton") -- Button to change key
-local toggleKeyLabel = settingsTab:WaitForChild("ToggleKeyLabel") -- Label showing the current toggle key
 
-local UserInputService = game:GetService("UserInputService")
-
--- Store the current toggle key (default to 'Tab')
-local currentToggleKey = Enum.KeyCode.Tab
-
--- Function to update the label to show the current toggle key
-local function updateToggleKeyLabel()
-    toggleKeyLabel.Text = "Current Toggle Key: " .. tostring(currentToggleKey)
-end
-
--- Function to enter key-change mode
-local function enterKeyChangeMode()
-    toggleKeyLabel.Text = "Press any key to set the toggle key..."
-    local keyPressed = false
-
-    -- Listen for key press
-    UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-        if gameProcessedEvent then return end  -- Ignore if the game already processed the input
-        if input.UserInputType == Enum.UserInputType.Keyboard then
-            -- Set the new toggle key
-            currentToggleKey = input.KeyCode
-            updateToggleKeyLabel()
-            keyPressed = true
-        end
-    end)
-
-    -- After key is pressed, revert to normal label
-    while not keyPressed do
-        wait()
-    end
-end
-
--- Toggle the key-change mode when the button is clicked
-toggleKeyButton.MouseButton1Click:Connect(function()
-    enterKeyChangeMode()
-end)
-
--- Initially update the label
-updateToggleKeyLabel()
-
--- Function to detect the toggle key press anywhere in the game
-UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-    if gameProcessedEvent then return end  -- Ignore if the game already processed the input
-    if input.KeyCode == currentToggleKey then
-        -- Insert your toggle functionality here
-        print("Toggle Key Pressed: " .. tostring(currentToggleKey))
-        -- Example: Toggle GUI visibility
-        -- YourToggleFunctionHere()
-    end
-end)
 
 -- Add credit labels
 local creditsText = Instance.new("TextLabel")
