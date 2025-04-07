@@ -1282,7 +1282,7 @@ local function logRemote(remote, args)
 end
 
 -- Override FireServer on all RemoteEvents
-for _, obj in ipairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+for _, obj in ipairs(game:GetDescendants()) do
 	if obj:IsA("RemoteEvent") then
 		local original = obj.FireServer
 		obj.FireServer = function(self, ...)
