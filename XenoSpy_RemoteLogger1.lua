@@ -48,20 +48,6 @@ local function safeCopy(text)
     setclipboard(text)
 end
 
--- Hook remotes
-local oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
-    local args = {...}
-    local method = getnamecallmethod()
-    if not checkcaller() then
-        if self:IsA("RemoteEvent") and (method == "FireServer") then
-            logRemote(self, args, "RemoteEvent", "FireServer")
-        elseif self:IsA("RemoteFunction") and (method == "InvokeServer") then
-            logRemote(self, args, "RemoteFunction", "InvokeServer")
-        end
-    end
-    return oldNamecall(self, ...)
-end))
-
 -- Generate readable code
 local function generateCode(remote, args, isFunction)
     local a = {}
@@ -132,3 +118,18 @@ local function logRemote(remote, args, class, method)
         method = method
     })
 end
+
+-- Hook remotes (MUST BE AT END)
+local oldNamecall
+oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+    local args = {...}
+    local method = getnamecallmethod()
+    if not checkcaller() then
+        if self:IsA("RemoteEvent") and method == "FireServer" then
+            logRemote(self, args, "RemoteEvent", method)
+        elseif self:IsA("RemoteFunction") and method == "InvokeServer" then
+            logRemote(self, args, "RemoteFunction", method)
+        end
+    end
+    return oldNamecall(self, ...)
+end))
