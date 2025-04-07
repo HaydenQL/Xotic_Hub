@@ -1082,7 +1082,9 @@ settingsLayout.Parent = SettingsFrame
 local settingsPadding = Instance.new("UIPadding")
 settingsPadding.PaddingTop = UDim.new(0, 10)
 settingsPadding.PaddingLeft = UDim.new(0, 20)
-settingsFrame.Padding = settingsPadding
+settingsPadding.PaddingRight = UDim.new(0, 20)
+settingsPadding.PaddingBottom = UDim.new(0, 10)
+settingsPadding.Parent = SettingsFrame
 
 -- Title
 local settingsTitle = Instance.new("TextLabel")
@@ -1096,6 +1098,7 @@ settingsTitle.TextXAlignment = Enum.TextXAlignment.Left
 settingsTitle.LayoutOrder = 0
 settingsTitle.Parent = SettingsFrame
 
+-- 🌗 Theme Toggle
 local themeToggle = Instance.new("TextButton")
 themeToggle.Size = UDim2.new(0, 200, 0, 30)
 themeToggle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
