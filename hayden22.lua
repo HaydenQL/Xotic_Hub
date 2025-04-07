@@ -500,7 +500,7 @@ makeRounded(gravReset, 6)
 
 local function updateGravity(px)
 	local percent = math.clamp(px / gravSlider.AbsoluteSize.X, 0, 1)
-	local value = math.floor(percent * 10000)
+	local value = math.floor(percent * 1000)
 	gravFill.Size = UDim2.new(percent, 0, 1, 0)
 	gravLabel.Text = "Gravity: " .. value
 	workspace.Gravity = value
@@ -514,7 +514,7 @@ gravSlider.InputBegan:Connect(function(input)
 end)
 
 gravReset.MouseButton1Click:Connect(function()
-	updateGravity(196.2 / 10000 * gravSlider.AbsoluteSize.X)
+	updateGravity(196.2 / 1000 * gravSlider.AbsoluteSize.X)
 end)
 
 
@@ -590,20 +590,24 @@ dropdown.Parent = tpDropdownFrame
 makeRounded(dropdown, 6)
 
 local listLayout = Instance.new("UIListLayout")
-listLayout.Parent = dropdown
 listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.Parent = dropdown
 
--- 🔽 Toggle + Refresh dropdown
+-- ✅ Toggle and refresh dropdown on click
 dropArrow.MouseButton1Click:Connect(function()
 	if dropdown.Visible then
 		dropdown.Visible = false
 	else
+		dropdown.Visible = true
+
+		-- Clear old
 		for _, child in ipairs(dropdown:GetChildren()) do
 			if child:IsA("TextButton") then
 				child:Destroy()
 			end
 		end
 
+		-- Add new options
 		for _, plr in ipairs(Players:GetPlayers()) do
 			if plr ~= LocalPlayer then
 				local option = Instance.new("TextButton")
@@ -626,19 +630,16 @@ dropArrow.MouseButton1Click:Connect(function()
 		task.wait()
 		local count = #dropdown:GetChildren() - 1 -- minus UIListLayout
 		dropdown.CanvasSize = UDim2.new(0, 0, 0, count * 27)
-
-		dropdown.Visible = true
 	end
 end)
 
--- ❌ Close dropdown when clicking elsewhere
+-- ❌ Close dropdown when clicking outside
 UIS.InputBegan:Connect(function(input, gpe)
 	if gpe then return end
 	if dropdown.Visible then
 		local mousePos = UIS:GetMouseLocation()
 		local guiInset = game:GetService("GuiService"):GetGuiInset()
 		local adjustedY = mousePos.Y - guiInset.Y
-
 		local absPos = dropdown.AbsolutePosition
 		local absSize = dropdown.AbsoluteSize
 
@@ -679,8 +680,6 @@ tpButton.MouseButton1Click:Connect(function()
 		end
 	end
 end)
-
-
 
 -- 🎨 Visual Tab (Scrollable + Ordered Buttons)
 local VisualFrame = Instance.new("ScrollingFrame")
