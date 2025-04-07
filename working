@@ -1222,20 +1222,21 @@ LocalPlayer.Chatted:Connect(function(msg)
 end)
 
 -- Spy Button
-local spyBtn = Instance.new("TextButton")
-spyBtn.Size = UDim2.new(0, 200, 0, 30)
-spyBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-spyBtn.Text = "🕵️ Launch SimpleSpy"
-spyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-spyBtn.Font = Enum.Font.Gotham
-spyBtn.TextSize = 14
-spyBtn.LayoutOrder = 1
-spyBtn.Parent = adminContent
-makeRounded(spyBtn, 6)
+local quizBtn = Instance.new("TextButton")
+quizBtn.Size = UDim2.new(0, 200, 0, 30)
+quizBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+quizBtn.Text = "🧠 Launch QuizBot"
+quizBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+quizBtn.Font = Enum.Font.Gotham
+quizBtn.TextSize = 14
+quizBtn.LayoutOrder = 3
+quizBtn.Parent = adminContent
+makeRounded(quizBtn, 6)
 
-spyBtn.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/main/SimpleSpy_Secure.lua"))()
+quizBtn.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Damian-11/quizbot/master/quizbot.luau"))()
 end)
+
 
 -- Admin Info Message
 local adminMsg = Instance.new("TextLabel")
