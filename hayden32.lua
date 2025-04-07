@@ -1097,19 +1097,6 @@ creditsNote.TextSize = 14
 creditsNote.TextXAlignment = Enum.TextXAlignment.Left
 creditsNote.Parent = CreditsFrame
 
-local spyBtn = Instance.new("TextButton")
-spyBtn.Size = UDim2.new(0, 200, 0, 30)
-spyBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-spyBtn.Text = "🕵️ Launch SimpleSpy"
-spyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-spyBtn.Font = Enum.Font.Gotham
-spyBtn.TextSize = 14
-spyBtn.Parent = AdminFrame
-makeRounded(spyBtn, 6)
-
-spyBtn.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/main/SimpleSpy_Secure.lua"))() -- or paste the code directly here
-end)
 
 -- Tab switching
 for tabName, button in pairs(tabButtons) do
@@ -1150,6 +1137,20 @@ adminTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 adminTitle.Font = Enum.Font.GothamBold
 adminTitle.TextSize = 18
 adminTitle.Parent = AdminFrame
+
+local spyBtn = Instance.new("TextButton")
+spyBtn.Size = UDim2.new(0, 200, 0, 30)
+spyBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+spyBtn.Text = "🕵️ Launch SimpleSpy"
+spyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+spyBtn.Font = Enum.Font.Gotham
+spyBtn.TextSize = 14
+spyBtn.Parent = AdminFrame
+makeRounded(spyBtn, 6)
+
+spyBtn.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/main/SimpleSpy_Secure.lua"))() -- or paste the code directly here
+end)
 
 local adminMsg = Instance.new("TextLabel")
 adminMsg.Size = UDim2.new(1, -40, 0, 30)
