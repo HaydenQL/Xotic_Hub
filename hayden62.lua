@@ -59,16 +59,16 @@ topBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 topBar.Parent = mainFrame
 makeRounded(topBar, 8)
 
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -180, 1, 0)
-title.Position = UDim2.new(0, 10, 0, 0)
-title.BackgroundTransparency = 1
-title.Text = "👑 Sigma Hub"
-title.TextSize = 16
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.GothamBold
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.Parent = topBar
+local usernametitle = Instance.new("TextLabel")
+usernametitle.Size = UDim2.new(1, -180, 1, 0)
+usernametitle.Position = UDim2.new(0, 10, 0, 0)
+usernametitle.BackgroundTransparency = 1
+usernametitle.Text = "👑 Sigma Hub"
+usernametitle.TextSize = 16
+usernametitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+usernametitle.Font = Enum.Font.GothamBold
+usernametitle.TextXAlignment = Enum.TextXAlignment.Left
+usernametitle.Parent = topBar
 
 local usernameLabel = Instance.new("TextLabel")
 usernameLabel.Size = UDim2.new(0, 100, 1, 0)
@@ -244,16 +244,16 @@ homePadding.PaddingLeft = UDim.new(0, 20)
 homePadding.Parent = HomeFrame
 
 -- Title
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -20, 0, 30)
-title.BackgroundTransparency = 1
-title.Text = "Home"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 16
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.LayoutOrder = 0
-title.Parent = HomeFrame
+local hometitle = Instance.new("TextLabel")
+hometitle.Size = UDim2.new(1, -20, 0, 30)
+hometitle.BackgroundTransparency = 1
+hometitle.Text = "Home"
+hometitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+hometitle.Font = Enum.Font.GothamBold
+hometitle.TextSize = 16
+hometitle.TextXAlignment = Enum.TextXAlignment.Left
+hometitle.LayoutOrder = 0
+hometitle.Parent = HomeFrame
 
 -- Infinite Yield Button
 local infYieldBtn = Instance.new("TextButton")
@@ -306,16 +306,16 @@ playerPadding.PaddingLeft = UDim.new(0, 20)
 playerPadding.Parent = PlayerFrame
 
 -- Title
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -20, 0, 30)
-title.BackgroundTransparency = 1
-title.Text = "Player Tab"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 16
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.LayoutOrder = 0
-title.Parent = PlayerFrame
+local playertitle = Instance.new("TextLabel")
+playertitle.Size = UDim2.new(1, -20, 0, 30)
+playertitle.BackgroundTransparency = 1
+playertitle.Text = "Player Tab"
+playertitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+playertitle.Font = Enum.Font.GothamBold
+playertitle.TextSize = 16
+playertitle.TextXAlignment = Enum.TextXAlignment.Left
+playertitle.LayoutOrder = 0
+playertitle.Parent = PlayerFrame
 
 -- Helper: Spacer
 local function addSpacer(order)
@@ -716,16 +716,16 @@ visualPadding.PaddingLeft = UDim.new(0, 20)
 visualPadding.Parent = VisualFrame
 
 -- Title
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -20, 0, 30)
-title.BackgroundTransparency = 1
-title.Text = "Visual Tab"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 16
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.LayoutOrder = 0
-title.Parent = VisualFrame
+local visualtitle = Instance.new("TextLabel")
+visualtitle.Size = UDim2.new(1, -20, 0, 30)
+visualtitle.BackgroundTransparency = 1
+visualtitle.Text = "Visual Tab"
+visualtitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+visualtitle.Font = Enum.Font.GothamBold
+visualtitle.TextSize = 16
+visualtitle.TextXAlignment = Enum.TextXAlignment.Left
+visualtitle.LayoutOrder = 0
+visualtitle.Parent = VisualFrame
 
 -- 💀 Spin and Die Button (softer fling)
 local spinDieBtn = Instance.new("TextButton")
@@ -1189,20 +1189,25 @@ creditsNote.Parent = CreditsFrame
 for tabName, button in pairs(tabButtons) do
 	button.MouseButton1Click:Connect(function()
 		for _, child in ipairs(contentFrame:GetChildren()) do
-			if child:IsA("Frame") or child:IsA("ScrollingFrame") then -- ✅ hides both
+			if child:IsA("Frame") or child:IsA("ScrollingFrame") then
 				child.Visible = false
 			end
 		end
+
 		local welcome = contentFrame:FindFirstChild("WelcomeFrame")
 		if welcome then
 			welcome.Visible = false
 		end
+
 		local tabFrame = contentFrame:FindFirstChild(tabName .. "Frame")
 		if tabFrame then
 			tabFrame.Visible = true
+		else
+			warn("⚠️ Tab frame not found:", tabName .. "Frame")
 		end
 	end)
 end
+
 
 
 -- 🔐 Admin Panel (hidden unless !admin is typed)
