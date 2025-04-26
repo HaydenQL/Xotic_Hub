@@ -930,31 +930,7 @@ unbanVCBtn.Parent = VoiceChatFrame
 makeRounded(unbanVCBtn, 6)
 
 unbanVCBtn.MouseButton1Click:Connect(function()
-	shouldRejoinVC = true
-end)
-
-
--- 🔴 Disconnect VC Button
-local disconnectVCBtn = Instance.new("TextButton")
-disconnectVCBtn.Size = UDim2.new(0, 200, 0, 35)
-disconnectVCBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-disconnectVCBtn.Text = "🔴 Disconnect from Voice Chat"
-disconnectVCBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-disconnectVCBtn.Font = Enum.Font.Gotham
-disconnectVCBtn.TextSize = 14
-disconnectVCBtn.LayoutOrder = 2
-disconnectVCBtn.Parent = VoiceChatFrame
-makeRounded(disconnectVCBtn, 6)
-
-disconnectVCBtn.MouseButton1Click:Connect(function()
-	local success, result = pcall(function()
-		game:GetService("VoiceChatService"):Leave()
-	end)
-	if success then
-		print("✅ Disconnected from VC.")
-	else
-		warn("❌ Failed to disconnect from VC:", result)
-	end
+	game:GetService("VoiceChatService"):joinVoice()
 end)
 
 
@@ -1112,6 +1088,22 @@ extendBaseBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/8973951821973068216/11374577211057006363/refs/heads/main/Baseplate"))()
 end)
 
+-- Rean
+local Rean = Instance.new("TextButton")
+Rean.Size = UDim2.new(0, 200, 0, 30)
+Rean.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Rean.Text = "rean"
+Rean.TextColor3 = Color3.fromRGB(255, 255, 255)
+Rean.Font = Enum.Font.Gotham
+Rean.TextSize = 14
+Rean.LayoutOrder = 1
+Rean.Parent = SettingsFrame
+makeRounded(Rean, 6)
+
+Rean.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/refs/heads/main/rean.lua"))()
+end)
+
 
 --credits
 local CreditsFrame = createTabFrame("Credits", "Credits Tab")
@@ -1221,7 +1213,7 @@ LocalPlayer.Chatted:Connect(function(msg)
 	end
 end)
 
--- Spy Button
+-- quizbtn Button
 local quizBtn = Instance.new("TextButton")
 quizBtn.Size = UDim2.new(0, 200, 0, 30)
 quizBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
