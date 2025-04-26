@@ -1,40 +1,33 @@
--- Remove existing GUI
+-- Remove existing SigmaHub GUI if exists (to avoid duplicates)
 for _, gui in pairs(game.CoreGui:GetChildren()) do
-	if gui.Name == "SigmaHub" then gui:Destroy() end
+	if gui.Name:match("^HUI%d%d%d%d%d$") then gui:Destroy() end
 end
 
 local UIS = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-
--- ScreenGui reassigned for stealth
--- SECURE GUI INJECTION
-local UIS = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 local CoreGui = game:GetService("CoreGui")
 
--- Create stealthy GUI name and attach to CoreGui
+-- Secure GUI Injection (Stealthy Randomized Name)
+local stealthName = "HUI" .. tostring(math.random(10000,99999))
+
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "HUI" .. tostring(math.random(10000,99999))
+ScreenGui.Name = stealthName
 ScreenGui.DisplayOrder = 999
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
--- Toggle visibility keybind (RightAlt)
-UIS.InputBegan:Connect(function(input, gpe)
-    if gpe then return end
-    if input.KeyCode == Enum.KeyCode.Tab then
-        ScreenGui.Enabled = not ScreenGui.Enabled
-    end
+-- Single toggle keybind (K) for GUI visibility
+local guiToggled = true
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+	if input.KeyCode == Enum.KeyCode.K then
+		guiToggled = not guiToggled
+		ScreenGui.Enabled = guiToggled
+	end
 end)
-
-
-ScreenGui.Name = "SigmaHub"
-ScreenGui.Parent = game.CoreGui
-ScreenGui.ResetOnSpawn = false
 
 local function makeRounded(obj, radius)
 	local corner = Instance.new("UICorner")
