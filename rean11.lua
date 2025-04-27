@@ -2623,6 +2623,7 @@ local function refreshAnimationList()
     if showOnlyCustom then
         animationsToShow = customAnimations
     else
+        -- Combine built-in animations and custom ones
         for name, id in pairs(BuiltInAnimationsR15) do
             table.insert(animationsToShow, {Name = name, ID = id})
         end
@@ -2631,6 +2632,12 @@ local function refreshAnimationList()
         end
     end
 
+    -- Sort animations alphabetically (optional, looks cleaner)
+    table.sort(animationsToShow, function(a, b)
+        return a.Name:lower() < b.Name:lower()
+    end)
+
+    -- Create buttons
     for _, anim in ipairs(animationsToShow) do
         local button = Instance.new("TextButton")
         button.Size = UDim2.new(1, 0, 0, 30)
@@ -2642,79 +2649,8 @@ local function refreshAnimationList()
 
         button.MouseButton1Click:Connect(function()
             print("Play animation:", anim.Name, anim.ID)
-            -- Insert your actual play animation function here if you want
+            -- Insert your play animation code here if you want
         end)
     end
 end
-
--- Add 'Add Animation' Button
-local function createAddAnimationPopup()
-    local popup = Instance.new("Frame")
-    popup.Size = UDim2.new(0, 250, 0, 150)
-    popup.Position = UDim2.new(0.5, -125, 0.5, -75)
-    popup.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    popup.BackgroundTransparency = 0
-    popup.Parent = AnimationGuiParent
-
-    local nameBox = Instance.new("TextBox")
-    nameBox.Size = UDim2.new(1, -20, 0, 30)
-    nameBox.Position = UDim2.new(0, 10, 0, 10)
-    nameBox.PlaceholderText = "Animation Name"
-    nameBox.Parent = popup
-
-    local idBox = Instance.new("TextBox")
-    idBox.Size = UDim2.new(1, -20, 0, 30)
-    idBox.Position = UDim2.new(0, 10, 0, 50)
-    idBox.PlaceholderText = "Animation ID"
-    idBox.Parent = popup
-
-    local saveBtn = Instance.new("TextButton")
-    saveBtn.Size = UDim2.new(1, -20, 0, 30)
-    saveBtn.Position = UDim2.new(0, 10, 0, 90)
-    saveBtn.Text = "Save"
-    saveBtn.Parent = popup
-
-    saveBtn.MouseButton1Click:Connect(function()
-        local animName = nameBox.Text
-        local animID = tonumber(idBox.Text)
-
-        if animName ~= "" and animID then
-            table.insert(customAnimations, {Name = animName, ID = animID})
-            saveCustomAnimations()
-            refreshAnimationList()
-        else
-            warn("Invalid animation name or ID!")
-        end
-        popup:Destroy()
-    end)
-end
-
-local addButton = Instance.new("TextButton")
-addButton.Size = UDim2.new(0, 100, 0, 30)
-addButton.Position = UDim2.new(0, 0, 0, -35)
-addButton.Text = "Add Animation"
-addButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-addButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-addButton.Parent = AnimationListFrame
-
-addButton.MouseButton1Click:Connect(function()
-    createAddAnimationPopup()
-end)
-
--- Add Toggle Button
-local toggleButton = Instance.new("TextButton")
-toggleButton.Size = UDim2.new(0, 100, 0, 30)
-toggleButton.Position = UDim2.new(0, 110, 0, -35)
-toggleButton.Text = "Show All"
-toggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleButton.Parent = AnimationListFrame
-
-toggleButton.MouseButton1Click:Connect(function()
-    showOnlyCustom = not showOnlyCustom
-    toggleButton.Text = showOnlyCustom and "Show All" or "Show Custom"
-    refreshAnimationList()
-end)
-
-refreshAnimationList()
 
