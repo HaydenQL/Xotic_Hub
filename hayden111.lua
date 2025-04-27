@@ -1325,7 +1325,7 @@ ReanimationFrame.CanvasSize = UDim2.new(0, 0, 0, 300)
 ReanimationFrame.ScrollBarThickness = 4
 ReanimationFrame.BackgroundTransparency = 1
 ReanimationFrame.Visible = false
-ReanimationFrame.Parent = contentFrame
+ReanimationFrame.Parent = contentFrame -- << Your parent
 makeRounded(ReanimationFrame, 10)
 
 local reanLayout = Instance.new("UIListLayout")
@@ -1338,27 +1338,16 @@ reanPadding.PaddingTop = UDim.new(0, 10)
 reanPadding.PaddingLeft = UDim.new(0, 20)
 reanPadding.Parent = ReanimationFrame
 
--- Title
-local reanTitle = Instance.new("TextLabel")
-reanTitle.Size = UDim2.new(1, -20, 0, 30)
-reanTitle.BackgroundTransparency = 1
-reanTitle.Text = "Reanimation Tab"
-reanTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-reanTitle.Font = Enum.Font.GothamBold
-reanTitle.TextSize = 16
-reanTitle.TextXAlignment = Enum.TextXAlignment.Left
-reanTitle.LayoutOrder = 0
-reanTitle.Parent = ReanimationFrame
-
--- Create the Reanimate Toggle
+-- 🧩 Reanimate Toggle Button
 local reanimateToggle = Instance.new("TextButton")
-reanimateToggle.Parent = scrollingFrame
-reanimateToggle.Size = UDim2.new(1, -10, 0, 30)
+reanimateToggle.Parent = ReanimationFrame
+reanimateToggle.Size = UDim2.new(1, -20, 0, 30)
 reanimateToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 reanimateToggle.Text = "Reanimate: OFF"
 reanimateToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 reanimateToggle.Font = Enum.Font.SourceSans
 reanimateToggle.TextSize = 18
+makeRounded(reanimateToggle, 8)
 
 local reanimateEnabled = false
 reanimateToggle.MouseButton1Click:Connect(function()
@@ -1367,26 +1356,28 @@ reanimateToggle.MouseButton1Click:Connect(function()
 	print("Reanimate toggled:", reanimateEnabled)
 end)
 
--- Create the Animation ID TextBox
+-- 🧩 Animation ID TextBox
 local animationIdBox = Instance.new("TextBox")
-animationIdBox.Parent = scrollingFrame
-animationIdBox.Size = UDim2.new(1, -10, 0, 30)
+animationIdBox.Parent = ReanimationFrame
+animationIdBox.Size = UDim2.new(1, -20, 0, 30)
 animationIdBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 animationIdBox.Text = "Enter Animation ID"
 animationIdBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 animationIdBox.Font = Enum.Font.SourceSans
 animationIdBox.TextSize = 18
 animationIdBox.ClearTextOnFocus = true
+makeRounded(animationIdBox, 8)
 
--- Load Button
+-- 🧩 Load Animation Button
 local loadButton = Instance.new("TextButton")
-loadButton.Parent = scrollingFrame
-loadButton.Size = UDim2.new(1, -10, 0, 30)
+loadButton.Parent = ReanimationFrame
+loadButton.Size = UDim2.new(1, -20, 0, 30)
 loadButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 loadButton.Text = "Load Animation"
 loadButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 loadButton.Font = Enum.Font.SourceSans
 loadButton.TextSize = 18
+makeRounded(loadButton, 8)
 
 loadButton.MouseButton1Click:Connect(function()
 	local animId = animationIdBox.Text
@@ -1397,15 +1388,16 @@ loadButton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- Play Button
+-- 🧩 Play Animation Button
 local playButton = Instance.new("TextButton")
-playButton.Parent = scrollingFrame
-playButton.Size = UDim2.new(1, -10, 0, 30)
+playButton.Parent = ReanimationFrame
+playButton.Size = UDim2.new(1, -20, 0, 30)
 playButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 playButton.Text = "Play Animation"
 playButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 playButton.Font = Enum.Font.SourceSans
 playButton.TextSize = 18
+makeRounded(playButton, 8)
 
 playButton.MouseButton1Click:Connect(function()
 	if reanimateEnabled then
@@ -1415,15 +1407,16 @@ playButton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- Stop Button
+-- 🧩 Stop Animation Button
 local stopButton = Instance.new("TextButton")
-stopButton.Parent = scrollingFrame
-stopButton.Size = UDim2.new(1, -10, 0, 30)
+stopButton.Parent = ReanimationFrame
+stopButton.Size = UDim2.new(1, -20, 0, 30)
 stopButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 stopButton.Text = "Stop Animation"
 stopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 stopButton.Font = Enum.Font.SourceSans
 stopButton.TextSize = 18
+makeRounded(stopButton, 8)
 
 stopButton.MouseButton1Click:Connect(function()
 	print("Stopped Animation")
