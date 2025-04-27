@@ -2484,39 +2484,39 @@ local function createDraggableGui(getGhostEnabled, toggleGhost, getSizeValue, se
 	end
     end)
 
-    local animListSection = Instance.new("Frame")
-    animListSection.Name = "AnimListSection"
-    animListSection.Size = UDim2.new(1, 0, 0, 40)
-    animListSection.Position = UDim2.new(0, 0, 1, -40)
-    animListSection.BackgroundTransparency = 1
-    animListSection.Parent = contentFrame
+    --local animListSection = Instance.new("Frame")
+    --animListSection.Name = "AnimListSection"
+    --animListSection.Size = UDim2.new(1, 0, 0, 40)
+    --animListSection.Position = UDim2.new(0, 0, 1, -40)
+    --animListSection.BackgroundTransparency = 1
+    --animListSection.Parent = contentFrame
 
-    local animListButton = Instance.new("TextButton")
-    animListButton.Name = "AnimListButton"
-    animListButton.Size = UDim2.new(1, 0, 1, 0)
-    animListButton.Position = UDim2.new(0, 0, 0, 0)
-    animListButton.Text = "Open Animation List"
-    animListButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    animListButton.TextSize = 16
-    animListButton.Font = Enum.Font.GothamSemibold
-    animListButton.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
-    animListButton.BorderSizePixel = 0
-    animListButton.AutoButtonColor = true
-    local animListCorner = Instance.new("UICorner")
-    animListCorner.CornerRadius = UDim.new(0, 8)
-    animListCorner.Parent = animListButton
-    animListButton.Parent = animListSection
+    --local animListButton = Instance.new("TextButton")
+    --animListButton.Name = "AnimListButton"
+    --animListButton.Size = UDim2.new(1, 0, 1, 0)
+    --animListButton.Position = UDim2.new(0, 0, 0, 0)
+    --animListButton.Text = "Open Animation List"
+    --animListButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    --animListButton.TextSize = 16
+    --animListButton.Font = Enum.Font.GothamSemibold
+    --animListButton.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+    --animListButton.BorderSizePixel = 0
+    --animListButton.AutoButtonColor = true
+    --local animListCorner = Instance.new("UICorner")
+    --animListCorner.CornerRadius = UDim.new(0, 8)
+    --animListCorner.Parent = animListButton
+    --animListButton.Parent = animListSection
 
-    animListButton.MouseButton1Click:Connect(function()
-        if animationListGui then
-            animationListGui:Destroy()
-            animationListGui = nil
-            animListButton.Text = "Open Animation List"
-        else
-            animationListGui = createAnimationListGui(fakeAnimTextBox)
-            animListButton.Text = "Close Animation List"
-        end
-    end)
+    --animListButton.MouseButton1Click:Connect(function()
+        --if animationListGui then
+            --animationListGui:Destroy()
+            --animationListGui = nil
+            --animListButton.Text = "Open Animation List"
+        --else
+            --animationListGui = createAnimationListGui(fakeAnimTextBox)
+            --animListButton.Text = "Close Animation List"
+        --end
+    --end)
 
     return screenGui
 end
