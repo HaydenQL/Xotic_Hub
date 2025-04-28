@@ -3,6 +3,10 @@ for _, gui in pairs(game.CoreGui:GetChildren()) do
 	if gui.Name:match("^HUI%d%d%d%d%d$") then gui:Destroy() end
 end
 
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local CoreGui = game:GetService("CoreGui")
 
 -- Secure GUI Injection (Stealthy Randomized Name)
 local stealthName = "HUI" .. tostring(math.random(10000,99999))
@@ -151,8 +155,6 @@ local tabInfo = {
 	{"🎙️", "VoiceChat"},
 	{"⚙️", "Settings"},
 	{"📜", "Credits"},
-    {"🌀", "Reanimation"},
-
 }
 
 local tabButtons = {}
@@ -1268,7 +1270,6 @@ makeRounded(reanimateFrame, 8)
 Rean.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/refs/heads/main/rean11.lua"))()
 end)
-
 
 -- 🔘 Minimize button functionality
 local isMinimized = false
