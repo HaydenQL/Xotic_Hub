@@ -155,6 +155,7 @@ local tabInfo = {
 	{"🎙️", "VoiceChat"},
 	{"⚙️", "Settings"},
 	{"📜", "Credits"},
+	{"🌀", "Reanimation"},
 }
 
 local tabButtons = {}
