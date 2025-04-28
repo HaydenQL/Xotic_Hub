@@ -2,91 +2,7 @@
 for _, gui in pairs(game.CoreGui:GetChildren()) do
 	if gui.Name:match("^HUI%d%d%d%d%d$") then gui:Destroy() end
 end
---Reanimation
-local UIS = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local CoreGui = game:GetService("CoreGui")
 
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-
-local ghostEnabled = false
-local originalCharacter
-local ghostClone
-local originalCFrame
-local ghostOriginalSizes = {}
-local ghostOriginalMotorCFrames = {}
-local updateConnection
-local cloneSize = 1
-local cloneWidth = 1
-
-local function setGhostEnabled(newState)
-    ghostEnabled = newState
-
-    if ghostEnabled then
-        local char = LocalPlayer.Character
-        if not char then return end
-        local humanoid = char:FindFirstChildWhichIsA("Humanoid")
-        local root = char:FindFirstChild("HumanoidRootPart")
-        if not humanoid or not root then return end
-
-        originalCharacter = char
-        originalCFrame = root.CFrame
-
-        char.Archivable = true
-        ghostClone = char:Clone()
-        char.Archivable = false
-
-        ghostClone.Name = originalCharacter.Name .. "_ghost"
-        local ghostHumanoid = ghostClone:FindFirstChildWhichIsA("Humanoid")
-        if ghostHumanoid then
-            ghostHumanoid.DisplayName = originalCharacter.Name .. "_ghost"
-        end
-
-        for _, part in ipairs(ghostClone:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.Transparency = 1
-            end
-        end
-
-        ghostOriginalSizes = {}
-        ghostOriginalMotorCFrames = {}
-        for _, desc in ipairs(ghostClone:GetDescendants()) do
-            if desc:IsA("BasePart") then
-                ghostOriginalSizes[desc] = desc.Size
-            elseif desc:IsA("Motor6D") then
-                ghostOriginalMotorCFrames[desc] = { C0 = desc.C0, C1 = desc.C1 }
-            end
-        end
-
-        ghostClone.Parent = originalCharacter.Parent
-        LocalPlayer.Character = ghostClone
-
-        updateConnection = RunService.Heartbeat:Connect(function()
-            if not ghostEnabled or not originalCharacter or not ghostClone then return end
-            for _, partName in ipairs({
-                "Head", "UpperTorso", "LowerTorso",
-                "LeftUpperArm", "LeftLowerArm", "LeftHand",
-                "RightUpperArm", "RightLowerArm", "RightHand",
-                "LeftUpperLeg", "LeftLowerLeg", "LeftFoot",
-                "RightUpperLeg", "RightLowerLeg", "RightFoot"
-            }) do
-                local originalPart = originalCharacter:FindFirstChild(partName)
-                local clonePart = ghostClone:FindFirstChild(partName)
-                if originalPart and clonePart then
-                    originalPart.CFrame = clonePart.CFrame
-                end
-            end
-        end)
-    else
-        if updateConnection then updateConnection:Disconnect() end
-        if ghostClone then ghostClone:Destroy() end
-        LocalPlayer.Character = originalCharacter
-    end
-end
 
 -- Secure GUI Injection (Stealthy Randomized Name)
 local stealthName = "HUI" .. tostring(math.random(10000,99999))
@@ -1339,87 +1255,18 @@ reanPadding.PaddingLeft = UDim.new(0, 20)
 reanPadding.Parent = ReanimationFrame
 
 -- 🧩 Reanimate Toggle Button
-local reanimateToggle = Instance.new("TextButton")
-reanimateToggle.Parent = ReanimationFrame
-reanimateToggle.Size = UDim2.new(1, -20, 0, 30)
-reanimateToggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-reanimateToggle.Text = "Reanimate: OFF"
-reanimateToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-reanimateToggle.Font = Enum.Font.SourceSans
-reanimateToggle.TextSize = 18
-makeRounded(reanimateToggle, 8)
+local reanimateFrame = Instance.new("TextButton")
+reanimateFrame.Parent = ReanimationFrame
+reanimateFrame.Size = UDim2.new(1, -20, 0, 30)
+reanimateFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+reanimateFrame.Text = "Reanimate: OFF"
+reanimateFrame.TextColor3 = Color3.fromRGB(255, 255, 255)
+reanimateFrame.Font = Enum.Font.SourceSans
+reanimateFrame.TextSize = 18
+makeRounded(reanimateFrame, 8)
 
-local reanimateEnabled = false
-reanimateToggle.MouseButton1Click:Connect(function()
-	reanimateEnabled = not reanimateEnabled
-	reanimateToggle.Text = "Reanimate: " .. (reanimateEnabled and "ON" or "OFF")
-	print("Reanimate toggled:", reanimateEnabled)
-end)
-
--- 🧩 Animation ID TextBox
-local animationIdBox = Instance.new("TextBox")
-animationIdBox.Parent = ReanimationFrame
-animationIdBox.Size = UDim2.new(1, -20, 0, 30)
-animationIdBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-animationIdBox.Text = "Enter Animation ID"
-animationIdBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-animationIdBox.Font = Enum.Font.SourceSans
-animationIdBox.TextSize = 18
-animationIdBox.ClearTextOnFocus = true
-makeRounded(animationIdBox, 8)
-
--- 🧩 Load Animation Button
-local loadButton = Instance.new("TextButton")
-loadButton.Parent = ReanimationFrame
-loadButton.Size = UDim2.new(1, -20, 0, 30)
-loadButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-loadButton.Text = "Load Animation"
-loadButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-loadButton.Font = Enum.Font.SourceSans
-loadButton.TextSize = 18
-makeRounded(loadButton, 8)
-
-loadButton.MouseButton1Click:Connect(function()
-	local animId = animationIdBox.Text
-	if animId and animId ~= "" then
-		print("Loaded Animation ID:", animId)
-	else
-		warn("No animation ID entered")
-	end
-end)
-
--- 🧩 Play Animation Button
-local playButton = Instance.new("TextButton")
-playButton.Parent = ReanimationFrame
-playButton.Size = UDim2.new(1, -20, 0, 30)
-playButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-playButton.Text = "Play Animation"
-playButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-playButton.Font = Enum.Font.SourceSans
-playButton.TextSize = 18
-makeRounded(playButton, 8)
-
-playButton.MouseButton1Click:Connect(function()
-	if reanimateEnabled then
-		print("Playing Animation ID:", animationIdBox.Text)
-	else
-		warn("Enable reanimation first")
-	end
-end)
-
--- 🧩 Stop Animation Button
-local stopButton = Instance.new("TextButton")
-stopButton.Parent = ReanimationFrame
-stopButton.Size = UDim2.new(1, -20, 0, 30)
-stopButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-stopButton.Text = "Stop Animation"
-stopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-stopButton.Font = Enum.Font.SourceSans
-stopButton.TextSize = 18
-makeRounded(stopButton, 8)
-
-stopButton.MouseButton1Click:Connect(function()
-	print("Stopped Animation")
+Rean.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/refs/heads/main/rean.lua"))()
 end)
 
 
