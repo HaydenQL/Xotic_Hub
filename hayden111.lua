@@ -1082,21 +1082,6 @@ extendBaseBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/8973951821973068216/11374577211057006363/refs/heads/main/Baseplate"))()
 end)
 
--- Rean
-local Rean = Instance.new("TextButton")
-Rean.Size = UDim2.new(0, 200, 0, 30)
-Rean.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Rean.Text = "rean"
-Rean.TextColor3 = Color3.fromRGB(255, 255, 255)
-Rean.Font = Enum.Font.Gotham
-Rean.TextSize = 14
-Rean.LayoutOrder = 1
-Rean.Parent = SettingsFrame
-makeRounded(Rean, 6)
-
-Rean.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/refs/heads/main/rean.lua"))()
-end)
 
 
 --credits
@@ -1257,20 +1242,22 @@ reanPadding.PaddingTop = UDim.new(0, 10)
 reanPadding.PaddingLeft = UDim.new(0, 20)
 reanPadding.Parent = ReanimationFrame
 
--- 🧩 Reanimate Toggle Button
-local reanimateFrame = Instance.new("TextButton")
-reanimateFrame.Parent = ReanimationFrame
-reanimateFrame.Size = UDim2.new(1, -20, 0, 30)
-reanimateFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-reanimateFrame.Text = "Reanimate: OFF"
-reanimateFrame.TextColor3 = Color3.fromRGB(255, 255, 255)
-reanimateFrame.Font = Enum.Font.SourceSans
-reanimateFrame.TextSize = 18
-makeRounded(reanimateFrame, 8)
+local Rean = Instance.new("TextButton")
+Rean.Size = UDim2.new(0, 200, 0, 30)
+Rean.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Rean.Text = "Reanimation"
+Rean.TextColor3 = Color3.fromRGB(255, 255, 255)
+Rean.Font = Enum.Font.Gotham
+Rean.TextSize = 14
+Rean.LayoutOrder = 1
+Rean.Parent = SettingsFrame
+makeRounded(Rean, 6)
 
-reanimateFrame.MouseButton1Click:Connect(function()
+Rean.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Chat-bypass/refs/heads/main/rean11.lua"))()
 end)
+
+
 
 -- 🔘 Minimize button functionality
 local isMinimized = false
