@@ -1250,7 +1250,7 @@ Rean.TextColor3 = Color3.fromRGB(255, 255, 255)
 Rean.Font = Enum.Font.Gotham
 Rean.TextSize = 14
 Rean.LayoutOrder = 1
-Rean.Parent = SettingsFrame
+Rean.Parent = ReanimationFrame
 makeRounded(Rean, 6)
 
 Rean.MouseButton1Click:Connect(function()
