@@ -4542,7 +4542,7 @@ end)
 
 --[[ GUI TAB ]]--
 local osint, r15Suite
-ui:AddButton(sections.guisGui, "Xeno R15 Suite", function()
+ui:AddButton(sections.guisGui, "R15 Animations", function()
     r15Suite()
 end)
 ui:AddButton(sections.guisGui, "Xeno OSINT", function()
@@ -4550,7 +4550,7 @@ ui:AddButton(sections.guisGui, "Xeno OSINT", function()
 end)
 
 --[[ ABOUT TAB ]]--
-ui:AddLabel(sections.aboutInfo, "Made by Xeno", UI_CONFIG.AccentColor)
+ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutCredits, "Co-Developed by 3itx", UI_CONFIG.TextColor)
 
