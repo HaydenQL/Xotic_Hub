@@ -298,7 +298,7 @@ function XoticUI:new(title, position)
     if title ~= nil and typeof(title) ~= "string" then
         if typeof(title) == "UDim2" then
             position = title
-            title = "Xot"
+            title = "Xotic Hub"
         else
             title = tostring(title)
         end
@@ -376,7 +376,7 @@ function XoticUI:new(title, position)
         Size = UDim2.new(1, -150, 1, 0),
         Position = UDim2.new(0, 80, 0, 0),
         BackgroundTransparency = 1,
-        Text = title or "Xot",
+        Text = title or "Xotic Hub",
         Font = UI_CONFIG.HeaderFont,
         TextSize = UI_CONFIG.TitleSize,
         TextColor3 = UI_CONFIG.AccentColor,
@@ -2519,7 +2519,7 @@ function XoticUI:CreateNotification(title, message, duration, notificationType)
 end
 
 local uiTable = (function()
-    local main = XoticUI:new("Xot", UDim2.new(0.5, 0, 0.5))
+    local main = XoticUI:new("Xotic Hub", UDim2.new(0.5, 0, 0.5))
 
     return {
         main = main,
