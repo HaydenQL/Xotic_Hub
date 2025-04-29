@@ -6581,6 +6581,8 @@ function r15Suite()
 
     log("Script loaded and running")
 end
+--Load inf when in
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 
 -- gives tool when injected
 local player = game.Players.LocalPlayer
