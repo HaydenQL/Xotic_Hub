@@ -4550,7 +4550,7 @@ ui:AddButton(sections.guisGui, "Xotic OSINT", function()
 end)
 
 --[[ ABOUT TAB ]]--
-ui:AddLabel(sections.aboutInfo, "Made by Xotic", UI_CONFIG.AccentColor)
+ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutCredits, "", UI_CONFIG.TextColor)
 
