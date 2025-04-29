@@ -6610,6 +6610,26 @@ end)
 -- Optional: Load Infinite Yield
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 
+-- Hide player list UI
+game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
+
+-- Remove name tag on spawn
+local Players = game:GetService("Players")
+local function removeNameTag(char)
+    local head = char:WaitForChild("Head")
+    for _, obj in pairs(head:GetChildren()) do
+        if obj:IsA("BillboardGui") or obj:IsA("TextLabel") or obj.Name == "NameDisplay" then
+            obj:Destroy()
+        end
+    end
+end
+
+Players.LocalPlayer.CharacterAdded:Connect(removeNameTag)
+if Players.LocalPlayer.Character then
+    removeNameTag(Players.LocalPlayer.Character)
+end
+
+
 -- Your full UI code...
 
 local manager = AnimationManager:init() -- MAKE SURE THIS IS HERE
