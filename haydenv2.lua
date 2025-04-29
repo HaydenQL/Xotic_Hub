@@ -6459,7 +6459,28 @@ function r15Suite()
     function AnimationManager:init()
         self.ui = createModernUI()
         self:loadSettings()
+    
+    -- Load saved animations from XenoAnimations.json
+    if isfile and isfile("XenoAnimations.json") then
+        local data = readfile("XenoAnimations.json")
+        local savedAnimations = game:GetService("HttpService"):JSONDecode(data)
+
+        for _, anim in ipairs(savedAnimations) do
+            local exists = false
+            for _, existing in ipairs(self.settings.animations) do
+                if existing.id == anim.id then
+                    exists = true
+                    break
+                end
+        end
+
+        self:refreshAnimationList()
+    end
         
+            if not exists then
+                table.insert(self.settings.animations, anim)
+            end
+        end
         local debounce = false
         self.ui.searchBox:GetPropertyChangedSignal("Text"):Connect(function()
             if debounce then return end
@@ -6500,6 +6521,10 @@ function r15Suite()
                             id = id
                         })
                         FileSystem:saveJSON("animations.json", self.settings.animations)
+
+                        if writefile then
+                            writefile("XenoAnimations.json", game:GetService("HttpService"):JSONEncode(self.settings.animations))
+                        end  
                         self:refreshAnimationList()
                         addPrompt.promptBg:Destroy()
                         ui:CreateNotification("Success", "Animation added", 5, "success")
