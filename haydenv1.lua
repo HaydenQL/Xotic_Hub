@@ -162,7 +162,6 @@ local UI_CONFIG = {
     ErrorColor = Color3.fromRGB(220, 60, 60), -- stays (red error)
     SuccessColor = Color3.fromRGB(40, 200, 100), -- stays (green success)
     WarningColor = Color3.fromRGB(255, 184, 50), -- stays (yellow warning)
-}
     
     ToggleSize = UDim2.new(0, 40, 0, 20),
     CornerRadius = UDim.new(0, 3),
@@ -4543,7 +4542,7 @@ end)
 
 --[[ GUI TAB ]]--
 local osint, r15Suite
-ui:AddButton(sections.guisGui, "R15 Animations", function()
+ui:AddButton(sections.guisGui, "Xeno R15 Suite", function()
     r15Suite()
 end)
 ui:AddButton(sections.guisGui, "Xeno OSINT", function()
@@ -4551,7 +4550,7 @@ ui:AddButton(sections.guisGui, "Xeno OSINT", function()
 end)
 
 --[[ ABOUT TAB ]]--
-ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
+ui:AddLabel(sections.aboutInfo, "Made by Xeno", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutCredits, "Co-Developed by 3itx", UI_CONFIG.TextColor)
 
