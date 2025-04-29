@@ -10,7 +10,7 @@ if getconnections then
         for _,v in pairs(getconnections(game:GetService("LogService")).MessageOut) do v:Disable() end
         for _,v in pairs(getconnections(game:GetService("ScriptContext")).Error) do v:Disable() end
     end
-    warn("[Xeno] -> DISCONNECTED ALL CONSOLE CONNECTIONS")
+    warn("[Xotic] -> DISCONNECTED ALL CONSOLE CONNECTIONS")
 end
 
 local function randomHex(len)
@@ -32,7 +32,7 @@ local function randstr()
     return  "HelloSkid_" .. uuid
 end
 
-local Xeno_UI_ID = randstr()
+local Xotic_UI_ID = randstr()
 local NOTIFICATIONS_ID = randstr()
 
 local function getrandstr()
@@ -40,13 +40,13 @@ local function getrandstr()
 end
 
 sep = string.rep("\n", 200)
-print("                             v LATEST LOGS OF Xeno ARE BELOW v"..sep.."            > Starting Xeno")
-warn("[Xeno] -> Starting...")
+print("                             v LATEST LOGS OF Xotic ARE BELOW v"..sep.."            > Starting Xotic")
+warn("[Xotic] -> Starting...")
 
 local logging = true
 local function log(...)
     if logging then
-        warn("[Xeno] -> " .. ...)
+        warn("[Xotic] -> " .. ...)
     end
 end
 local function seperate(job)
@@ -188,8 +188,8 @@ local UI_CONFIG = {
     Version = "1.0.2"
 }
 
-local XenoUI = {}
-XenoUI.__index = XenoUI
+local XoticUI = {}
+XoticUI.__index = XoticUI
 
 local function CreateInstance(className, properties)
     local instance = Instance.new(className)
@@ -293,12 +293,12 @@ local function MakeDraggable(gui, dragRegion)
     end)
 end
 
-function XenoUI:new(title, position)
+function XoticUI:new(title, position)
     log("Randomizing strings...")
     if title ~= nil and typeof(title) ~= "string" then
         if typeof(title) == "UDim2" then
             position = title
-            title = "Xeno"
+            title = "Xotic"
         else
             title = tostring(title)
         end
@@ -309,7 +309,7 @@ function XenoUI:new(title, position)
     end
     
     local screenGui = CreateInstance("ScreenGui", {
-        Name = Xeno_UI_ID,
+        Name = Xotic_UI_ID,
         ResetOnSpawn = false,
         IgnoreGuiInset = true,
         DisplayOrder = 999999999,
@@ -376,7 +376,7 @@ function XenoUI:new(title, position)
         Size = UDim2.new(1, -150, 1, 0),
         Position = UDim2.new(0, 80, 0, 0),
         BackgroundTransparency = 1,
-        Text = title or "Xeno",
+        Text = title or "Xotic",
         Font = UI_CONFIG.HeaderFont,
         TextSize = UI_CONFIG.TitleSize,
         TextColor3 = UI_CONFIG.AccentColor,
@@ -486,7 +486,7 @@ function XenoUI:new(title, position)
         SectionColumns = {},
         ActiveTab = nil,
         ActivePage = nil
-    }, XenoUI)
+    }, XoticUI)
     
     closeButton.MouseButton1Click:Connect(function()
         local gui = screenGui
@@ -618,7 +618,7 @@ function XenoUI:new(title, position)
     return ui
 end
 
-function XenoUI:AddTabsElement(section, tabs, callback)
+function XoticUI:AddTabsElement(section, tabs, callback)
     local tabsContainer = CreateInstance("Frame", {
         Name = getrandstr(),
         Size = UDim2.new(1, -10, 0, 30),
@@ -745,7 +745,7 @@ function XenoUI:AddTabsElement(section, tabs, callback)
     return tabsInterface
 end
 
-function XenoUI:AddTab(name, icon)
+function XoticUI:AddTab(name, icon)
     local tabButton = CreateInstance("TextButton", {
         Name = getrandstr(),
         Size = UDim2.new(0, 0, 1, 0),
@@ -911,7 +911,7 @@ function XenoUI:AddTab(name, icon)
     return tab
 end
 
-function XenoUI:SelectTab(tabButton, noAnimation)
+function XoticUI:SelectTab(tabButton, noAnimation)
     if not self.AnimationOverlay then
         self.AnimationOverlay = CreateInstance("Frame", {
             Name = getrandstr(),
@@ -1043,7 +1043,7 @@ function XenoUI:SelectTab(tabButton, noAnimation)
     end
 end
 
-function XenoUI:AddSection(tab, name, position)
+function XoticUI:AddSection(tab, name, position)
     position = position or "left"
     
     local targetColumn = position == "left" and tab.LeftColumn or tab.RightColumn
@@ -1113,7 +1113,7 @@ function XenoUI:AddSection(tab, name, position)
     return section
 end
 
-function XenoUI:AddToggle(section, name, defaultValue, callback)
+function XoticUI:AddToggle(section, name, defaultValue, callback)
     local isToggled = defaultValue or false
     local isOnCooldown = false
     
@@ -1237,7 +1237,7 @@ function XenoUI:AddToggle(section, name, defaultValue, callback)
     return toggleInterface
 end
 
-function XenoUI:AddButton(section, name, callback)
+function XoticUI:AddButton(section, name, callback)
     local buttonContainer = CreateInstance("Frame", {
         Name = "Button_" .. name,
         Size = UDim2.new(1, 0, 0, 30),
@@ -1330,7 +1330,7 @@ function XenoUI:AddButton(section, name, callback)
     return buttonInterface
 end
 
-function XenoUI:AddDropdown(section, name, options, default, callback)
+function XoticUI:AddDropdown(section, name, options, default, callback)
     options = options or {}
     default = default or options[1] or ""
     
@@ -1401,7 +1401,7 @@ function XenoUI:AddDropdown(section, name, options, default, callback)
     
     dropdownContainer.Parent = section.ContentHolder
     
-    local screenGui = gethui():FindFirstChild(Xeno_UI_ID)
+    local screenGui = gethui():FindFirstChild(Xotic_UI_ID)
     
     local optionsContainer = CreateInstance("Frame", {
         Name = getrandstr(),
@@ -1684,7 +1684,7 @@ function XenoUI:AddDropdown(section, name, options, default, callback)
     return dropdownInterface
 end
 
-function XenoUI:AddSlider(section, name, min, max, defaultValue, callback)
+function XoticUI:AddSlider(section, name, min, max, defaultValue, callback)
     min = min or 0
     max = max or 100
     defaultValue = defaultValue or min
@@ -1889,7 +1889,7 @@ function XenoUI:AddSlider(section, name, min, max, defaultValue, callback)
     return sliderInterface
 end
 
-function XenoUI:AddTextbox(section, name, defaultText, placeholderText, callback)
+function XoticUI:AddTextbox(section, name, defaultText, placeholderText, callback)
     local textboxContainer = CreateInstance("Frame", {
         Name = "Textbox_" .. name,
         Size = UDim2.new(1, 0, 0, 50),
@@ -1979,7 +1979,7 @@ function XenoUI:AddTextbox(section, name, defaultText, placeholderText, callback
     return textboxInterface
 end
 
-function XenoUI:AddLabel(section, text, color)
+function XoticUI:AddLabel(section, text, color)
     local labelContainer = CreateInstance("Frame", {
         Name = getrandstr(),
         Size = UDim2.new(1, -10, 0, 30),
@@ -2017,7 +2017,7 @@ function XenoUI:AddLabel(section, text, color)
     return labelInterface
 end
 
-function XenoUI:AddDropdown(section, name, options, default, callback)
+function XoticUI:AddDropdown(section, name, options, default, callback)
     options = options or {}
     default = default or options[1] or ""
     
@@ -2088,7 +2088,7 @@ function XenoUI:AddDropdown(section, name, options, default, callback)
     
     dropdownContainer.Parent = section.ContentHolder
     
-    local screenGui = gethui():FindFirstChild(Xeno_UI_ID)
+    local screenGui = gethui():FindFirstChild(Xotic_UI_ID)
     
     local optionsContainer = CreateInstance("Frame", {
         Name = getrandstr(),
@@ -2289,7 +2289,7 @@ function XenoUI:AddDropdown(section, name, options, default, callback)
     return dropdownInterface
 end
 
-function XenoUI:CreateNotification(title, message, duration, notificationType)
+function XoticUI:CreateNotification(title, message, duration, notificationType)
     duration = duration or 3
     notificationType = notificationType or "info"
     
@@ -2519,7 +2519,7 @@ function XenoUI:CreateNotification(title, message, duration, notificationType)
 end
 
 local uiTable = (function()
-    local main = XenoUI:new("Xeno", UDim2.new(0.5, 0, 0.5))
+    local main = XoticUI:new("Xotic", UDim2.new(0.5, 0, 0.5))
 
     return {
         main = main,
@@ -2749,14 +2749,14 @@ function getchar()
 end
 
 function cloned()
-    return workspace:FindFirstChild("Xeno")
+    return workspace:FindFirstChild("Xotic")
 end
 
 function clone()
     if not cloned() then
         Player.Character.Archivable = true
         local clone = Player.Character:Clone()
-        clone.Name = "Xeno"
+        clone.Name = "Xotic"
         clone.Parent = workspace
         for _, part in pairs(clone:GetDescendants()) do
             if part:IsA("BasePart") or part:IsA("Decal") then
@@ -2773,7 +2773,7 @@ function clone()
         return clone
     else
         log("Already cloned. Returning...")
-        return workspace:FindFirstChild("Xeno")
+        return workspace:FindFirstChild("Xotic")
     end
 end
 
@@ -3231,7 +3231,7 @@ ui:AddToggle(sections.reanimPresets, "Grab", false, function(value)
         local rightTrailParts = {}
         
         local trailFolder = Instance.new("Folder")
-        trailFolder.Name = "XenoTrailParts"
+        trailFolder.Name = "XoticTrailParts"
         trailFolder.Parent = workspace
         
         for i = 1, armTrailLength do
@@ -3279,7 +3279,7 @@ ui:AddToggle(sections.reanimPresets, "Grab", false, function(value)
                 leftMouseDown = true
                 
                 local rayParams = RaycastParams.new()
-                rayParams.FilterDescendantsInstances = {originalChar, cloned(), workspace:FindFirstChild("XenoTrailParts")}
+                rayParams.FilterDescendantsInstances = {originalChar, cloned(), workspace:FindFirstChild("XoticTrailParts")}
                 rayParams.FilterType = Enum.RaycastFilterType.Exclude
                 
                 local mousePos = UserInputService:GetMouseLocation()
@@ -3296,7 +3296,7 @@ ui:AddToggle(sections.reanimPresets, "Grab", false, function(value)
                 rightMouseDown = true
                 
                 local rayParams = RaycastParams.new()
-                rayParams.FilterDescendantsInstances = {originalChar, cloned(), workspace:FindFirstChild("XenoTrailParts")}
+                rayParams.FilterDescendantsInstances = {originalChar, cloned(), workspace:FindFirstChild("XoticTrailParts")}
                 rayParams.FilterType = Enum.RaycastFilterType.Exclude
                 
                 local mousePos = UserInputService:GetMouseLocation()
@@ -3467,7 +3467,7 @@ ui:AddToggle(sections.reanimPresets, "Grab", false, function(value)
                     part:Destroy()
                 end
                 
-                local trailFolder = workspace:FindFirstChild("XenoTrailParts")
+                local trailFolder = workspace:FindFirstChild("XoticTrailParts")
                 if trailFolder then
                     trailFolder:Destroy()
                 end
@@ -4529,28 +4529,28 @@ end)
 
 --[[ MISC TAB ]]--
 ui:AddToggle(sections.miscMap, "Void Walk", true, function()
-    if not workspace:FindFirstChild("XenoVoid") then
+    if not workspace:FindFirstChild("XoticVoid") then
         local void = Instance.new("Part", workspace)
         void.Anchored = true
         void.Size = Vector3.new(2048, 16, 2048)
         void.Position = Vector3.new(66, -8, 72.5)
         void.Transparency = 1
     else
-        workspace:FindFirstChild("XenoVoid"):Destroy()
+        workspace:FindFirstChild("XoticVoid"):Destroy()
     end
 end)
 
 --[[ GUI TAB ]]--
 local osint, r15Suite
-ui:AddButton(sections.guisGui, "Xeno R15 Suite", function()
+ui:AddButton(sections.guisGui, "Xotic R15 Suite", function()
     r15Suite()
 end)
-ui:AddButton(sections.guisGui, "Xeno OSINT", function()
+ui:AddButton(sections.guisGui, "Xotic OSINT", function()
     osint()
 end)
 
 --[[ ABOUT TAB ]]--
-ui:AddLabel(sections.aboutInfo, "Made by Xeno", UI_CONFIG.AccentColor)
+ui:AddLabel(sections.aboutInfo, "Made by Xotic", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutCredits, "", UI_CONFIG.TextColor)
 
@@ -4568,7 +4568,7 @@ function osint()
             for _,v in pairs(getconnections(game:GetService("LogService")).MessageOut) do v:Disable() end
             for _,v in pairs(getconnections(game:GetService("ScriptContext")).Error) do v:Disable() end
         end
-        warn("[Xeno OSINT] -> DISCONNECTED ALL CONSOLE CONNECTIONS")
+        warn("[Xotic OSINT] -> DISCONNECTED ALL CONSOLE CONNECTIONS")
     end
 
     local function randomHex(len)
@@ -4590,7 +4590,7 @@ function osint()
         return  "HelloSkid_" .. uuid
     end
 
-    local Xeno_UI_ID = randstr()
+    local Xotic_UI_ID = randstr()
     local NOTIFICATIONS_ID = randstr()
 
     local function getrandstr()
@@ -4598,13 +4598,13 @@ function osint()
     end
 
     sep = string.rep("\n", 200)
-    print("                             v LATEST LOGS OF Xeno ARE BELOW v"..sep.."            > Starting Xeno")
-    warn("[Xeno OSINT] -> Starting...")
+    print("                             v LATEST LOGS OF Xotic ARE BELOW v"..sep.."            > Starting Xotic")
+    warn("[Xotic OSINT] -> Starting...")
 
     local logging = true
     local function log(...)
         if logging then
-            warn("[Xeno OSINT] -> " .. ...)
+            warn("[Xotic OSINT] -> " .. ...)
         end
     end
     local function seperate(job)
@@ -4746,7 +4746,7 @@ function osint()
     titleLabel.Font = Enum.Font.GothamBold
     titleLabel.TextSize = 14
     titleLabel.TextColor3 = COLORS.TEXT_PRIMARY
-    titleLabel.Text = "Xeno OSINT"
+    titleLabel.Text = "Xotic OSINT"
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     titleLabel.Parent = topBar
 
@@ -5203,7 +5203,7 @@ function r15Suite()
             for _,v in pairs(getconnections(game:GetService("LogService")).MessageOut) do v:Disable() end
             for _,v in pairs(getconnections(game:GetService("ScriptContext")).Error) do v:Disable() end
         end
-        warn("[Xeno] -> DISCONNECTED ALL CONSOLE CONNECTIONS")
+        warn("[Xotic] -> DISCONNECTED ALL CONSOLE CONNECTIONS")
     end
 
     local function randomHex(len)
@@ -5222,20 +5222,20 @@ function r15Suite()
             randomHex(4),
             randomHex(12)
         }, "-")
-        return "Xeno_" .. uuid
+        return "Xotic_" .. uuid
     end
 
     local ANIMATION_UI_ID = randstr()
     local NOTIFICATIONS_ID = randstr()
 
     sep = string.rep("\n", 200)
-    print("                             v LATEST LOGS OF Xeno ANIM ARE BELOW v"..sep.."            > Starting Xeno")
-    warn("[Xeno] -> Starting...")
+    print("                             v LATEST LOGS OF Xotic ANIM ARE BELOW v"..sep.."            > Starting Xotic")
+    warn("[Xotic] -> Starting...")
 
     local logging = true
     local function log(...)
         if logging then
-            warn("[Xeno] -> " .. ...)
+            warn("[Xotic] -> " .. ...)
         end
     end
     local function seperate(job)
@@ -5341,7 +5341,7 @@ function r15Suite()
     }
 
     local CONFIG = {
-        FOLDER_NAME = "Xeno/animations",
+        FOLDER_NAME = "Xotic/animations",
         SETTINGS_FILE = "settings.json",
         DEFAULT_SPEED = 1,
         KEYBINDS = {
@@ -5803,7 +5803,7 @@ function r15Suite()
 
         local function onCharacterAdded(char)
             local player = Players.LocalPlayer
-            local expectedCloneName = "Xeno"
+            local expectedCloneName = "Xotic"
             
             if char.Name ~= expectedCloneName then
                 self:cleanupCharacter()
@@ -5950,7 +5950,7 @@ function r15Suite()
                 -- wait one frame to make sure table.remove finished
                 task.defer(function()
                     if writefile then
-                        writefile("XenoAnimations.json", game:GetService("HttpService"):JSONEncode(self.settings.animations))
+                        writefile("XoticAnimations.json", game:GetService("HttpService"):JSONEncode(self.settings.animations))
                     end
                 end)
                 self:refreshAnimationList(self.ui.searchBox.Text)
@@ -6016,7 +6016,7 @@ function r15Suite()
         title.Size = UDim2.new(1, -100, 1, 0)
         title.Position = UDim2.new(0, 12, 0, 0)
         title.BackgroundTransparency = 1
-        title.Text = "Xeno R15 Suite"
+        title.Text = "Xotic R15 Suite"
         title.TextColor3 = UI_CONFIG.TextColor
         title.Font = UI_CONFIG.HeaderFont
         title.TextSize = UI_CONFIG.TitleSize
@@ -6467,8 +6467,8 @@ function r15Suite()
         self:loadSettings()
     
     -- AFTER self:loadSettings()
-    if isfile and isfile("XenoAnimations.json") then
-        local data = readfile("XenoAnimations.json")
+    if isfile and isfile("XoticAnimations.json") then
+        local data = readfile("XoticAnimations.json")
         local savedAnimations = game:GetService("HttpService"):JSONDecode(data)
 
         local addedAny = false -- track if we added anything
@@ -6535,7 +6535,7 @@ function r15Suite()
                         FileSystem:saveJSON("animations.json", self.settings.animations)
 
                         if writefile then
-                            writefile("XenoAnimations.json", game:GetService("HttpService"):JSONEncode(self.settings.animations))
+                            writefile("XoticAnimations.json", game:GetService("HttpService"):JSONEncode(self.settings.animations))
                         end  
                         self:refreshAnimationList()
                         addPrompt.promptBg:Destroy()
@@ -6623,7 +6623,7 @@ task.wait(1)
 
 
 --[[ WELCOME ]]--
-ui:CreateNotification("Welcome", "Xeno has been loaded successfully", 5, "info")
+ui:CreateNotification("Welcome", "Xotic has been loaded successfully", 5, "info")
 seperate("Loaded!")
 
-return XenoUI
+return XoticUI
