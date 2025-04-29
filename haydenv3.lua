@@ -295,7 +295,6 @@ end
 
 function XenoUI:new(title, position)
     log("Randomizing strings...")
-    
     if title ~= nil and typeof(title) ~= "string" then
         if typeof(title) == "UDim2" then
             position = title
@@ -309,7 +308,6 @@ function XenoUI:new(title, position)
         position = UDim2.new(0.5, 0, 0.5, 0)
     end
     
-
     local screenGui = CreateInstance("ScreenGui", {
         Name = Xeno_UI_ID,
         ResetOnSpawn = false,
@@ -6489,11 +6487,6 @@ function r15Suite()
         end
     end
 
-        
-            if not exists then
-                table.insert(self.settings.animations, anim)
-            end
-        end
         local debounce = false
         self.ui.searchBox:GetPropertyChangedSignal("Text"):Connect(function()
             if debounce then return end
