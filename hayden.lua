@@ -298,7 +298,7 @@ function XoticUI:new(title, position)
     if title ~= nil and typeof(title) ~= "string" then
         if typeof(title) == "UDim2" then
             position = title
-            title = "Xotic"
+            title = "Xotic Hub"
         else
             title = tostring(title)
         end
