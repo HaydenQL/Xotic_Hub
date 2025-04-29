@@ -6584,21 +6584,33 @@ end
 --Load inf when in
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 
--- gives tool when injected
-local player = game.Players.LocalPlayer
-local mouse = player:GetMouse()
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
-local tool = Instance.new("Tool")
-tool.RequiresHandle = false
-tool.Name = "Click Teleport"
+-- Function to create the tool
+local function giveTeleportTool()
+    local mouse = player:GetMouse()
+    local tool = Instance.new("Tool")
+    tool.RequiresHandle = false
+    tool.Name = "Click Teleport"
 
-tool.Activated:Connect(function()
-    local pos = mouse.Hit + Vector3.new(0, 2.5, 0)
-    local cf = CFrame.new(pos.X, pos.Y, pos.Z)
-    player.Character.HumanoidRootPart.CFrame = cf
+    tool.Activated:Connect(function()
+        local pos = mouse.Hit + Vector3.new(0, 2.5, 0)
+        local cf = CFrame.new(pos.X, pos.Y, pos.Z)
+        player.Character.HumanoidRootPart.CFrame = cf
+    end)
+
+    tool.Parent = player:WaitForChild("Backpack")
+
+-- Give tool on first injection
+giveTeleportTool()
+
+-- Re-give tool every time the player respawns
+player.CharacterAdded:Connect(function()
+    task.wait(1) -- wait a moment so character loads fully
+    giveTeleportTool()
 end)
 
-tool.Parent = player.Backpack
 
 --[[ WELCOME ]]--
 ui:CreateNotification("Welcome", "Xeno has been loaded successfully", 5, "info")
