@@ -295,12 +295,6 @@ end
 
 function XenoUI:new(title, position)
     log("Randomizing strings...")
-
-    -- Destroy old Xeno UI if it exists before creating a new one
-    local existingGui = gethui():FindFirstChild(Xeno_UI_ID)
-    if existingGui then
-        existingGui:Destroy()
-    end
     
     if title ~= nil and typeof(title) ~= "string" then
         if typeof(title) == "UDim2" then
