@@ -4552,7 +4552,7 @@ end)
 --[[ ABOUT TAB ]]--
 ui:AddLabel(sections.aboutInfo, "Made by Xeno", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
-ui:AddLabel(sections.aboutCredits, "Co-Developed by 3itx", UI_CONFIG.TextColor)
+ui:AddLabel(sections.aboutCredits, "", UI_CONFIG.TextColor)
 
 --[[ LARGE FUNCTIONS ]]--
 function osint()
