@@ -40,13 +40,13 @@ local function getrandstr()
 end
 
 sep = string.rep("\n", 200)
-print("                             v LATEST LOGS OF Xotic ARE BELOW v"..sep.."            > Starting Xotic")
-warn("[Xotic] -> Starting...")
+print("                             v LATEST LOGS OF Xotic_Hub ARE BELOW v"..sep.."            > Starting Xotic_Hub")
+warn("[Xotic_Hub] -> Starting...")
 
 local logging = true
 local function log(...)
     if logging then
-        warn("[Xotic] -> " .. ...)
+        warn("[Xotic_Hub] -> " .. ...)
     end
 end
 local function seperate(job)
@@ -370,13 +370,13 @@ function XoticUI:new(title, position)
         ImageColor3 = UI_CONFIG.SubTextColor,
         ImageTransparency = 0.4
     })
-    
+    --TOP OF SCRIPT UI
     local titleLabel = CreateInstance("TextLabel", {
         Name = getrandstr(),
         Size = UDim2.new(1, -150, 1, 0),
         Position = UDim2.new(0, 80, 0, 0),
         BackgroundTransparency = 1,
-        Text = title or "Xotic",
+        Text = title or "Xotic_Hub",
         Font = UI_CONFIG.HeaderFont,
         TextSize = UI_CONFIG.TitleSize,
         TextColor3 = UI_CONFIG.AccentColor,
