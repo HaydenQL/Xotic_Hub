@@ -6582,11 +6582,29 @@ function r15Suite()
     log("Script loaded and running")
 end
 
--- Give teleport tool
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
+-- Function to give the tool only if it doesn't already exist
 local function giveTeleportTool()
+    -- Check if tool already exists in Backpack or Character
+    local function hasTool()
+        for _, t in ipairs(player.Backpack:GetChildren()) do
+            if t:IsA("Tool") and t.Name == "Click Teleport" then
+                return true
+            end
+        end
+        for _, t in ipairs(player.Character:GetChildren()) do
+            if t:IsA("Tool") and t.Name == "Click Teleport" then
+                return true
+            end
+        end
+        return false
+    end
+
+    if hasTool() then return end -- prevent duplicates
+
+    -- Create and insert tool
     local mouse = player:GetMouse()
     local tool = Instance.new("Tool")
     tool.RequiresHandle = false
@@ -6597,15 +6615,19 @@ local function giveTeleportTool()
         player.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(pos.X, pos.Y, pos.Z)
     end)
 
-    tool.Parent = player:WaitForChild("Backpack")
+    tool.Parent = player.Backpack
     player.Character:WaitForChild("Humanoid"):EquipTool(tool)
 end
 
+-- Run once on injection
 giveTeleportTool()
+
+-- Re-run on respawn, but prevent duplicates
 player.CharacterAdded:Connect(function()
     task.wait(1)
     giveTeleportTool()
 end)
+
 
 -- Optional: Load Infinite Yield
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
