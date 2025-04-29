@@ -149,19 +149,20 @@ workspace.FallenPartsDestroyHeight = 0/0
 seperate("Loading UI")
 
 local UI_CONFIG = {
-    MainColor = Color3.fromRGB(22, 22, 24),
-    SecondaryColor = Color3.fromRGB(30, 30, 34),
-    AccentColor = Color3.fromRGB(180, 90, 255), 
-    AccentColorDark = Color3.fromRGB(140, 60, 200), 
-    TextColor = Color3.fromRGB(255, 255, 255),
-    SubTextColor = Color3.fromRGB(180, 180, 200),
-    BorderColor = Color3.fromRGB(40, 44, 55),
-    HoverColor = Color3.fromRGB(45, 50, 65),
-    ToggleOnColor = Color3.fromRGB(56, 189, 248),
-    ToggleOffColor = Color3.fromRGB(60, 65, 80),
-    ErrorColor = Color3.fromRGB(220, 60, 60),
-    SuccessColor = Color3.fromRGB(40, 200, 100),
-    WarningColor = Color3.fromRGB(255, 184, 50),
+    MainColor = Color3.fromRGB(22, 22, 24), -- stays (dark background)
+    SecondaryColor = Color3.fromRGB(30, 30, 34), -- stays (dark background)
+    AccentColor = Color3.fromRGB(180, 90, 255), -- purple
+    AccentColorDark = Color3.fromRGB(140, 60, 200), -- dark purple
+    TextColor = Color3.fromRGB(255, 255, 255), -- stays (white text)
+    SubTextColor = Color3.fromRGB(180, 180, 200), -- stays (grayish text)
+    BorderColor = Color3.fromRGB(40, 44, 55), -- stays (dark border)
+    HoverColor = Color3.fromRGB(90, 60, 120), -- purple hover
+    ToggleOnColor = Color3.fromRGB(180, 90, 255), -- changed to purple
+    ToggleOffColor = Color3.fromRGB(60, 65, 80), -- stays (dark toggle off)
+    ErrorColor = Color3.fromRGB(220, 60, 60), -- stays (red error)
+    SuccessColor = Color3.fromRGB(40, 200, 100), -- stays (green success)
+    WarningColor = Color3.fromRGB(255, 184, 50), -- stays (yellow warning)
+}
     
     ToggleSize = UDim2.new(0, 40, 0, 20),
     CornerRadius = UDim.new(0, 3),
