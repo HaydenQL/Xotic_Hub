@@ -151,8 +151,8 @@ seperate("Loading UI")
 local UI_CONFIG = {
     MainColor = Color3.fromRGB(22, 22, 24),
     SecondaryColor = Color3.fromRGB(30, 30, 34),
-    AccentColor = Color3.fromRGB(56, 189, 248),
-    AccentColorDark = Color3.fromRGB(30, 120, 200),
+    AccentColor = Color3.fromRGB(180, 90, 255), 
+    AccentColorDark = Color3.fromRGB(140, 60, 200), 
     TextColor = Color3.fromRGB(255, 255, 255),
     SubTextColor = Color3.fromRGB(180, 180, 200),
     BorderColor = Color3.fromRGB(40, 44, 55),
