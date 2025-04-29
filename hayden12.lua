@@ -6581,34 +6581,42 @@ function r15Suite()
 
     log("Script loaded and running")
 end
---Load inf when in
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 
+-- Give teleport tool
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
--- Function to create the tool
 local function giveTeleportTool()
+    local mouse = player:GetMouse()
     local tool = Instance.new("Tool")
     tool.RequiresHandle = false
     tool.Name = "Click Teleport"
 
     tool.Activated:Connect(function()
         local pos = mouse.Hit + Vector3.new(0, 2.5, 0)
-        local cf = CFrame.new(pos.X, pos.Y, pos.Z)
-        player.Character.HumanoidRootPart.CFrame = cf
+        player.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(pos.X, pos.Y, pos.Z)
     end)
 
     tool.Parent = player:WaitForChild("Backpack")
+    player.Character:WaitForChild("Humanoid"):EquipTool(tool)
+end
 
-    -- Give tool on first injection
+giveTeleportTool()
+player.CharacterAdded:Connect(function()
+    task.wait(1)
     giveTeleportTool()
+end)
 
-    -- Re-give tool every time the player respawns
-    player.CharacterAdded:Connect(function()
-        task.wait(1) -- wait a moment so character loads fully
-        giveTeleportTool()
-    end)
+-- Optional: Load Infinite Yield
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+
+-- Your full UI code...
+
+local manager = AnimationManager:init() -- MAKE SURE THIS IS HERE
+
+-- Now your tool + other scripts
+task.wait(1)
+
 
 
 
