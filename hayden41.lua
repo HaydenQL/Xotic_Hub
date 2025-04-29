@@ -147,7 +147,7 @@ end
 workspace.FallenPartsDestroyHeight = 0/0
 
 seperate("Loading UI")
-
+--UI
 local UI_CONFIG = {
     MainColor = Color3.fromRGB(22, 22, 24), -- stays (dark background)
     SecondaryColor = Color3.fromRGB(30, 30, 34), -- stays (dark background)
@@ -185,7 +185,7 @@ local UI_CONFIG = {
     TweenStyle = Enum.EasingStyle.Quad,
     TweenDirection = Enum.EasingDirection.Out,
     
-    Version = "1.0.2"
+    Version = "1.0.0"
 }
 
 local XoticUI = {}
