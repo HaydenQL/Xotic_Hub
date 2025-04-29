@@ -5947,6 +5947,10 @@ function r15Suite()
                 end
                 
                 FileSystem:saveJSON("animations.json", self.settings.animations)
+                if writefile then
+                    writefile("XenoAnimations.json", game:GetService("HttpService"):JSONEncode(self.settings.animations))
+                end
+
                 self:refreshAnimationList(self.ui.searchBox.Text)
                 ui:CreateNotification("Success", "Animation removed", 5, "success")
             end)
