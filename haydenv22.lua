@@ -295,6 +295,13 @@ end
 
 function XenoUI:new(title, position)
     log("Randomizing strings...")
+
+    -- Destroy old Xeno UI if it exists before creating a new one
+    local existingGui = gethui():FindFirstChild(Xeno_UI_ID)
+    if existingGui then
+        existingGui:Destroy()
+    end
+    
     if title ~= nil and typeof(title) ~= "string" then
         if typeof(title) == "UDim2" then
             position = title
@@ -308,6 +315,7 @@ function XenoUI:new(title, position)
         position = UDim2.new(0.5, 0, 0.5, 0)
     end
     
+
     local screenGui = CreateInstance("ScreenGui", {
         Name = Xeno_UI_ID,
         ResetOnSpawn = false,
@@ -6460,10 +6468,12 @@ function r15Suite()
         self.ui = createModernUI()
         self:loadSettings()
     
-    -- Load saved animations from XenoAnimations.json
+    -- AFTER self:loadSettings()
     if isfile and isfile("XenoAnimations.json") then
         local data = readfile("XenoAnimations.json")
         local savedAnimations = game:GetService("HttpService"):JSONDecode(data)
+
+        local addedAny = false -- track if we added anything
 
         for _, anim in ipairs(savedAnimations) do
             local exists = false
@@ -6472,10 +6482,19 @@ function r15Suite()
                     exists = true
                     break
                 end
+            end
+            if not exists then
+                table.insert(self.settings.animations, anim)
+                addedAny = true
+            end
         end
 
-        self:refreshAnimationList()
+        -- Only refresh the list if something new was added
+        if addedAny then
+            self:refreshAnimationList()
+        end
     end
+
         
             if not exists then
                 table.insert(self.settings.animations, anim)
