@@ -40,13 +40,13 @@ local function getrandstr()
 end
 
 sep = string.rep("\n", 200)
-print("                             v LATEST LOGS OF Xotic_Hub ARE BELOW v"..sep.."            > Starting Xotic_Hub")
-warn("[Xotic_Hub] -> Starting...")
+print("                             v LATEST LOGS OF Xotic ARE BELOW v"..sep.."            > Starting Xotic")
+warn("[Xotic] -> Starting...")
 
 local logging = true
 local function log(...)
     if logging then
-        warn("[Xotic_Hub] -> " .. ...)
+        warn("[Xotic] -> " .. ...)
     end
 end
 local function seperate(job)
@@ -298,7 +298,7 @@ function XoticUI:new(title, position)
     if title ~= nil and typeof(title) ~= "string" then
         if typeof(title) == "UDim2" then
             position = title
-            title = "Xotic Hub"
+            title = "Xot"
         else
             title = tostring(title)
         end
@@ -376,7 +376,7 @@ function XoticUI:new(title, position)
         Size = UDim2.new(1, -150, 1, 0),
         Position = UDim2.new(0, 80, 0, 0),
         BackgroundTransparency = 1,
-        Text = title or "Xotic_Hub",
+        Text = title or "Xot",
         Font = UI_CONFIG.HeaderFont,
         TextSize = UI_CONFIG.TitleSize,
         TextColor3 = UI_CONFIG.AccentColor,
@@ -2519,7 +2519,7 @@ function XoticUI:CreateNotification(title, message, duration, notificationType)
 end
 
 local uiTable = (function()
-    local main = XoticUI:new("Xotic", UDim2.new(0.5, 0, 0.5))
+    local main = XoticUI:new("Xot", UDim2.new(0.5, 0, 0.5))
 
     return {
         main = main,
