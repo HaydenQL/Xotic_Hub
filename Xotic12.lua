@@ -4545,14 +4545,14 @@ local osint, r15Suite
 ui:AddButton(sections.guisGui, "Xotic R15 Suite", function()
     r15Suite()
 end)
-ui:AddButton(sections.guisGui, "Xotic ", function()
-    ()
+ui:AddButton(sections.guisGui, "Xotic OSINT", function()
+    osint()
 end)
 
 --[[ ABOUT TAB ]]--
 ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
-ui:AddLabel(sections.aboutCredits, "Added: FaceF*** Key (Z) and Rewind Key (X) ", UI_CONFIG.TextColor)
+ui:AddLabel(sections.aboutCredits, "", UI_CONFIG.TextColor)
 
 --[[ LARGE FUNCTIONS ]]--
 function osint()
@@ -6584,11 +6584,6 @@ end
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
---FaceFuck
-loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/FaceFuck.lua"))()
-
---Flashback
-loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/Flashback.lua"))()
 
 -- Function to give the tool only if it doesn't already exist
 local function giveTeleportTool()
@@ -6637,10 +6632,13 @@ end)
 -- Optional: Load Infinite Yield
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 
+--FaceFuck
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/FaceFuck.lua"))()
 
+--Flashback
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/Flashback.lua"))()
 
 -- Your full UI code...
-
 local manager = AnimationManager:init() -- MAKE SURE THIS IS HERE
 
 -- Now your tool + other scripts
