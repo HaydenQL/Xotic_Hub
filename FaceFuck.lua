@@ -1,4 +1,6 @@
 --// Face Bang (Fixed, Pull Back and Forward - No GUI Version)
+-- At top of FaceFuck script
+getgenv().FaceFuck_Ready = false
 
 -- Settings
 local FaceBangKey = Enum.KeyCode.Z
@@ -20,6 +22,10 @@ local conn
 local loaded_face_bang = false
 
 -- Stop Function
+if not getgenv().FaceFuck_Ready then
+    return
+end
+
 local function stop()
     loaded_face_bang = false
     if conn then
@@ -121,3 +127,5 @@ player.CharacterAdded:Connect(function(newChar)
     humanoid = newChar:WaitForChild("Humanoid")
     humanoidRootPart = newChar:WaitForChild("HumanoidRootPart")
 end)
+-- At the very bottom of script (after everything loaded)
+getgenv().FaceFuck_Ready = true
