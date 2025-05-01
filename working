@@ -4542,10 +4542,10 @@ end)
 
 --[[ GUI TAB ]]--
 local osint, r15Suite
-ui:AddButton(sections.guisGui, "Xotic R15 Suite", function()
+ui:AddButton(sections.guisGui, "Xotic R15 Animations", function()
     r15Suite()
 end)
-ui:AddButton(sections.guisGui, "Xotic OSINT", function()
+ui:AddButton(sections.guisGui, "Xotic All Emotes", function()
     osint()
 end)
 
@@ -5190,7 +5190,7 @@ function osint()
 
     createSummaryLabel(resultsContainer, "Enter a username and click Search to start", 0)
 end
-
+--end
 function r15Suite()
     --!nolint BuiltinGlobalWrite
     --!optimize 2
@@ -6638,6 +6638,9 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/ma
 
 --Flashback
 loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/Flashback.lua"))()
+
+--AllEmotes
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/AllEmotes.lua"))()
 
 -- Your full UI code...
 local manager = AnimationManager:init() -- MAKE SURE THIS IS HERE
