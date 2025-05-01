@@ -185,7 +185,7 @@ local UI_CONFIG = {
     TweenStyle = Enum.EasingStyle.Quad,
     TweenDirection = Enum.EasingDirection.Out,
     
-    Version = "1.0.0"
+    Version = "1.0.1"
 }
 
 local XoticUI = {}
@@ -4552,7 +4552,7 @@ end)
 --[[ ABOUT TAB ]]--
 ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
-ui:AddLabel(sections.aboutCredits, "Added:\n• FaceFuck Key (Z)\n• Rewind Key (X)", UI_CONFIG.TextColor)
+ui:AddLabel(sections.aboutCredits, "• FaceFuck Key (Z)\n• Rewind Key (X)\n • All Emotes in GUI tab", UI_CONFIG.TextColor)
 
 
 --[[ LARGE FUNCTIONS ]]--
