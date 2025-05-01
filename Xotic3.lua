@@ -307,7 +307,14 @@ function XoticUI:new(title, position)
     if position ~= nil and typeof(position) ~= "UDim2" then
         position = UDim2.new(0.5, 0, 0.5, 0)
     end
-    
+
+    -- Remove old Xotic Hub UIs before creating new one
+for _, gui in ipairs(gethui():GetChildren()) do
+    if gui:IsA("ScreenGui") and (gui.Name:find("Xotic") or gui.Name:find("Xotic Hub")) then
+        gui:Destroy()
+    end
+end
+
     local screenGui = CreateInstance("ScreenGui", {
         Name = Xotic_UI_ID,
         ResetOnSpawn = false,
