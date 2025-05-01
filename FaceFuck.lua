@@ -1,5 +1,9 @@
 --// Face Bang (Fixed, Pull Back and Forward - No GUI Version)
 
+if getgenv().FaceFuckLoaded then
+    return
+end
+getgenv().FaceFuckLoaded = true
 
 -- Settings
 local FaceBangKey = Enum.KeyCode.Z
