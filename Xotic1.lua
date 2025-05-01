@@ -6011,6 +6011,16 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/ma
 --AllEmotes
 loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/AllEmotes.lua"))()
 
+-- Notify user to check About Tab
+pcall(function()
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "⚡ Xotic Hub",
+        Text = "Make sure to check the About tab for updates!",
+        Duration = 10
+    })
+end)
+
+
 -- Your full UI code...
 local manager = AnimationManager:init() -- MAKE SURE THIS IS HERE
 
