@@ -309,10 +309,10 @@ function XoticUI:new(title, position)
     end
 
     -- Remove old Xotic UI if exists
-    local existingGui = gethui():FindFirstChild(Xotic_UI_ID)
-    if existingGui then
-        existingGui:Destroy()
-    end
+local existingGui = gethui():FindFirstChild(Xotic_UI_ID)
+if existingGui then
+    existingGui:Destroy()
+end
 
     local screenGui = CreateInstance("ScreenGui", {
         Name = Xotic_UI_ID,
