@@ -2586,7 +2586,7 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         info = main:AddSection(tab, "Script Information", "left"),
-                        credits = main:AddSection(tab, "Update v1.0.1", "right")
+                        credits = main:AddSection(tab, "Update v1.0.1\n", "right")
                     }
                 }
             end)(),
