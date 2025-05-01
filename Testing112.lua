@@ -1,9 +1,9 @@
---// Face Bang (No GUI Version - Hold Z)
+--// Face Bang (Fixed, Pull Back and Forward - No GUI Version)
 
 -- Settings
 local FaceBangKey = Enum.KeyCode.Z
-local Speed = 0.5
-local Distance = 1
+local Speed = 0.5 -- Pull/Thrust speed
+local Distance = 5 -- How far to pull back
 
 -- Services
 local uis = game:GetService("UserInputService")
@@ -17,7 +17,6 @@ local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 -- Internal Vars
 local running = false
 local conn
-local heartConn
 local loaded_face_bang = false
 
 -- Stop Function
@@ -27,11 +26,9 @@ local function stop()
         conn:Disconnect()
         conn = nil
     end
-
     if humanoid then
         humanoid.PlatformStand = false
     end
-
     running = false
 end
 
@@ -41,7 +38,6 @@ local function fuck()
     running = true
 
     local closest, dist = nil, math.huge
-
     loaded_face_bang = true
 
     for _, target in ipairs(players:GetPlayers()) do
@@ -64,34 +60,26 @@ local function fuck()
 
     humanoid.PlatformStand = true
     local head = closest.Character:FindFirstChild("Head")
-    local init = true
     local out = true
     local min = -0.9
-    local base = 2
-    local last = tick()
+    local max = -Distance
     local prog = 0
+    local last = tick()
 
     conn = runService.Heartbeat:Connect(function()
         humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+
         local back = head.CFrame * CFrame.new(0, 0, 1)
         local front = head.CFrame * CFrame.new(0, 0, -1)
         local bPos = back.Position
         local fPos = front.Position
         local dir = (bPos - fPos).Unit
-        local max = -Distance
-
-        if init then
-            humanoidRootPart.CFrame = CFrame.new(bPos + dir * max + Vector3.new(0, 0.5, 0))
-            init = false
-            last = tick()
-            return
-        end
 
         local now = tick()
         local dt = now - last
         last = now
 
-        local spd = base * (Speed or 1)
+        local spd = 2 * Speed
 
         if out then
             prog = math.min(1, prog + dt * spd)
@@ -100,10 +88,11 @@ local function fuck()
         end
 
         local curr = min + (max - min) * prog
-        local target = bPos + dir * curr
-        local pos = humanoidRootPart.Position
-        local new = pos:Lerp(target, 0.5) + Vector3.new(0, 0.5, 0)
-        humanoidRootPart.CFrame = CFrame.new(new) * (head.CFrame - head.CFrame.Position) * CFrame.Angles(0, math.rad(180), 0)
+        local targetPos = bPos + dir * curr
+        local currentPos = humanoidRootPart.Position
+        local newPos = currentPos:Lerp(targetPos, 0.5) + Vector3.new(0, 0.5, 0)
+
+        humanoidRootPart.CFrame = CFrame.new(newPos) * (head.CFrame - head.CFrame.Position) * CFrame.Angles(0, math.rad(180), 0)
 
         if prog >= 1 or prog <= 0 then
             out = not out
