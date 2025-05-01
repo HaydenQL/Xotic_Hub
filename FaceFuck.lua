@@ -1,4 +1,5 @@
 --// Face Bang (Fixed, Pull Back and Forward - No GUI Version)
+
 -- Settings
 local FaceBangKey = Enum.KeyCode.Z
 local Speed = 7 -- Pull/Thrust speed
@@ -19,10 +20,6 @@ local conn
 local loaded_face_bang = false
 
 -- Stop Function
-if not getgenv().FaceFuck_Ready then
-    return
-end
-
 local function stop()
     loaded_face_bang = false
     if conn then
@@ -36,6 +33,9 @@ local function stop()
 end
 
 -- Start / Face Bang Function
+local function fuck()
+    if running then return end
+    running = true
 
     local closest, dist = nil, math.huge
     loaded_face_bang = true
