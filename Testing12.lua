@@ -1,0 +1,134 @@
+--// Face Bang (No GUI Version - Hold Z)
+
+-- Settings
+local FaceBangKey = Enum.KeyCode.Z
+local Speed = 0.5
+local Distance = 1
+
+-- Services
+local uis = game:GetService("UserInputService")
+local runService = game:GetService("RunService")
+local players = game:GetService("Players")
+local player = players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Internal Vars
+local running = false
+local conn
+local heartConn
+local loaded_face_bang = false
+
+-- Stop Function
+local function stop()
+    loaded_face_bang = false
+    if conn then
+        conn:Disconnect()
+        conn = nil
+    end
+
+    if humanoid then
+        humanoid.PlatformStand = false
+    end
+
+    running = false
+end
+
+-- Start / Face Bang Function
+local function fuck()
+    if running then return end
+    running = true
+
+    local closest, dist = nil, math.huge
+
+    loaded_face_bang = true
+
+    for _, target in ipairs(players:GetPlayers()) do
+        if target ~= player and target.Character then
+            local head = target.Character:FindFirstChild('Head')
+            if head then
+                local d = (head.Position - humanoidRootPart.Position).Magnitude
+                if d < dist then
+                    closest = target
+                    dist = d
+                end
+            end
+        end
+    end
+
+    if not closest or not humanoidRootPart then
+        running = false
+        return
+    end
+
+    humanoid.PlatformStand = true
+    local head = closest.Character:FindFirstChild("Head")
+    local init = true
+    local out = true
+    local min = -0.9
+    local base = 2
+    local last = tick()
+    local prog = 0
+
+    conn = runService.Heartbeat:Connect(function()
+        humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+        local back = head.CFrame * CFrame.new(0, 0, 1)
+        local front = head.CFrame * CFrame.new(0, 0, -1)
+        local bPos = back.Position
+        local fPos = front.Position
+        local dir = (bPos - fPos).Unit
+        local max = -Distance
+
+        if init then
+            humanoidRootPart.CFrame = CFrame.new(bPos + dir * max + Vector3.new(0, 0.5, 0))
+            init = false
+            last = tick()
+            return
+        end
+
+        local now = tick()
+        local dt = now - last
+        last = now
+
+        local spd = base * (Speed or 1)
+
+        if out then
+            prog = math.min(1, prog + dt * spd)
+        else
+            prog = math.max(0, prog - dt * spd)
+        end
+
+        local curr = min + (max - min) * prog
+        local target = bPos + dir * curr
+        local pos = humanoidRootPart.Position
+        local new = pos:Lerp(target, 0.5) + Vector3.new(0, 0.5, 0)
+        humanoidRootPart.CFrame = CFrame.new(new) * (head.CFrame - head.CFrame.Position) * CFrame.Angles(0, math.rad(180), 0)
+
+        if prog >= 1 or prog <= 0 then
+            out = not out
+        end
+    end)
+end
+
+-- Input Handler
+runService:BindToRenderStep("FaceBangHold", Enum.RenderPriority.Camera.Value + 1, function()
+    if not character or not humanoidRootPart then return end
+
+    if uis:IsKeyDown(FaceBangKey) then
+        if not loaded_face_bang then
+            fuck()
+        end
+    else
+        if loaded_face_bang then
+            stop()
+        end
+    end
+end)
+
+-- Auto update on respawn
+player.CharacterAdded:Connect(function(newChar)
+    character = newChar
+    humanoid = newChar:WaitForChild("Humanoid")
+    humanoidRootPart = newChar:WaitForChild("HumanoidRootPart")
+end)
