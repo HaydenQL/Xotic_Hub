@@ -1,5 +1,5 @@
 -- flashback
-local Keybind = Enum.KeyCode.C -- Hold C to rewind
+local Keybind = Enum.KeyCode.X -- Hold C to rewind
 local RewindSpeed = 1.7 -- How fast to rewind
 local FlashbackLength = 95 -- How long history stores (seconds)
 
