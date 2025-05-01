@@ -2,8 +2,8 @@
 
 -- Settings
 local FaceBangKey = Enum.KeyCode.Z
-local Speed = 0.5 -- Pull/Thrust speed
-local Distance = 5 -- How far to pull back
+local Speed = 2 -- Pull/Thrust speed
+local Distance = 3 -- How far to pull back
 
 -- Services
 local uis = game:GetService("UserInputService")
