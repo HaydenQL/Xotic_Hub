@@ -4,8 +4,13 @@ local player = game.Players.LocalPlayer
 local function Trip(Character: Model)
     local RootPart = Character.PrimaryPart
     local Humanoid = Character.Humanoid
+
+    -- Trip state
     Humanoid:ChangeState(Enum.HumanoidStateType.FallingDown)
-    RootPart.AssemblyLinearVelocity += RootPart.CFrame.LookVector * 5
+
+    -- Push forward force (stronger push)
+    local pushForce = RootPart.CFrame.LookVector * 50 -- Adjust this number (50 = about 5-10 studs fast push)
+    RootPart.AssemblyLinearVelocity += pushForce
 end
 
 -- Handle Key Press
