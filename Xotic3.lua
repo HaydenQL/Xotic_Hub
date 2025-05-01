@@ -2586,7 +2586,7 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         info = main:AddSection(tab, "Script Information", "left"),
-                        credits = main:AddSection(tab, "Credits", "right")
+                        credits = main:AddSection(tab, "Update", "right")
                     }
                 }
             end)(),
@@ -4552,7 +4552,7 @@ end)
 --[[ ABOUT TAB ]]--
 ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
-ui:AddLabel(sections.aboutCredits, "", UI_CONFIG.TextColor)
+ui:AddLabel(sections.aboutCredits, "Added:\n •FaceFuck Key (Z)\n •Rewind Key (X)", UI_CONFIG.TextColor)
 
 --[[ LARGE FUNCTIONS ]]--
 function osint()
