@@ -6585,6 +6585,204 @@ end
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
+--// Face Bang (Fixed, Pull Back and Forward
+
+-- Settings
+local FaceBangKey = Enum.KeyCode.Z
+local Speed = 2 -- Pull/Thrust speed
+local Distance = 3 -- How far to pull back
+
+-- Services
+local uis = game:GetService("UserInputService")
+local runService = game:GetService("RunService")
+local players = game:GetService("Players")
+local player = players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Internal Vars
+local running = false
+local conn
+local loaded_face_bang = false
+
+-- Stop Function
+local function stop()
+    loaded_face_bang = false
+    if conn then
+        conn:Disconnect()
+        conn = nil
+    end
+    if humanoid then
+        humanoid.PlatformStand = false
+    end
+    running = false
+end
+
+-- Start / Face Bang Function
+local function fuck()
+    if running then return end
+    running = true
+
+    local closest, dist = nil, math.huge
+    loaded_face_bang = true
+
+    for _, target in ipairs(players:GetPlayers()) do
+        if target ~= player and target.Character then
+            local head = target.Character:FindFirstChild('Head')
+            if head then
+                local d = (head.Position - humanoidRootPart.Position).Magnitude
+                if d < dist then
+                    closest = target
+                    dist = d
+                end
+            end
+        end
+    end
+
+    if not closest or not humanoidRootPart then
+        running = false
+        return
+    end
+
+    humanoid.PlatformStand = true
+    local head = closest.Character:FindFirstChild("Head")
+    local out = true
+    local min = -0.9
+    local max = -Distance
+    local prog = 0
+    local last = tick()
+
+    conn = runService.Heartbeat:Connect(function()
+        humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+
+        local back = head.CFrame * CFrame.new(0, 0, 1)
+        local front = head.CFrame * CFrame.new(0, 0, -1)
+        local bPos = back.Position
+        local fPos = front.Position
+        local dir = (bPos - fPos).Unit
+
+        local now = tick()
+        local dt = now - last
+        last = now
+
+        local spd = 2 * Speed
+
+        if out then
+            prog = math.min(1, prog + dt * spd)
+        else
+            prog = math.max(0, prog - dt * spd)
+        end
+
+        local curr = min + (max - min) * prog
+        local targetPos = bPos + dir * curr
+        local currentPos = humanoidRootPart.Position
+        local newPos = currentPos:Lerp(targetPos, 0.5) + Vector3.new(0, 0.5, 0)
+
+        humanoidRootPart.CFrame = CFrame.new(newPos) * (head.CFrame - head.CFrame.Position) * CFrame.Angles(0, math.rad(180), 0)
+
+        if prog >= 1 or prog <= 0 then
+            out = not out
+        end
+    end)
+end
+
+-- Input Handler
+runService:BindToRenderStep("FaceBangHold", Enum.RenderPriority.Camera.Value + 1, function()
+    if not character or not humanoidRootPart then return end
+
+    if uis:IsKeyDown(FaceBangKey) then
+        if not loaded_face_bang then
+            fuck()
+        end
+    else
+        if loaded_face_bang then
+            stop()
+        end
+    end
+end)
+
+-- Auto update on respawn
+player.CharacterAdded:Connect(function(newChar)
+    character = newChar
+    humanoid = newChar:WaitForChild("Humanoid")
+    humanoidRootPart = newChar:WaitForChild("HumanoidRootPart")
+end)
+
+-- flashback
+local Keybind = Enum.KeyCode.C -- Hold C to rewind
+local RewindSpeed = 1.7 -- How fast to rewind
+local FlashbackLength = 95 -- How long history stores (seconds)
+
+-- Services
+local uis = game:GetService("UserInputService")
+local runService = game:GetService("RunService")
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Flashback frames storage
+local frames = {}
+
+-- Advance function (store frames)
+local function Advance()
+    if #frames > FlashbackLength * 60 then
+        table.remove(frames, 1)
+    end
+
+    table.insert(frames, {
+        humanoidRootPart.CFrame,
+        humanoidRootPart.Velocity,
+        humanoid:GetState(),
+        humanoid.PlatformStand
+    })
+end
+
+-- Revert function (rewind frames)
+local function Revert()
+    local frameCount = #frames
+    if frameCount == 0 then
+        Advance()
+        return
+    end
+
+    for _ = 1, RewindSpeed do
+        if frameCount == 0 then break end
+        table.remove(frames, frameCount)
+        frameCount = frameCount - 1
+    end
+
+    local lastFrame = frames[frameCount]
+    table.remove(frames, frameCount)
+
+    if lastFrame then
+        humanoidRootPart.CFrame = lastFrame[1]
+        humanoidRootPart.Velocity = -lastFrame[2]
+        humanoid:ChangeState(lastFrame[3])
+        humanoid.PlatformStand = lastFrame[4]
+    end
+end
+
+-- Main loop
+runService:BindToRenderStep("FlashbackRewind", Enum.RenderPriority.Camera.Value, function()
+    if not character or not humanoidRootPart or not humanoid then return end
+
+    if uis:IsKeyDown(Keybind) then
+        Revert()
+    else
+        Advance()
+    end
+end)
+
+-- Auto update on character respawn
+player.CharacterAdded:Connect(function(newChar)
+    character = newChar
+    humanoid = newChar:WaitForChild("Humanoid")
+    humanoidRootPart = newChar:WaitForChild("HumanoidRootPart")
+    frames = {}
+end)
+
 -- Function to give the tool only if it doesn't already exist
 local function giveTeleportTool()
     -- Check if tool already exists in Backpack or Character
