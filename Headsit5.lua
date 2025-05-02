@@ -45,11 +45,18 @@ LocalPlayer.Chatted:Connect(function(msg)
             -- Sit down
             LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Sit = true
 
-            -- Start sitting on target's head
+            -- Start sitting on target's head (smooth velocity based)
             headSit = RunService.Heartbeat:Connect(function()
-                if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Sit then
-                    -- Adjust height (2.2 for higher sit on head)
-                    LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2.7, 0.2)
+                local targetRoot = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+                local localRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+
+                if targetRoot and localRoot and humanoid and humanoid.Sit then
+                    local targetPosition = targetRoot.CFrame * CFrame.new(0, 2.7, 0.2)
+                    local direction = (targetPosition.Position - localRoot.Position)
+
+                    -- Apply velocity towards target position
+                    localRoot.Velocity = direction * 10
                 else
                     headSit:Disconnect()
                 end
