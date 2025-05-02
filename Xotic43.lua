@@ -2928,27 +2928,23 @@ ui:AddButton(sections.reanimMisc, "Instant-Respawn", function()
 
     local pos = character.HumanoidRootPart.CFrame
 
-    if replicatesignal then
-        replicatesignal(player.ConnectDiedSignalBackend)
-        task.wait(game.Players.RespawnTime - 0.165)
+    -- Instant kill
+    character:BreakJoints()
 
-        character:BreakJoints()
-
-        local connection
-        connection = player.CharacterAdded:Connect(function(char)
-            local hrp = char:WaitForChild("HumanoidRootPart", 5)
-            if hrp then
-                hrp.CFrame = pos
-            end
-            if connection then
-                connection:Disconnect()
-                connection = nil
-            end
-        end)
-    else
-        ui:CreateNotification("Error", "You cannot use this because your executor doesn't support 'replicatesignal'", 5, "error")
-    end
+    -- On respawn, teleport to old position
+    local connection
+    connection = player.CharacterAdded:Connect(function(char)
+        local hrp = char:WaitForChild("HumanoidRootPart", 5)
+        if hrp then
+            hrp.CFrame = pos
+        end
+        if connection then
+            connection:Disconnect()
+            connection = nil
+        end
+    end)
 end)
+
 
 --[[ PRESETS ]]--
 ui:AddToggle(sections.reanimPresets, "Invisible", false, function(value)
