@@ -4,7 +4,7 @@ local LocalPlayer = Players.LocalPlayer
 
 local headSit -- connection holder
 
--- Helper function to get player by display name
+-- Helper function to get player by display name (case insensitive)
 local function getPlayerByDisplayName(name)
     name = name:lower()
     for _, player in ipairs(Players:GetPlayers()) do
@@ -38,19 +38,18 @@ LocalPlayer.Chatted:Connect(function(msg)
             target = getPlayerByDisplayName(args[2])
         end
 
-        local speaker = LocalPlayer
-
-        if target and target.Character and speaker.Character then
-            -- If already headsitting, disconnect first
+        if target and target.Character and LocalPlayer.Character then
+            -- Disconnect old headsit if active
             if headSit then headSit:Disconnect() end
 
             -- Sit down
-            speaker.Character:FindFirstChildOfClass("Humanoid").Sit = true
+            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Sit = true
 
-            -- Start sticking to target's head
+            -- Start sitting on target's head
             headSit = RunService.Heartbeat:Connect(function()
-                if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and speaker.Character and speaker.Character:FindFirstChild("HumanoidRootPart") and speaker.Character:FindFirstChildOfClass("Humanoid").Sit then
-                    speaker.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2.5, 0.2)
+                if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Sit then
+                    -- Adjust height (2.2 for higher sit on head)
+                    LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2.2, 0.2)
                 else
                     headSit:Disconnect()
                 end
