@@ -50,7 +50,7 @@ LocalPlayer.Chatted:Connect(function(msg)
             -- Start sticking to target's head
             headSit = RunService.Heartbeat:Connect(function()
                 if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and speaker.Character and speaker.Character:FindFirstChild("HumanoidRootPart") and speaker.Character:FindFirstChildOfClass("Humanoid").Sit then
-                    speaker.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2.2, 0.2)
+                    speaker.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2.5, 0.2)
                 else
                     headSit:Disconnect()
                 end
