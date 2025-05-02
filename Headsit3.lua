@@ -20,14 +20,14 @@ local function createSeat(targetPlayer)
         targetHead.HeadSeat:Destroy()
     end
 
-    -- Create seat
+    -- Create real sit-able seat
     local seat = Instance.new("Seat")
     seat.Name = "HeadSeat"
     seat.Size = Vector3.new(2, 1, 2)
-    seat.CFrame = targetHead.CFrame * CFrame.new(0, 1.5, 0)
+    seat.CFrame = targetHead.CFrame * CFrame.new(0, 2, 0)
     seat.Anchored = false
-    seat.CanCollide = true -- MAKE SEAT SOLID AND INTERACTABLE
-    seat.Transparency = 0.2 -- Visible but not ugly
+    seat.CanCollide = true -- VERY IMPORTANT -> Must be true for player to sit
+    seat.Transparency = 0.3 -- Visible but not ugly
     seat.Parent = targetHead
 
     -- Weld seat to head
@@ -36,25 +36,20 @@ local function createSeat(targetPlayer)
     weld.Part1 = targetHead
     weld.Parent = seat
 
-    -- Teleport player on top of seat
+    -- Teleport player slightly above seat so they fall onto it and auto sit
     local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local hrp = char:FindFirstChild("HumanoidRootPart")
-    local humanoid = char:FindFirstChildWhichIsA("Humanoid")
 
-    if hrp and humanoid then
-        -- Put right above seat so player drops down gently
-        hrp.CFrame = seat.CFrame + Vector3.new(0, 3, 0)
-
-        -- Wait a tiny bit to let physics drop player on seat
-        task.wait(0.2)
-
-        -- Force sit (player will sit on seat since it's a Seat now)
-        humanoid.Sit = true
+    if hrp then
+        hrp.CFrame = seat.CFrame + Vector3.new(0, 3, 0) -- Spawn slightly above seat
     end
 
-    -- Remove seat when unsit
-    seat.ChildAdded:Connect(function(child)
-        if child:IsA("Weld") and child.Part1 and child.Part1.Parent == char then
+    -- Detect when local player sits
+    seat:GetPropertyChangedSignal("Occupant"):Connect(function()
+        if seat.Occupant then
+            local humanoid = seat.Occupant
+
+            -- Remove seat when get off
             humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
                 if not humanoid.Sit then
                     if seat then
