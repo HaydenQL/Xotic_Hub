@@ -2927,23 +2927,27 @@ ui:AddButton(sections.reanimMisc, "Instant-Respawn", function()
     if not character or not character:FindFirstChild("HumanoidRootPart") then return end
 
     local pos = character.HumanoidRootPart.CFrame
+    local oldRespawnTime = game.Players.RespawnTime
 
-    -- Instant kill
+    game.Players.RespawnTime = 0
     character:BreakJoints()
 
-    -- On respawn, teleport to old position
     local connection
     connection = player.CharacterAdded:Connect(function(char)
         local hrp = char:WaitForChild("HumanoidRootPart", 5)
         if hrp then
             hrp.CFrame = pos
         end
+
+        game.Players.RespawnTime = oldRespawnTime
+
         if connection then
             connection:Disconnect()
             connection = nil
         end
     end)
 end)
+
 
 
 --[[ PRESETS ]]--
