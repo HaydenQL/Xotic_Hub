@@ -41,7 +41,8 @@ local function fuck()
     loaded_face_bang = true
 
     for _, target in ipairs(players:GetPlayers()) do
-        if target ~= player and target.Character then
+        -- Skip self and R15 clones (same UserId as yourself)
+        if target.Character and target.UserId ~= player.UserId then
             local head = target.Character:FindFirstChild('Head')
             if head then
                 local d = (head.Position - humanoidRootPart.Position).Magnitude
