@@ -16,27 +16,27 @@ local function createSeat(targetPlayer)
     if not targetHead then return end
 
     -- Remove old seat if exists
-    if targetHead:FindFirstChild("HeadSeat") then
-        targetHead.HeadSeat:Destroy()
+    if workspace:FindFirstChild("HeadSeat_" .. targetPlayer.Name) then
+        workspace["HeadSeat_" .. targetPlayer.Name]:Destroy()
     end
 
-    -- Create REAL sit-able seat
+    -- Create REAL sit-able seat (MUST parent to workspace first)
     local seat = Instance.new("Seat")
-    seat.Name = "HeadSeat"
-    seat.Size = Vector3.new(3, 1, 3) -- Bigger so it's easy to sit
+    seat.Name = "HeadSeat_" .. targetPlayer.Name
+    seat.Size = Vector3.new(3, 1, 3)
     seat.CFrame = targetHead.CFrame * CFrame.new(0, 2, 0)
     seat.Anchored = false
-    seat.CanCollide = true -- Must be true to be sitable
-    seat.Transparency = 0.3 -- Visible seat
-    seat.Parent = targetHead
+    seat.CanCollide = true
+    seat.Transparency = 0.3
+    seat.Parent = workspace -- IMPORTANT -> this makes it real seat!
 
-    -- Weld seat to head
+    -- Weld seat to head after parented
     local weld = Instance.new("WeldConstraint")
     weld.Part0 = seat
     weld.Part1 = targetHead
     weld.Parent = seat
 
-    -- Teleport player slightly above seat to land naturally and sit
+    -- Teleport player above seat to sit
     local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local hrp = char:FindFirstChild("HumanoidRootPart")
 
