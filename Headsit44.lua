@@ -49,7 +49,7 @@ LocalPlayer.Chatted:Connect(function(msg)
             headSit = RunService.Heartbeat:Connect(function()
                 if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Sit then
                     -- Adjust height (2.2 for higher sit on head)
-                    LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2.2, 0.2)
+                    LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2.7, 0.2)
                 else
                     headSit:Disconnect()
                 end
