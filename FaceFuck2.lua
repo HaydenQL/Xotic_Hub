@@ -41,10 +41,12 @@ local function fuck()
     loaded_face_bang = true
 
     for _, target in ipairs(players:GetPlayers()) do
-        -- Skip self and R15 clones (same UserId as yourself)
-        if target.Character and target.UserId ~= player.UserId then
+        -- Skip self only
+        if target.Character and target ~= players.LocalPlayer then
             local head = target.Character:FindFirstChild('Head')
-            if head then
+    
+            -- Extra check: Make sure we are NOT targeting ourselves or any character where UserId matches LocalPlayer
+            if head and target.UserId ~= players.LocalPlayer.UserId then
                 local d = (head.Position - humanoidRootPart.Position).Magnitude
                 if d < dist then
                     closest = target
@@ -53,7 +55,7 @@ local function fuck()
             end
         end
     end
-
+    
     if not closest or not humanoidRootPart then
         running = false
         return
