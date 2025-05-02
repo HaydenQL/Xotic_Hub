@@ -16,59 +16,43 @@ local function createSeat(targetPlayer)
     if not targetHead then return end
 
     -- Remove old seat if exists
-    if targetHead:FindFirstChild("HeadSeatPart") then
-        targetHead.HeadSeatPart:Destroy()
+    if targetHead:FindFirstChild("HeadSeat") then
+        targetHead.HeadSeat:Destroy()
     end
 
-    -- Create physical part
-    local part = Instance.new("Part")
-    part.Name = "HeadSeatPart"
-    part.Size = Vector3.new(3, 1, 3)
-    part.CFrame = targetHead.CFrame * CFrame.new(0, 2, 0)
-    part.Anchored = false
-    part.CanCollide = true
-    part.Transparency = 0.3
-    part.Parent = targetHead
-
-    -- Weld part to head
-    local weld = Instance.new("WeldConstraint")
-    weld.Part0 = part
-    weld.Part1 = targetHead
-    weld.Parent = part
-
-    -- Create seat INSIDE part (for sitting)
+    -- Create REAL sit-able seat
     local seat = Instance.new("Seat")
-    seat.Name = "Seat"
-    seat.Size = Vector3.new(2, 1, 2)
-    seat.CFrame = part.CFrame
+    seat.Name = "HeadSeat"
+    seat.Size = Vector3.new(3, 1, 3) -- Bigger so it's easy to sit
+    seat.CFrame = targetHead.CFrame * CFrame.new(0, 2, 0)
     seat.Anchored = false
-    seat.CanCollide = false
-    seat.Transparency = 1
-    seat.Parent = part
+    seat.CanCollide = true -- Must be true to be sitable
+    seat.Transparency = 0.3 -- Visible seat
+    seat.Parent = targetHead
 
-    -- Position seat properly inside the part
-    local seatWeld = Instance.new("WeldConstraint")
-    seatWeld.Part0 = seat
-    seatWeld.Part1 = part
-    seatWeld.Parent = seat
+    -- Weld seat to head
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = seat
+    weld.Part1 = targetHead
+    weld.Parent = seat
 
-    -- Teleport player above seat
+    -- Teleport player slightly above seat to land naturally and sit
     local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local hrp = char:FindFirstChild("HumanoidRootPart")
 
     if hrp then
-        hrp.CFrame = part.CFrame + Vector3.new(0, 3, 0) -- above seat
+        hrp.CFrame = seat.CFrame + Vector3.new(0, 3, 0)
     end
 
-    -- Detect sit and remove after unsit
+    -- Detect when sat and remove after unsit
     seat:GetPropertyChangedSignal("Occupant"):Connect(function()
         if seat.Occupant then
             local humanoid = seat.Occupant
 
             humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
                 if not humanoid.Sit then
-                    if part then
-                        part:Destroy()
+                    if seat then
+                        seat:Destroy()
                     end
                 end
             end)
