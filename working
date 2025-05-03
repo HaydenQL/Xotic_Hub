@@ -2595,7 +2595,8 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         info = main:AddSection(tab, "Script Information", "left"),
-                        credits = main:AddSection(tab, "Update v1.0.1\n", "right")
+                        credits = main:AddSection(tab, "Update v1.0.1\n", "right"),
+                        keybinds = main:AddSection(tab, "Keybinds", "Left")
                     }
                 }
             end)(),
@@ -2628,7 +2629,8 @@ local sections = {
     
     --[[ ABOUT ]]--
     aboutInfo = uiTable.tabs.about.sections.info,
-    aboutCredits = uiTable.tabs.about.sections.credits
+    aboutCredits = uiTable.tabs.about.sections.credits,
+    aboutKeybinds = uiTable.tabs.about.sections.keybinds
 }
 
 --[[ VARIABLES ]]--
@@ -4562,6 +4564,7 @@ end)
 ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutCredits, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
+ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
 
 --AllEmotes button functions
 function osint()
