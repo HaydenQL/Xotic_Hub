@@ -1,7 +1,7 @@
 --// Face Bang (Fixed, Pull Back and Forward - No GUI Version)
 
 -- Settings
-local FaceBangKey = Enum.KeyCode.Z
+getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 local Speed = 7 -- Pull/Thrust speed
 local Distance = 3 -- How far to pull back
 
