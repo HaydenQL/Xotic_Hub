@@ -185,7 +185,7 @@ local UI_CONFIG = {
     TweenStyle = Enum.EasingStyle.Quad,
     TweenDirection = Enum.EasingDirection.Out,
     
-    Version = "1.0.1"
+    Version = "1.0.2"
 }
 
 local XoticUI = {}
@@ -2596,7 +2596,7 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         info = main:AddSection(tab, "Script Information", "left"),
-                        credits = main:AddSection(tab, "Update v1.0.1\n", "right"),
+                        credits = main:AddSection(tab, "Update v1.0.2\n", "right"),
                         keybinds = main:AddSection(tab, "Keybinds", "Left")
                     }
                 }
@@ -4555,7 +4555,7 @@ end)
 
 --[[ MISC TAB ]]--
 ui:AddToggle(sections.miscMap, "Void Walk", true, function()
-    if not workspace:FindFirstChild("XoticVoid") then
+    if workspace:FindFirstChild("XoticVoid") then
         local void = Instance.new("Part", workspace)
         void.Name = "XoticVoid"
         void.Anchored = true
