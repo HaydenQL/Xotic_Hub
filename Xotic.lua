@@ -2589,6 +2589,7 @@ local uiTable = (function()
                 }
             end)(),
 
+            --About tab
             about = (function()
                 local tab = main:AddTab("About")
                 return {
@@ -2597,6 +2598,16 @@ local uiTable = (function()
                         info = main:AddSection(tab, "Script Information", "left"),
                         credits = main:AddSection(tab, "Update v1.0.1\n", "right"),
                         keybinds = main:AddSection(tab, "Keybinds", "Left")
+                    }
+                }
+            end)(),
+
+            guis = (function()
+                local tab = main:AddTab("Settings")
+                return {
+                    tab = tab,
+                    sections = {
+                        gui = main:AddSection(tab, "Keybinds", "left"),
                     }
                 }
             end)(),
@@ -2630,7 +2641,10 @@ local sections = {
     --[[ ABOUT ]]--
     aboutInfo = uiTable.tabs.about.sections.info,
     aboutCredits = uiTable.tabs.about.sections.credits,
-    aboutKeybinds = uiTable.tabs.about.sections.keybinds
+    aboutKeybinds = uiTable.tabs.about.sections.keybinds,
+
+    --[[settings]]--
+    settings = uiTable.tabs.about.sections.settings
 }
 
 --[[ VARIABLES ]]--
@@ -4542,6 +4556,7 @@ end)
 ui:AddToggle(sections.miscMap, "Void Walk", true, function()
     if not workspace:FindFirstChild("XoticVoid") then
         local void = Instance.new("Part", workspace)
+        void.Name = "XoticVoid"
         void.Anchored = true
         void.Size = Vector3.new(2048, 16, 2048)
         void.Position = Vector3.new(66, -8, 72.5)
@@ -4550,6 +4565,7 @@ ui:AddToggle(sections.miscMap, "Void Walk", true, function()
         workspace:FindFirstChild("XoticVoid"):Destroy()
     end
 end)
+
 
 --[[ GUI TAB ]]--
 local osint, r15Suite
@@ -4565,6 +4581,24 @@ ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutCredits, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
+
+--[[Settings]]--
+getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
+
+-- UI Keybind
+ui:AddKeybind(sections.settings, "FaceFuck Keybind", getgenv().FaceBangKey, function(newKey)
+    getgenv().FaceBangKey = newKey
+end)
+
+-- Key Input Listener
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == getgenv().FaceBangKey then
+        -- FaceFuck call
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/XoticHub/Xotic_Hub/main/FaceFuck.lua"))()
+    end
+end)
+
+
 
 --AllEmotes button functions
 function osint()
