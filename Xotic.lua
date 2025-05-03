@@ -6091,6 +6091,8 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/ma
 --Trip
 loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/Trip1.lua"))()
 
+--Headsit
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/Headsit5.lua"))()
 -- Notify user to check About Tab
 pcall(function()
     game.StarterGui:SetCore("SendNotification", {
