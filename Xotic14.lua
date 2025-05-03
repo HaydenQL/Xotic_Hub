@@ -2603,7 +2603,7 @@ local uiTable = (function()
             end)(),
 
             --[[settings]]--
-            set = (function()
+            settings = (function()
                 local tab = main:AddTab("Settings")
                 return {
                     tab = tab,
@@ -2645,7 +2645,7 @@ local sections = {
     aboutKeybinds = uiTable.tabs.about.sections.keybinds,
 
     --[[settings]]--
-    setkeys = uiTable.tabs.set.sections.keys,
+    settingsKeys = uiTable.tabs.settings.sections.keys,
 }
 
 --[[ VARIABLES ]]--
@@ -4586,18 +4586,28 @@ ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n�
 --[[Settings]]--
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 
--- UI Keybind
-ui:AddKeybind(sections.setKeys, "FaceFuck Keybind", getgenv().FaceBangKey, function(newKey)
-    getgenv().FaceBangKey = newKey
+local keybindLabel = ui:AddLabel(sections.setKeys, "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name, UI_CONFIG.TextColor)
+
+local waitingForKey = false
+
+ui:AddButton(sections.setKeys, "Change FaceFuck Key", function()
+    if waitingForKey then return end
+
+    waitingForKey = true
+    keybindLabel.Text = "Press any key..."
+
+    local conn
+    conn = game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
+            getgenv().FaceBangKey = input.KeyCode
+            keybindLabel.Text = "FaceFuck Keybind: " .. input.KeyCode.Name
+
+            waitingForKey = false
+            conn:Disconnect()
+        end
+    end)
 end)
 
--- Key Input Listener
-game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == getgenv().FaceBangKey then
-        -- FaceFuck call
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/XoticHub/Xotic_Hub/main/FaceFuck.lua"))()
-    end
-end)
 
 
 
