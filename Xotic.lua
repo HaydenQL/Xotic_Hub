@@ -2629,7 +2629,7 @@ local sections = {
     
     --[[ ABOUT ]]--
     aboutInfo = uiTable.tabs.about.sections.info,
-    aboutCredits = uiTable.tabs.about.sections.credits
+    aboutCredits = uiTable.tabs.about.sections.credits,
     aboutKeybinds = uiTable.tabs.about.sections.keybinds
 }
 
