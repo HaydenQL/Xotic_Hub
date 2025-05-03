@@ -4555,7 +4555,7 @@ end)
 
 --[[ MISC TAB ]]--
 ui:AddToggle(sections.miscMap, "Void Walk", true, function()
-    if workspace:FindFirstChild("XoticVoid") then
+    if not workspace:FindFirstChild("XoticVoid") then
         local void = Instance.new("Part", workspace)
         void.Name = "XoticVoid"
         void.Anchored = true
