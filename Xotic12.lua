@@ -2607,7 +2607,7 @@ local uiTable = (function()
                 return {
                     tab = tab,
                     sections = {
-                        gui = main:AddSection(tab, "Keybinds", "left"),
+                        Keys = main:AddSection(tab, "Keybinds", "left"),
                     }
                 }
             end)(),
@@ -2644,7 +2644,7 @@ local sections = {
     aboutKeybinds = uiTable.tabs.about.sections.keybinds,
 
     --[[settings]]--
-    settings = uiTable.tabs.about.sections.settings
+    settingsKeys = uiTable.tabs.settings.sections.Keys
 }
 
 --[[ VARIABLES ]]--
@@ -4586,7 +4586,7 @@ ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n�
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 
 -- UI Keybind
-ui:AddKeybind(sections.settings, "FaceFuck Keybind", getgenv().FaceBangKey, function(newKey)
+ui:AddKeybind(sections.settingsKeys, "FaceFuck Keybind", UI_CONFIG.TextColor, getgenv().FaceBangKey, function(newKey)
     getgenv().FaceBangKey = newKey
 end)
 
