@@ -4586,6 +4586,9 @@ ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n�
 --[[Settings]]--
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 
+--[[Settings]]--
+getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
+
 local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name, UI_CONFIG.TextColor)
 
 local waitingForKey = false
@@ -4600,13 +4603,20 @@ ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
     conn = game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
         if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
             getgenv().FaceBangKey = input.KeyCode
-            keybindLabel.Text = "FaceFuck Keybind: " .. input.KeyCode.Name
-
+            keybindLabel.Text = "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name
             waitingForKey = false
             conn:Disconnect()
         end
     end)
 end)
+
+-- ✅ LIVE UPDATER → updates every frame (optional but clean)
+game:GetService("RunService").RenderStepped:Connect(function()
+    if not waitingForKey then
+        keybindLabel.Text = "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name
+    end
+end)
+
 
 
 
