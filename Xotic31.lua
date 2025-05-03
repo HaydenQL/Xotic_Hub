@@ -4589,7 +4589,9 @@ getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 --[[Settings]]--
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 
-local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name, UI_CONFIG.TextColor)
+local lastKey = getgenv().FaceBangKey.Name
+
+local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. lastKey, UI_CONFIG.TextColor)
 
 local waitingForKey = false
 
@@ -4603,23 +4605,21 @@ ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
     conn = game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
         if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
             getgenv().FaceBangKey = input.KeyCode
-            keybindLabel.Text = "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name
+            lastKey = input.KeyCode.Name
+            keybindLabel.Text = "FaceFuck Keybind: " .. lastKey
             waitingForKey = false
             conn:Disconnect()
         end
     end)
 end)
 
--- ✅ LIVE UPDATER → updates every frame (optional but clean)
+-- ✅ LIVE DETECTOR → checks if key changes every frame
 game:GetService("RunService").RenderStepped:Connect(function()
-    if not waitingForKey then
-        keybindLabel.Text = "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name
+    if not waitingForKey and lastKey ~= getgenv().FaceBangKey.Name then
+        lastKey = getgenv().FaceBangKey.Name
+        keybindLabel.Text = "FaceFuck Keybind: " .. lastKey
     end
 end)
-
-
-
-
 
 --AllEmotes button functions
 function osint()
