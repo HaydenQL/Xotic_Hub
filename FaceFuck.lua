@@ -107,7 +107,7 @@ end
 runService:BindToRenderStep("FaceBangHold", Enum.RenderPriority.Camera.Value + 1, function()
     if not character or not humanoidRootPart then return end
 
-    if uis:IsKeyDown(FaceBangKey) then
+    if uis:IsKeyDown(getgenv().FaceBangKey) then
         if not loaded_face_bang then
             fuck()
         end
