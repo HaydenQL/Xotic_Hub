@@ -4586,11 +4586,11 @@ ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n�
 --[[Settings]]--
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 
-local keybindLabel = ui:AddLabel(sections.setKeys, "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name, UI_CONFIG.TextColor)
+local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name, UI_CONFIG.TextColor)
 
 local waitingForKey = false
 
-ui:AddButton(sections.setKeys, "Change FaceFuck Key", function()
+ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
     if waitingForKey then return end
 
     waitingForKey = true
