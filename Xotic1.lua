@@ -2602,7 +2602,7 @@ local uiTable = (function()
                 }
             end)(),
 
-            guis = (function()
+            settings = (function()
                 local tab = main:AddTab("Settings")
                 return {
                     tab = tab,
