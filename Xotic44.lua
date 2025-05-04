@@ -2575,9 +2575,12 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         map = main:AddSection(tab, "Map Module", "left"),
+                        rejoin = main:AddSection(tab, "Server", "right"),
                     }
                 }
             end)(),
+            
+                
 
             guis = (function()
                 local tab = main:AddTab("GUIs")
