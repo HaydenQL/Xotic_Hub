@@ -2635,6 +2635,7 @@ local sections = {
     
     --[[ MISC ]]--
     miscMap = uiTable.tabs.misc.sections.map,
+    miscRejoin = uiTable.tabs.misc.sections.rejoin,
 
     --[[ GUIs ]]--
     guisGui = uiTable.tabs.guis.sections.gui,
@@ -4566,6 +4567,19 @@ ui:AddToggle(sections.miscMap, "Void Walk", true, function()
         workspace:FindFirstChild("XoticVoid"):Destroy()
     end
 end)
+
+ui:AddButton(sections.miscRejoin, "Rejoin", function()
+    local TeleportService = game:GetService("TeleportService")
+    local PlaceID = game.PlaceId
+    local JobID = game.JobId
+    local LocalPlayer = game.Players.LocalPlayer
+
+    TeleportService:TeleportToPlaceInstance(PlaceID, JobID, LocalPlayer)
+end)
+
+        
+        
+    
 
 
 --[[ GUI TAB ]]--
