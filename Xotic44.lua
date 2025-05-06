@@ -4600,7 +4600,9 @@ ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.Text
 ui:AddLabel(sections.aboutCredits, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
 
---[[Settings]]--
+--[[Settings tab]]--
+
+--[[facefuck]]--
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 
 -- Keybind Label
@@ -4608,6 +4610,25 @@ local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. 
 
 local waitingForKey = false
 
+-- Speed Slider
+ui:AddSlider(sections.settingsKeys, "FaceFuck Speed", {
+    min = 1,
+    max = 20,
+    default = getgenv().FaceBangSpeed,
+}, function(value)
+    getgenv().FaceBangSpeed = value
+end)
+
+-- Distance Slider
+ui:AddSlider(sections.settingsKeys, "FaceFuck Distance", {
+    min = 1,
+    max = 10,
+    default = getgenv().FaceBangDistance,
+}, function(value)
+    getgenv().FaceBangDistance = value
+end)
+
+-- Change key button
 ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
     if waitingForKey then return end
 
@@ -4634,7 +4655,21 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 
+--[[Flashback/Rewind]]--
 
+
+
+
+
+
+
+--[[trip]]--
+
+
+
+
+
+--[[GUI's tab functions]]--
 --AllEmotes button functions
 function osint()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/AllEmotes.lua"))()
