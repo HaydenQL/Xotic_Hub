@@ -4615,6 +4615,12 @@ local waitingForKey = false
 ui:AddSlider(sections.settingsKeys, "FaceFuck Speed", 1, 20, getgenv().FaceBangSpeed or 7, function(v)
     getgenv().FaceBangSpeed = v
 end)
+
+ui:AddSlider(sections.settingsKeys, "FaceFuck Distance", 1, 20, getgenv().FaceBangDistance or 3, function(v)
+    getgenv().FaceBangDistance = v
+end)
+
+
         
 -- Change key button
 ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
