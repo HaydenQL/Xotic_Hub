@@ -2528,16 +2528,6 @@ function XoticUI:CreateNotification(title, message, duration, notificationType)
     }
 end
 
--- Whitelisted Roblox UserIds
-local adminUsers = {
-    [1308676373] = true
-}
-
--- Check if player is admin
-local isAdmin = adminUsers[game.Players.LocalPlayer.UserId] or false
-
--- 🔥 PUT THIS HERE
-local admin = nil
 
 local uiTable = (function()
     local main = XoticUI:new("Xotic Hub", UDim2.new(0.5, 0, 0.5))
@@ -2629,19 +2619,15 @@ local uiTable = (function()
             end)(),
 
             --[[admin]]--
-            local admin = nil
-
-            if isAdmin then
-                admin = (function()
-                    local tab = main:AddTab("Admin")
-                    return {
-                        tab = tab,
-                        sections = {
-                            rep = main:AddSection(tab, "Spawm Report", "left"),
-                        }
-                    }
-                end)(),
-            end,
+            admin = (function()
+                local tab = main:AddTab("Admin")
+                return {
+                    tab = tab,
+                    sections = {
+                        rep = main:AddSection(tab, "Spawm Report", "left"),
+                     }
+                }
+            end)(),
         }
     }
 end)()
