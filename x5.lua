@@ -2,6 +2,17 @@
 --!optimize 2
 --!native
 
+-- Whitelisted usernames
+local adminUsers = {
+    ["Errayking"] = true,
+    ["Squishy"] = true,
+    ["Xeno"] = true
+}
+
+-- Check if the player is in whitelist
+local isAdmin = adminUsers[game.Players.LocalPlayer.Name] or false
+
+
 if getconnections then
     if cloneref then
         for _,v in pairs(getconnections(cloneref(game:GetService("LogService")).MessageOut)) do v:Disable() end
@@ -2615,6 +2626,21 @@ local uiTable = (function()
                     }
                 }
             end)(),
+
+            --[[admin]]--
+            local admin = nil
+
+            if isAdmin then
+                admin = (function()
+                    local tab = main:AddTab("Admin")
+                    return {
+                        tab = tab,
+                        sections = {
+                            rep = main:AddSection(tab, "Spawm Report", "left"),
+                        }
+                    }
+                end)(),
+            end,
         }
     }
 end)()
