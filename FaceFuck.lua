@@ -1,6 +1,6 @@
---// FaceFuck UI + Functionality (FULL VERSION)
+--// FaceFuck Functionality (PURE VERSION)
 
---// SETTINGS (Global Defaults)
+--// SETTINGS11
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 getgenv().FaceBangSpeed = getgenv().FaceBangSpeed or 7
 getgenv().FaceBangDistance = getgenv().FaceBangDistance or 3
@@ -14,48 +14,12 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
---// UI Elements
-local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name, UI_CONFIG.TextColor)
-
-local waitingForKey = false
-
-ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
-    if waitingForKey then return end
-    waitingForKey = true
-    keybindLabel.Text = "Press any key..."
-
-    local conn
-    conn = uis.InputBegan:Connect(function(input, gameProcessed)
-        if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
-            getgenv().FaceBangKey = input.KeyCode
-            keybindLabel.Text = "FaceFuck Keybind: " .. getgenv().FaceBangKey.Name
-            waitingForKey = false
-            conn:Disconnect()
-        end
-    end)
-end)
-
-ui:AddSlider(sections.settingsKeys, "FaceFuck Speed", {
-    min = 1,
-    max = 20,
-    default = getgenv().FaceBangSpeed,
-}, function(value)
-    getgenv().FaceBangSpeed = value
-end)
-
-ui:AddSlider(sections.settingsKeys, "FaceFuck Distance", {
-    min = 1,
-    max = 10,
-    default = getgenv().FaceBangDistance,
-}, function(value)
-    getgenv().FaceBangDistance = value
-end)
-
---// Face Fuck System Vars
+--// SYSTEM VARS
 local running = false
 local conn
 local loaded_face_bang = false
 
+--// STOP FUNCTION
 local function stop()
     loaded_face_bang = false
     if conn then
@@ -68,6 +32,7 @@ local function stop()
     running = false
 end
 
+--// FACEFUCK FUNCTION
 local function facefuck()
     if running then return end
     running = true
@@ -97,7 +62,6 @@ local function facefuck()
     local head = closest.Character:FindFirstChild("Head")
     local out = true
     local min = -0.9
-    local max = -getgenv().FaceBangDistance
     local prog = 0
     local last = tick()
 
@@ -106,7 +70,7 @@ local function facefuck()
 
         local speed = getgenv().FaceBangSpeed
         local distance = getgenv().FaceBangDistance
-        max = -distance
+        local max = -distance
 
         local back = head.CFrame * CFrame.new(0, 0, 1)
         local front = head.CFrame * CFrame.new(0, 0, -1)
@@ -136,7 +100,7 @@ local function facefuck()
     end)
 end
 
---// Input Handler
+--// INPUT HANDLER
 runService:BindToRenderStep("FaceFuckHandler", Enum.RenderPriority.Camera.Value + 1, function()
     if not character or not humanoidRootPart then return end
 
@@ -151,7 +115,7 @@ runService:BindToRenderStep("FaceFuckHandler", Enum.RenderPriority.Camera.Value 
     end
 end)
 
---// Auto Update on Respawn
+--// AUTO UPDATE ON RESPAWN
 player.CharacterAdded:Connect(function(newChar)
     character = newChar
     humanoid = newChar:WaitForChild("Humanoid")
