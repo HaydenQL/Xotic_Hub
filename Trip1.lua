@@ -1,10 +1,10 @@
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-local player = game.Players.LocalPlayer
+local player = game.Players.LocalLocalPlayer
 
 -- Global defaults
 getgenv().TripKey = getgenv().TripKey or Enum.KeyCode.V
-getgenv().TripPushForce = getgenv().TripPushForce or 50
+getgenv().TripPushForce = getgenv().TripPushForce or 5
 
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
