@@ -4608,6 +4608,12 @@ getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. (getgenv().FaceBangKey and getgenv().FaceBangKey.Name or "None"), UI_CONFIG.TextColor)
 
 local waitingForKey = false
+
+-- facefucksliders
+ui:AddSlider(sections.settingsKeys, "FaceFuck Speed", 1, 20, getgenv().FaceBangSpeed or 7, function(v)
+    getgenv().FaceBangSpeed = v
+end)
+        
 -- Change key button
 ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
     if waitingForKey then return end
