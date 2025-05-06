@@ -2617,6 +2617,18 @@ local uiTable = (function()
                     }
                 }
             end)(),
+                
+             --[[admin]]--
+            admin = (function()
+                local tab = main:AddTab("Admin")
+                return {
+                    tab = tab,
+                    sections = {
+                        rep = main:AddSection(tab, "report", "left"),
+
+                    }
+                }
+            end)(),
         }
     }
 end)()
