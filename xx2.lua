@@ -2,16 +2,6 @@
 --!optimize 2
 --!native
 
--- Whitelisted usernames
-local adminUsers = {
-    ["xxerray_kingxx"] = true,
-    ["Squishy"] = true,
-    ["Xeno"] = true
-}
-
--- Check if the player is in whitelist
-local isAdmin = adminUsers[game.Players.LocalPlayer.Name] or false
-
 
 if getconnections then
     if cloneref then
