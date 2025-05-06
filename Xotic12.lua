@@ -2617,17 +2617,6 @@ local uiTable = (function()
                     }
                 }
             end)(),
-
-            --[[admin]]--
-            admin = (function()
-                local tab = main:AddTab("Admin")
-                return {
-                    tab = tab,
-                    sections = {
-                        rep = main:AddSection(tab, "Spawm Report", "left"),
-                     }
-                }
-            end)(),
         }
     }
 end)()
