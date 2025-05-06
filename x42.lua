@@ -4650,7 +4650,7 @@ end)
 
 --[[Trip]]--
 getgenv().TripKey = getgenv().TripKey or Enum.KeyCode.V
-getgenv().TripPushForce = getgenv().TripPushForce or 50
+getgenv().TripPushForce = getgenv().TripPushForce or 5
 
 -- Keybind Label
 local tripKeyLabel = ui:AddLabel(sections.settingsTrip, "Trip Keybind: " .. (getgenv().TripKey and getgenv().TripKey.Name or "None"), UI_CONFIG.TextColor)
@@ -4658,7 +4658,7 @@ local tripKeyLabel = ui:AddLabel(sections.settingsTrip, "Trip Keybind: " .. (get
 local tripWaitingForKey = false
 
 -- Trip Sliders
-ui:AddSlider(sections.settingsTrip, "Trip Push Force", 1, 15, getgenv().TripPushForce or 5, function(v)
+ui:AddSlider(sections.settingsKeys, "Trip Push Force", 1, 15, getgenv().TripPushForce or 5, function(v)
     getgenv().TripPushForce = v
 end)
 
