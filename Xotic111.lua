@@ -185,7 +185,7 @@ local UI_CONFIG = {
     TweenStyle = Enum.EasingStyle.Quad,
     TweenDirection = Enum.EasingDirection.Out,
     
-    Version = "1.0.2"
+    Version = "1.0.1"
 }
 
 local XoticUI = {}
@@ -2575,12 +2575,9 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         map = main:AddSection(tab, "Map Module", "left"),
-                        rejoin = main:AddSection(tab, "Server", "right"),
                     }
                 }
             end)(),
-            
-                
 
             guis = (function()
                 local tab = main:AddTab("GUIs")
@@ -2599,19 +2596,18 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         info = main:AddSection(tab, "Script Information", "left"),
-                        credits = main:AddSection(tab, "Update v1.0.2\n", "right"),
+                        credits = main:AddSection(tab, "Update v1.0.1\n", "right"),
                         keybinds = main:AddSection(tab, "Keybinds", "Left")
                     }
                 }
             end)(),
 
-            --[[settings]]--
             settings = (function()
                 local tab = main:AddTab("Settings")
                 return {
                     tab = tab,
                     sections = {
-                        keys = main:AddSection(tab, "Keybinds", "left"),
+                        gui = main:AddSection(tab, "Keybinds", "left"),
                     }
                 }
             end)(),
@@ -2638,7 +2634,6 @@ local sections = {
     
     --[[ MISC ]]--
     miscMap = uiTable.tabs.misc.sections.map,
-    miscRejoin = uiTable.tabs.misc.sections.rejoin,
 
     --[[ GUIs ]]--
     guisGui = uiTable.tabs.guis.sections.gui,
@@ -2649,7 +2644,7 @@ local sections = {
     aboutKeybinds = uiTable.tabs.about.sections.keybinds,
 
     --[[settings]]--
-    settingsKeys = uiTable.tabs.settings.sections.keys,
+    settings = uiTable.tabs.about.sections.settings
 }
 
 --[[ VARIABLES ]]--
@@ -4571,19 +4566,6 @@ ui:AddToggle(sections.miscMap, "Void Walk", true, function()
     end
 end)
 
-ui:AddButton(sections.miscRejoin, "Rejoin", function()
-    local TeleportService = game:GetService("TeleportService")
-    local PlaceID = game.PlaceId
-    local JobID = game.JobId
-    local LocalPlayer = game.Players.LocalPlayer
-
-    TeleportService:TeleportToPlaceInstance(PlaceID, JobID, LocalPlayer)
-end)
-
-        
-        
-    
-
 
 --[[ GUI TAB ]]--
 local osint, r15Suite
@@ -4600,58 +4582,24 @@ ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.Text
 ui:AddLabel(sections.aboutCredits, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
 
---[[Settings tab]]--
-
---[[facefuck]]--
+--[[Settings]]--
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 
--- Keybind Label
-local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. (getgenv().FaceBangKey and getgenv().FaceBangKey.Name or "None"), UI_CONFIG.TextColor)
-
-local waitingForKey = false
-
--- Change key button
-ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
-    if waitingForKey then return end
-
-    waitingForKey = true
-    keybindLabel.Text = "Press any key..."
-
-    local conn
-    conn = game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-        if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
-            getgenv().FaceBangKey = input.KeyCode
-            waitingForKey = false
-            conn:Disconnect()
-        end
-    end)
+-- UI Keybind
+ui:AddKeybind(sections.settings, "FaceFuck Keybind", getgenv().FaceBangKey, function(newKey)
+    getgenv().FaceBangKey = newKey
 end)
 
--- FULL LIVE UPDATER (Always updates text)
-game:GetService("RunService").RenderStepped:Connect(function()
-    if not waitingForKey then
-        local currentKey = (getgenv().FaceBangKey and getgenv().FaceBangKey.Name or "None")
-        if keybindLabel.Text ~= "FaceFuck Keybind: " .. currentKey then
-            keybindLabel.Text = "FaceFuck Keybind: " .. currentKey
-        end
+-- Key Input Listener
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == getgenv().FaceBangKey then
+        -- FaceFuck call
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/XoticHub/Xotic_Hub/main/FaceFuck.lua"))()
     end
 end)
 
---[[Flashback/Rewind]]--
 
 
-
-
-
-
-
---[[trip]]--
-
-
-
-
-
---[[GUI's tab functions]]--
 --AllEmotes button functions
 function osint()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/AllEmotes.lua"))()
