@@ -4,7 +4,7 @@
 
 -- Whitelisted usernames
 local adminUsers = {
-    ["Errayking"] = true,
+    ["xxerray_kingxx"] = true,
     ["Squishy"] = true,
     ["Xeno"] = true
 }
