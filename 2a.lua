@@ -4697,7 +4697,7 @@ end)
 --[[anti]]--
 getgenv().MethodFourAntiTP = false
 
-ui:AddToggle(sections.settingsKeys, "Anti Bang/TP (Method 4, Void Method)", getgenv().MethodFourAntiTP, function(v)
+ui:AddToggle(sections.settingsAnti, "Anti Bang/TP (Method 4, Void Method)", getgenv().MethodFourAntiTP, function(v)
     getgenv().MethodFourAntiTP = v
 
     local OldDestroyH = getgenv().Workspace.FallenPartsDestroyHeight
@@ -4705,6 +4705,9 @@ ui:AddToggle(sections.settingsKeys, "Anti Bang/TP (Method 4, Void Method)", getg
     local HumanoidRP = getgenv().HumanoidRootPart
 
     if v then
+        -- Save current position to return to later
+        getgenv().LastSafePosition = HumanoidRP.CFrame
+
         local putPositionTo = Vector3.new(-84385288, 69380040, 174817648)
         getgenv().Workspace.FallenPartsDestroyHeight = 0
         wait(0.2)
@@ -4719,16 +4722,18 @@ ui:AddToggle(sections.settingsKeys, "Anti Bang/TP (Method 4, Void Method)", getg
                 HumanoidRP.CFrame = CFrame.new(putPositionTo)
             end
         end)
+
     else
-        -- Toggle OFF → stop loop
+        -- Turn OFF void loop
         getgenv().loopTPToVoid = false
 
-        -- Wait until sure void loop stopped
-        task.wait(0.1)
+        -- Wait until loop stops
+        repeat wait() until not getgenv().loopTPToVoid
 
-        -- TP back
-        if HumanoidRP and HumanoidRP.Parent then
-            HumanoidRP.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
+        -- Teleport back to saved position
+        local HumanoidRP = getgenv().HumanoidRootPart
+        if getgenv().LastSafePosition and HumanoidRP and HumanoidRP.Parent then
+            HumanoidRP.CFrame = getgenv().LastSafePosition
         end
 
         wait(0.3)
