@@ -6162,16 +6162,16 @@ end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 
 --FaceFuck
-loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/FaceFuck.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/refs/heads/main/FaceFuck.lua"))()
 
 --Flashback
-loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/Flashback.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/refs/heads/main/Flashback.lua"))()
 
 --Trip
-loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/Trip1.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/refs/heads/main/Trip1.lua"))()
 
 --Headsit
-loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/Headsit5.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/refs/heads/main/Headsit5.lua"))()
 -- Notify user to check About Tab
 pcall(function()
     game.StarterGui:SetCore("SendNotification", {
