@@ -1,6 +1,7 @@
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-local player = game.Players.LocalLocalPlayer
+local player = game.Players.LocalPlayer
+
 
 -- Global defaults
 getgenv().TripKey = getgenv().TripKey or Enum.KeyCode.V
