@@ -4610,24 +4610,6 @@ local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. 
 
 local waitingForKey = false
 
--- Speed Slider
-ui:AddSlider(sections.settingsKeys, "FaceFuck Speed", {
-    min = 1,
-    max = 20,
-    default = getgenv().FaceBangSpeed,
-}, function(value)
-    getgenv().FaceBangSpeed = value
-end)
-
--- Distance Slider
-ui:AddSlider(sections.settingsKeys, "FaceFuck Distance", {
-    min = 1,
-    max = 10,
-    default = getgenv().FaceBangDistance,
-}, function(value)
-    getgenv().FaceBangDistance = value
-end)
-
 -- Change key button
 ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
     if waitingForKey then return end
