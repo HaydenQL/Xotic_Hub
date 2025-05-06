@@ -4599,29 +4599,64 @@ ui:AddLabel(sections.aboutCredits, "• FaceFuck Key (Z)\n• Rewind Key (X)\n�
 ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
 
 --[[settings tab]]--
- getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
- 
- -- Keybind Label
- local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. (getgenv().FaceBangKey and getgenv().FaceBangKey.Name or "None"), UI_CONFIG.TextColor)
- 
- local waitingForKey = false
- 
- -- Change key button
- ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
-     if waitingForKey then return end
- 
-     waitingForKey = true
-     keybindLabel.Text = "Press any key..."
- 
-     local conn
-     conn = game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-         if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
-             getgenv().FaceBangKey = input.KeyCode
-             waitingForKey = false
-             conn:Disconnect()
-         end
-     end)
 
+--Facefuck
+ --[[facefuck]]--
+
+-- Settings Defaults (VERY IMPORTANT to set first)
+getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
+getgenv().FaceBangSpeed = getgenv().FaceBangSpeed or 7
+getgenv().FaceBangDistance = getgenv().FaceBangDistance or 3
+
+-- Keybind Label
+local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. (getgenv().FaceBangKey and getgenv().FaceBangKey.Name or "None"), UI_CONFIG.TextColor)
+
+local waitingForKey = false
+
+-- Speed Slider
+ui:AddSlider(sections.settingsKeys, "FaceFuck Speed", {
+    min = 1,
+    max = 20,
+    default = getgenv().FaceBangSpeed, -- now guaranteed to exist
+}, function(value)
+    getgenv().FaceBangSpeed = value
+end)
+
+-- Distance Slider
+ui:AddSlider(sections.settingsKeys, "FaceFuck Distance", {
+    min = 1,
+    max = 10,
+    default = getgenv().FaceBangDistance, -- now guaranteed to exist
+}, function(value)
+    getgenv().FaceBangDistance = value
+end)
+
+-- Change key button
+ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
+    if waitingForKey then return end
+
+    waitingForKey = true
+    keybindLabel.Text = "Press any key..."
+
+    local conn
+    conn = game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
+            getgenv().FaceBangKey = input.KeyCode
+            waitingForKey = false
+            conn:Disconnect()
+        end
+    end)
+end)
+
+-- FULL LIVE UPDATER (Always updates text)
+game:GetService("RunService").RenderStepped:Connect(function()
+    if not waitingForKey then
+        local currentKey = (getgenv().FaceBangKey and getgenv().FaceBangKey.Name or "None")
+        if keybindLabel.Text ~= "FaceFuck Keybind: " .. currentKey then
+            keybindLabel.Text = "FaceFuck Keybind: " .. currentKey
+        end
+    end
+end)
 
 
 --[[Gui tab functions]]--
