@@ -2610,7 +2610,7 @@ local uiTable = (function()
                 return {
                     tab = tab,
                     sections = {
-                        keys = main:AddSection(tab, "Keybinds", "left"),
+                        keys = main:AddSection(tab, "Facefuck", "left"),
                     }
                 }
             end)(),
@@ -4314,7 +4314,6 @@ ui:AddToggle(sections.reanimPresets, "Circle", false, function(value)
 end)
 
 --[[ VOICE TAB ]]--
---[[ SETTINGS ]]--
 ui:AddToggle(sections.voiceSettings, "Auto Unsuspend", false, function(value)
     if value then
         autoConnection = VoiceChatInternal.LocalPlayerModerated:Connect(function()
@@ -4600,37 +4599,15 @@ ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n�
 
 --[[settings tab]]--
 
---Facefuck
  --[[facefuck]]--
 
 -- Settings Defaults (VERY IMPORTANT to set first)
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
-getgenv().FaceBangSpeed = getgenv().FaceBangSpeed or 7
-getgenv().FaceBangDistance = getgenv().FaceBangDistance or 3
 
 -- Keybind Label
 local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. (getgenv().FaceBangKey and getgenv().FaceBangKey.Name or "None"), UI_CONFIG.TextColor)
 
 local waitingForKey = false
-
--- Speed Slider
-ui:AddSlider(sections.settingsKeys, "FaceFuck Speed", {
-    min = 1,
-    max = 20,
-    default = getgenv().FaceBangSpeed, -- now guaranteed to exist
-}, function(value)
-    getgenv().FaceBangSpeed = value
-end)
-
--- Distance Slider
-ui:AddSlider(sections.settingsKeys, "FaceFuck Distance", {
-    min = 1,
-    max = 10,
-    default = getgenv().FaceBangDistance, -- now guaranteed to exist
-}, function(value)
-    getgenv().FaceBangDistance = value
-end)
-
 -- Change key button
 ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
     if waitingForKey then return end
