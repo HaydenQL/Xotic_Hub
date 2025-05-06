@@ -2611,6 +2611,7 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         keys = main:AddSection(tab, "Facefuck", "left"),
+                        trip = main:AddSection(tab, "Trip", "right"),
                     }
                 }
             end)(),
@@ -2649,6 +2650,7 @@ local sections = {
 
     --[[ SETTINGS ]]--
     settingsKeys = uiTable.tabs.settings.sections.keys,
+    settingsTrip = uiTable.tabs.settings.sections.trip,
     
 
     
@@ -4598,10 +4600,6 @@ ui:AddLabel(sections.aboutCredits, "• FaceFuck Key (Z)\n• Rewind Key (X)\n�
 ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
 
 --[[settings tab]]--
-
- --[[facefuck]]--
-
--- Settings Defaults (VERY IMPORTANT to set first)
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
 getgenv().FaceBangSpeed = getgenv().FaceBangSpeed or 7
 getgenv().FaceBangDistance = getgenv().FaceBangDistance or 3
@@ -4648,6 +4646,49 @@ game:GetService("RunService").RenderStepped:Connect(function()
         end
     end
 end)
+
+
+--[[Trip]]--
+getgenv().TripKey = getgenv().TripKey or Enum.KeyCode.V
+getgenv().TripPushForce = getgenv().TripPushForce or 50
+
+-- Keybind Label
+local tripKeyLabel = ui:AddLabel(sections.settingsTrip, "Trip Keybind: " .. (getgenv().TripKey and getgenv().TripKey.Name or "None"), UI_CONFIG.TextColor)
+
+local tripWaitingForKey = false
+
+-- Trip Sliders
+ui:AddSlider(sections.settingsTrip, "Trip Push Force", 5, 150, getgenv().TripPushForce or 50, function(v)
+    getgenv().TripPushForce = v
+end)
+
+-- Change Trip Key Button
+ui:AddButton(sections.settingsTrip, "Change Trip Key", function()
+    if tripWaitingForKey then return end
+
+    tripWaitingForKey = true
+    tripKeyLabel.Text = "Press any key..."
+
+    local conn
+    conn = game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
+            getgenv().TripKey = input.KeyCode
+            tripWaitingForKey = false
+            conn:Disconnect()
+        end
+    end)
+end)
+
+-- FULL LIVE UPDATER (Always updates Trip key text)
+game:GetService("RunService").RenderStepped:Connect(function()
+    if not tripWaitingForKey then
+        local currentKey = (getgenv().TripKey and getgenv().TripKey.Name or "None")
+        if tripKeyLabel.Text ~= "Trip Keybind: " .. currentKey then
+            tripKeyLabel.Text = "Trip Keybind: " .. currentKey
+        end
+    end
+end)
+
 
 
 --[[Gui tab functions]]--
