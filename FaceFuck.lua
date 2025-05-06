@@ -1,9 +1,9 @@
 --// Face Bang (Fixed, Pull Back and Forward - No GUI Version)
 
--- Settings
+-- Settings (from UI sliders)
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
-local Speed = 7 -- Pull/Thrust speed
-local Distance = 3 -- How far to pull back
+local speed = getgenv().FaceBangSpeed or 7 -- Pull/Thrust speed
+local distance = getgenv().FaceBangDistance or 3 -- How far to pull back
 
 -- Services
 local uis = game:GetService("UserInputService")
@@ -41,12 +41,10 @@ local function fuck()
     loaded_face_bang = true
 
     for _, target in ipairs(players:GetPlayers()) do
-        -- Skip self only
-        if target.Character and target ~= players.LocalPlayer then
+        -- Skip self
+        if target.Character and target ~= player then
             local head = target.Character:FindFirstChild('Head')
-    
-            -- Extra check: Make sure we are NOT targeting ourselves or any character where UserId matches LocalPlayer
-            if head and target.UserId ~= players.LocalPlayer.UserId then
+            if head and target.UserId ~= player.UserId then
                 local d = (head.Position - humanoidRootPart.Position).Magnitude
                 if d < dist then
                     closest = target
@@ -55,7 +53,7 @@ local function fuck()
             end
         end
     end
-    
+
     if not closest or not humanoidRootPart then
         running = false
         return
@@ -65,7 +63,7 @@ local function fuck()
     local head = closest.Character:FindFirstChild("Head")
     local out = true
     local min = -0.9
-    local max = -Distance
+    local max = -distance -- fixed from "Distance" to correct lowercase "distance"
     local prog = 0
     local last = tick()
 
@@ -82,7 +80,7 @@ local function fuck()
         local dt = now - last
         last = now
 
-        local spd = 2 * Speed
+        local spd = 2 * speed -- fixed from "Speed" to correct lowercase "speed"
 
         if out then
             prog = math.min(1, prog + dt * spd)
@@ -106,6 +104,10 @@ end
 -- Input Handler
 runService:BindToRenderStep("FaceBangHold", Enum.RenderPriority.Camera.Value + 1, function()
     if not character or not humanoidRootPart then return end
+
+    -- Refresh speed and distance in real time
+    speed = getgenv().FaceBangSpeed or 7
+    distance = getgenv().FaceBangDistance or 3
 
     if uis:IsKeyDown(getgenv().FaceBangKey) then
         if not loaded_face_bang then
