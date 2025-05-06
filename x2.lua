@@ -4603,6 +4603,8 @@ ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n�
 
 -- Settings Defaults (VERY IMPORTANT to set first)
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
+getgenv().FaceBangSpeed = getgenv().FaceBangSpeed or 7
+getgenv().FaceBangDistance = getgenv().FaceBangDistance or 3
 
 -- Keybind Label
 local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. (getgenv().FaceBangKey and getgenv().FaceBangKey.Name or "None"), UI_CONFIG.TextColor)
