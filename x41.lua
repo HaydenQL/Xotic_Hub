@@ -4658,7 +4658,7 @@ local tripKeyLabel = ui:AddLabel(sections.settingsTrip, "Trip Keybind: " .. (get
 local tripWaitingForKey = false
 
 -- Trip Sliders
-ui:AddSlider(sections.settingsTrip, "Trip Push Force", 5, 150, getgenv().TripPushForce or 50, function(v)
+ui:AddSlider(sections.settingsTrip, "Trip Push Force", 1, 15, getgenv().TripPushForce or 5, function(v)
     getgenv().TripPushForce = v
 end)
 
