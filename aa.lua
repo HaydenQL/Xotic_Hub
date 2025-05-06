@@ -2614,21 +2614,11 @@ local uiTable = (function()
                     sections = {
                         keys = main:AddSection(tab, "Facefuck", "left"),
                         trip = main:AddSection(tab, "Trip", "right"),
+                        anti = main:AddSection(tab, "More", "left"),
                     }
                 }
             end)(),
                 
-             --[[admin]]--
-            admin = (function()
-                local tab = main:AddTab("Admin")
-                return {
-                    tab = tab,
-                    sections = {
-                        rep = main:AddSection(tab, "report", "left"),
-
-                    }
-                }
-            end)(),
         }
     }
 end)()
@@ -2665,6 +2655,7 @@ local sections = {
     --[[ SETTINGS ]]--
     settingsKeys = uiTable.tabs.settings.sections.keys,
     settingsTrip = uiTable.tabs.settings.sections.trip,
+    settingsAnti = uiTable.tabs.settings.sections.anti,
     
 
     
@@ -4700,6 +4691,42 @@ game:GetService("RunService").RenderStepped:Connect(function()
         if tripKeyLabel.Text ~= "Trip Keybind: " .. currentKey then
             tripKeyLabel.Text = "Trip Keybind: " .. currentKey
         end
+    end
+end)
+
+--[[anti]]--
+getgenv().MethodFourAntiTP = false
+
+ui:AddToggle(sections.settingsKeys, "Anti Bang/TP (Method 4, Void Method)", getgenv().MethodFourAntiTP, function(v)
+    getgenv().MethodFourAntiTP = v
+
+    local OldDestroyH = getgenv().Workspace.FallenPartsDestroyHeight
+
+    if v then
+        local putPositionTo = Vector3.new(-84385288, 69380040, 174817648)
+        local Workspace = getgenv().Workspace
+        local HumanoidRP = getgenv().HumanoidRootPart
+
+        getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
+        wait(0.2)
+
+        getgenv().loopTPToVoid = true
+        while getgenv().loopTPToVoid do
+            wait()
+            getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
+            HumanoidRP.CFrame = CFrame.new(putPositionTo)
+        end
+    else
+        getgenv().loopTPToVoid = false
+        wait()
+
+        repeat wait() until getgenv().loopTPToVoid == false
+
+        local HumanoidRootPart = getgenv().HumanoidRootPart
+        HumanoidRootPart.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
+
+        wait(0.3)
+        getgenv().Workspace.FallenPartsDestroyHeight = OldDestroyH
     end
 end)
 
