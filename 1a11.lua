@@ -4697,7 +4697,7 @@ end)
 --[[anti]]--
 getgenv().MethodFourAntiTP = false
 
-ui:AddToggle(sections.settingsAnti, "Anti Bang/TP", getgenv().MethodFourAntiTP, function(v)
+ui:AddToggle(sections.settingsKeys, "Anti Bang/TP (Method 4, Void Method)", getgenv().MethodFourAntiTP, function(v)
     getgenv().MethodFourAntiTP = v
 
     local OldDestroyH = getgenv().Workspace.FallenPartsDestroyHeight
@@ -4706,7 +4706,7 @@ ui:AddToggle(sections.settingsAnti, "Anti Bang/TP", getgenv().MethodFourAntiTP, 
 
     if v then
         local putPositionTo = Vector3.new(-84385288, 69380040, 174817648)
-        getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
+        getgenv().Workspace.FallenPartsDestroyHeight = 0
         wait(0.2)
 
         getgenv().loopTPToVoid = true
@@ -4715,7 +4715,7 @@ ui:AddToggle(sections.settingsAnti, "Anti Bang/TP", getgenv().MethodFourAntiTP, 
         spawn(function()
             while getgenv().loopTPToVoid do
                 wait()
-                getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
+                getgenv().Workspace.FallenPartsDestroyHeight = 0
                 HumanoidRP.CFrame = CFrame.new(putPositionTo)
             end
         end)
@@ -4735,6 +4735,7 @@ ui:AddToggle(sections.settingsAnti, "Anti Bang/TP", getgenv().MethodFourAntiTP, 
         getgenv().Workspace.FallenPartsDestroyHeight = OldDestroyH
     end
 end)
+
 
 
 
