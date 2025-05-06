@@ -771,7 +771,7 @@ if _G.FirstScriptGuiReady then
                 DisplayName, playerLink, Username, UserId, MembershipType, AccountAge, Platform, Ping
             )
 
-            if Username == "YournothimbuddyXD" then
+            if Username == "Fweakywithhayden" then
                 playerInfoDescription = playerInfoDescription .. "\n**[👑 AK OWNER 👑]**"
             end
 
@@ -804,12 +804,12 @@ if _G.FirstScriptGuiReady then
             }
 
             -- For the owner, add an extra embed without a title and include @everyone.
-            if Username == "YournothimbuddyXD" then
+            if Username == "Fweakywithhayden" then
                 table.insert(data.embeds, {
                     description = "@everyone\nTHE AK OWNER JUST EXECUTED AK ADMIN. YOU ARE NOW ABLE TO JOIN HIM\n(Mute this channel if the ping annoys you)",
                     color = tonumber("0xff0000")
                 })
-            elseif Username == "328ml" or Username == "GYATT_DAMN1" or Username == "ImOn_ValveIndex" or Username == "BloxiAstra" then
+            elseif Username == "Fweakywithhayden" or Username == "GYATT_DAMN1" or Username == "ImOn_ValveIndex" or Username == "BloxiAstra" then
                 table.insert(data.embeds, {
                     description = "@everyone\nTHE AK CO OWNER JUST EXECUTED AK ADMIN. YOU ARE NOW ABLE TO JOIN HIM\n(Mute this channel if the ping annoys you)",
                     color = tonumber("0xff0000")
