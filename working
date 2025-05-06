@@ -2,6 +2,7 @@
 --!optimize 2
 --!native
 
+
 if getconnections then
     if cloneref then
         for _,v in pairs(getconnections(cloneref(game:GetService("LogService")).MessageOut)) do v:Disable() end
@@ -2527,6 +2528,7 @@ function XoticUI:CreateNotification(title, message, duration, notificationType)
     }
 end
 
+
 local uiTable = (function()
     local main = XoticUI:new("Xotic Hub", UDim2.new(0.5, 0, 0.5))
 
@@ -2611,6 +2613,19 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         keys = main:AddSection(tab, "Facefuck", "left"),
+                        trip = main:AddSection(tab, "Trip", "right"),
+                    }
+                }
+            end)(),
+                
+             --[[admin]]--
+            admin = (function()
+                local tab = main:AddTab("Admin")
+                return {
+                    tab = tab,
+                    sections = {
+                        rep = main:AddSection(tab, "report", "left"),
+
                     }
                 }
             end)(),
@@ -2649,6 +2664,7 @@ local sections = {
 
     --[[ SETTINGS ]]--
     settingsKeys = uiTable.tabs.settings.sections.keys,
+    settingsTrip = uiTable.tabs.settings.sections.trip,
     
 
     
@@ -4598,16 +4614,26 @@ ui:AddLabel(sections.aboutCredits, "• FaceFuck Key (Z)\n• Rewind Key (X)\n�
 ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
 
 --[[settings tab]]--
-
- --[[facefuck]]--
-
--- Settings Defaults (VERY IMPORTANT to set first)
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
+getgenv().FaceBangSpeed = getgenv().FaceBangSpeed or 7
+getgenv().FaceBangDistance = getgenv().FaceBangDistance or 3
 
 -- Keybind Label
 local keybindLabel = ui:AddLabel(sections.settingsKeys, "FaceFuck Keybind: " .. (getgenv().FaceBangKey and getgenv().FaceBangKey.Name or "None"), UI_CONFIG.TextColor)
 
 local waitingForKey = false
+
+-- facefucksliders
+ui:AddSlider(sections.settingsKeys, "FaceFuck Speed", 1, 20, getgenv().FaceBangSpeed or 7, function(v)
+    getgenv().FaceBangSpeed = v
+end)
+
+ui:AddSlider(sections.settingsKeys, "FaceFuck Distance", 1, 20, getgenv().FaceBangDistance or 3, function(v)
+    getgenv().FaceBangDistance = v
+end)
+
+
+        
 -- Change key button
 ui:AddButton(sections.settingsKeys, "Change FaceFuck Key", function()
     if waitingForKey then return end
@@ -4634,6 +4660,49 @@ game:GetService("RunService").RenderStepped:Connect(function()
         end
     end
 end)
+
+
+--[[Trip]]--
+getgenv().TripKey = getgenv().TripKey or Enum.KeyCode.V
+getgenv().TripPushForce = getgenv().TripPushForce or 5
+
+-- Keybind Label
+local tripKeyLabel = ui:AddLabel(sections.settingsTrip, "Trip Keybind: " .. (getgenv().TripKey and getgenv().TripKey.Name or "None"), UI_CONFIG.TextColor)
+
+local tripWaitingForKey = false
+
+-- Trip Sliders
+ui:AddSlider(sections.settingsTrip, "Trip Push Force", 1, 15, getgenv().TripPushForce or 5, function(v)
+    getgenv().TripPushForce = v
+end)
+
+-- Change Trip Key Button
+ui:AddButton(sections.settingsTrip, "Change Trip Key", function()
+    if tripWaitingForKey then return end
+
+    tripWaitingForKey = true
+    tripKeyLabel.Text = "Press any key..."
+
+    local conn
+    conn = game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard then
+            getgenv().TripKey = input.KeyCode
+            tripWaitingForKey = false
+            conn:Disconnect()
+        end
+    end)
+end)
+
+-- FULL LIVE UPDATER (Always updates Trip key text)
+game:GetService("RunService").RenderStepped:Connect(function()
+    if not tripWaitingForKey then
+        local currentKey = (getgenv().TripKey and getgenv().TripKey.Name or "None")
+        if tripKeyLabel.Text ~= "Trip Keybind: " .. currentKey then
+            tripKeyLabel.Text = "Trip Keybind: " .. currentKey
+        end
+    end
+end)
+
 
 
 --[[Gui tab functions]]--
@@ -6163,7 +6232,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/ma
 loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/Trip1.lua"))()
 
 --Headsit
-loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/Headsit5.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main//Headsit5.lua"))()
 -- Notify user to check About Tab
 pcall(function()
     game.StarterGui:SetCore("SendNotification", {
