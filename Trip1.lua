@@ -1,22 +1,26 @@
 local UserInputService = game:GetService("UserInputService")
 local player = game.Players.LocalPlayer
 
-local function Trip(Character: Model)
+-- Global defaults
+getgenv().TripKey = getgenv().TripKey or Enum.KeyCode.V
+getgenv().TripPushForce = getgenv().TripPushForce or 50
+
+local function Trip(Character)
     local RootPart = Character.PrimaryPart
     local Humanoid = Character.Humanoid
 
     -- Trip state
     Humanoid:ChangeState(Enum.HumanoidStateType.FallingDown)
 
-    -- Push forward force (stronger push)
-    local pushForce = RootPart.CFrame.LookVector * 50 -- Adjust this number (50 = about 5-10 studs fast push)
+    -- Push forward force (uses slider value)
+    local pushForce = RootPart.CFrame.LookVector * getgenv().TripPushForce
     RootPart.AssemblyLinearVelocity += pushForce
 end
 
 -- Handle Key Press
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
-    if input.KeyCode == Enum.KeyCode.V then
+    if input.KeyCode == getgenv().TripKey then
         local character = player.Character or player.CharacterAdded:Wait()
         Trip(character)
     end
