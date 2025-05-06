@@ -4697,38 +4697,45 @@ end)
 --[[anti]]--
 getgenv().MethodFourAntiTP = false
 
-ui:AddToggle(sections.settingsAnti, "Anti Bang/TP (Method 4, Void Method)", getgenv().MethodFourAntiTP, function(v)
+ui:AddToggle(sections.settingsAnti, "Anti Bang/TP", getgenv().MethodFourAntiTP, function(v)
     getgenv().MethodFourAntiTP = v
 
     local OldDestroyH = getgenv().Workspace.FallenPartsDestroyHeight
+    local Workspace = getgenv().Workspace
+    local HumanoidRP = getgenv().HumanoidRootPart
 
     if v then
         local putPositionTo = Vector3.new(-84385288, 69380040, 174817648)
-        local Workspace = getgenv().Workspace
-        local HumanoidRP = getgenv().HumanoidRootPart
-
         getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
         wait(0.2)
 
         getgenv().loopTPToVoid = true
-        while getgenv().loopTPToVoid do
-            wait()
-            getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
-            HumanoidRP.CFrame = CFrame.new(putPositionTo)
-        end
+
+        -- Start void loop
+        spawn(function()
+            while getgenv().loopTPToVoid do
+                wait()
+                getgenv().Workspace.FallenPartsDestroyHeight = 0/1/0
+                HumanoidRP.CFrame = CFrame.new(putPositionTo)
+            end
+        end)
     else
+        -- Toggle OFF → stop loop
         getgenv().loopTPToVoid = false
-        wait()
 
-        repeat wait() until getgenv().loopTPToVoid == false
+        -- Wait until sure void loop stopped
+        task.wait(0.1)
 
-        local HumanoidRootPart = getgenv().HumanoidRootPart
-        HumanoidRootPart.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
+        -- TP back
+        if HumanoidRP and HumanoidRP.Parent then
+            HumanoidRP.CFrame = CFrame.new(36.5316811, 4.99999952, 24.585743)
+        end
 
         wait(0.3)
         getgenv().Workspace.FallenPartsDestroyHeight = OldDestroyH
     end
 end)
+
 
 
 
