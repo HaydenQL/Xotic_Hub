@@ -4697,7 +4697,7 @@ end)
 --[[anti]]--
 getgenv().MethodFourAntiTP = false
 
-ui:AddToggle(sections.settingsKeys, "Anti Bang/TP (Method 4, Void Method)", getgenv().MethodFourAntiTP, function(v)
+ui:AddToggle(sections.settingsAnti, "Anti Bang/TP (Method 4, Void Method)", getgenv().MethodFourAntiTP, function(v)
     getgenv().MethodFourAntiTP = v
 
     local OldDestroyH = getgenv().Workspace.FallenPartsDestroyHeight
