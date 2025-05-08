@@ -4600,9 +4600,10 @@ end)
 
 --[[ ABOUT TAB ]]--
 ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
+ui:AddLabel(sections.aboutInfo, "Code Credit: OFFYSSignal", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
-ui:AddLabel(sections.aboutCredits, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
-ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
+ui:AddLabel(sections.aboutCredits, "• FaceFuck Speed/Distance Changer\n• Trip Force changer\n ", UI_CONFIG.TextColor)
+ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n All Emotes in GUI tab Key (,)\n", UI_CONFIG.TextColor)
 
 --[[settings tab]]--
 getgenv().FaceBangKey = getgenv().FaceBangKey or Enum.KeyCode.Z
