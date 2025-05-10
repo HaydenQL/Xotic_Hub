@@ -4572,7 +4572,7 @@ ui:AddToggle(sections.miscMap, "Void Walk", true, function()
     if not workspace:FindFirstChild("XoticVoid") then
         local void = Instance.new("Part", workspace)
         void.Anchored = true
-        void.Size = Vector3.new(2048, 16, 2048)
+        void.Size = Vector3.new(9999, 16, 9999)
         void.Position = Vector3.new(66, -8, 72.5)
         void.Transparency = 1
     else
