@@ -138,12 +138,18 @@ local function confuse(amount)
     end
 end
 
-confuse(999)
-log("Protected UI with confusion")
-
-if CoreGui.TopBarApp.TopBarApp.FullScreenFrame:FindFirstChild("HurtOverlay") then
-    CoreGui.TopBarApp.TopBarApp.FullScreenFrame:FindFirstChild("HurtOverlay"):Destroy()
+-- Stealth-safe GUI confusion (optional)
+local function confuse(amount)
+    for i = 1, math.min(amount, 5) do
+        local gui = Instance.new("ScreenGui")
+        gui.Name = "X_" .. tostring(math.random(100000, 999999))
+        gui.ResetOnSpawn = false
+        gui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+    end
 end
+
+confuse(5)
+warn("[Xotic] -> Confuse layer applied safely")
 
 workspace.FallenPartsDestroyHeight = 0/0
 
