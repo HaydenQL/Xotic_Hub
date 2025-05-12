@@ -3,16 +3,22 @@
 --!native
 
 
-if getconnections then
-    if cloneref then
-        for _,v in pairs(getconnections(cloneref(game:GetService("LogService")).MessageOut)) do v:Disable() end
-        for _,v in pairs(getconnections(cloneref(game:GetService("ScriptContext")).Error)) do v:Disable() end
-    else
-        for _,v in pairs(getconnections(game:GetService("LogService")).MessageOut) do v:Disable() end
-        for _,v in pairs(getconnections(game:GetService("ScriptContext")).Error) do v:Disable() end
+local gcs = getrenv()["getconnections"]
+local clr = getrenv()["cloneref"]
+local function silentDisconnect(signal)
+    local sig = clr and clr(signal) or signal
+    for _, conn in pairs(gcs and gcs(sig) or {}) do
+        if typeof(conn) == "table" and conn.Disable then
+            pcall(function() conn:Disable() end)
+        end
     end
-    warn("[Xotic] -> DISCONNECTED ALL CONSOLE CONNECTIONS")
 end
+
+silentDisconnect(game:GetService("LogService").MessageOut)
+silentDisconnect(game:GetService("ScriptContext").Error)
+
+if math.random() < 0.01 then print("[Xotic] -> Console unhooked.") end
+
 
 local function randomHex(len)
     local str = ""
@@ -42,12 +48,12 @@ end
 
 sep = string.rep("\n", 200)
 print("                             v LATEST LOGS OF Xotic ARE BELOW v"..sep.."            > Starting Xotic")
-warn("[Xotic] -> Starting...")
+if math.random() < 0.01 then print("[Xotic] -> Starting...")
 
 local logging = true
 local function log(...)
     if logging then
-        warn("[Xotic] -> " .. ...)
+        if math.random() < 0.01 then print("[Xotic] -> " .. ...)
     end
 end
 local function seperate(job)
@@ -66,7 +72,7 @@ if hookfunction and newcclosure then
             local url = select(1, ...)
             if url == originalHttpGet then
                 log("HttpGet protection triggered")
-                while true do end
+                task.wait(9e9)
                 return nil
             end
         end
@@ -75,19 +81,18 @@ if hookfunction and newcclosure then
     log("Hooked HttpGet.")
 end
 
-local rawgs = clonefunction and clonefunction(game.GetService) or game.GetService
-function gs(service)
-    local ok, result = pcall(function()
-        return rawgs(game, service)
+local rawgs = (clonefunction or clone_function or function(f) return f end)(game.GetService)
+
+local function gs(s)
+    local ok, srv = pcall(function()
+        return rawgs(game, s)
     end)
-    if ok and result then
-        log("Got service '" .. service .. "' successfully")
-        return result
-    else
-        log("Failed to get service '" .. service .. "'")
-        return nil
+    if ok and srv then
+        return srv
     end
+    return nil
 end
+
 
 function define(instance)
     if cloneref then
@@ -142,16 +147,16 @@ end
 local function confuse(amount)
     for i = 1, math.min(amount, 5) do
         local gui = Instance.new("ScreenGui")
-        gui.Name = "X_" .. tostring(math.random(100000, 999999))
+        gui.Name = "UI_" .. tostring(math.random(1000000, 9999999))
         gui.ResetOnSpawn = false
         gui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     end
 end
 
 confuse(5)
-warn("[Xotic] -> Confuse layer applied safely")
+if math.random() < 0.01 then print("[Xotic]") 
 
-workspace.FallenPartsDestroyHeight = 0/0
+workspace.FallenPartsDestroyHeight = math.huge
 
 seperate("Loading UI")
 --UI
@@ -4764,16 +4769,22 @@ function r15Suite()
     --!optimize 2
     --!native
 
-    if getconnections then
-        if cloneref then
-            for _,v in pairs(getconnections(cloneref(game:GetService("LogService")).MessageOut)) do v:Disable() end
-            for _,v in pairs(getconnections(cloneref(game:GetService("ScriptContext")).Error)) do v:Disable() end
-        else
-            for _,v in pairs(getconnections(game:GetService("LogService")).MessageOut) do v:Disable() end
-            for _,v in pairs(getconnections(game:GetService("ScriptContext")).Error) do v:Disable() end
+    local gcs = getrenv()["getconnections"]
+    local clr = getrenv()["cloneref"]
+    local function silentDisconnect(signal)
+        local sig = clr and clr(signal) or signal
+        for _, conn in pairs(gcs and gcs(sig) or {}) do
+            if typeof(conn) == "table" and conn.Disable then
+                pcall(function() conn:Disable() end)
+            end
         end
-        warn("[Xotic] -> DISCONNECTED ALL CONSOLE CONNECTIONS")
     end
+
+    silentDisconnect(game:GetService("LogService").MessageOut)
+    silentDisconnect(game:GetService("ScriptContext").Error)
+
+    if math.random() < 0.01 then print("[Xotic] -> Console unhooked.") end
+
 
     local function randomHex(len)
         local str = ""
@@ -4799,12 +4810,13 @@ function r15Suite()
 
     sep = string.rep("\n", 200)
     print("                             v LATEST LOGS OF Xotic ANIM ARE BELOW v"..sep.."            > Starting Xotic")
-    warn("[Xotic] -> Starting...")
+    if math.random() < 0.01 then print("[Xotic] starting")
+
 
     local logging = true
     local function log(...)
         if logging then
-            warn("[Xotic] -> " .. ...)
+            if math.random() < 0.01 then print("[Xotic] -> " .. ...)
         end
     end
     local function seperate(job)
@@ -4823,7 +4835,7 @@ function r15Suite()
                 local url = select(1, ...)
                 if url == originalHttpGet then
                     log("HttpGet protection triggered")
-                    while true do end
+                    task.wait(9e9)
                     return nil
                 end
             end
@@ -4832,19 +4844,18 @@ function r15Suite()
         log("Hooked HttpGet.")
     end
 
-    local rawgs = clonefunction and clonefunction(game.GetService) or game.GetService
-    function gs(service)
-        local ok, result = pcall(function()
-            return rawgs(game, service)
-        end)
-        if ok and result then
-            log("Got service '" .. service .. "' successfully")
-            return result
-        else
-            log("Failed to get service '" .. service .. "'")
-            return nil
-        end
+   local rawgs = (clonefunction or clone_function or function(f) return f end)(game.GetService)
+
+local function gs(s)
+    local ok, srv = pcall(function()
+        return rawgs(game, s)
+    end)
+    if ok and srv then
+        return srv
     end
+    return nil
+end
+
 
     function define(instance)
         if cloneref then
@@ -4872,7 +4883,7 @@ function r15Suite()
     local workspace = define(gs("Workspace"))
     local CoreGui = define(gs("CoreGui"))
 
-    workspace.FallenPartsDestroyHeight = 0/0
+    workspace.FallenPartsDestroyHeight = math.huge
 
     seperate("Loading UI")
 
