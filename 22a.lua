@@ -727,7 +727,7 @@ function XoticUI:AddTabsElement(section, tabs, callback)
     
     tabsContainer.Parent = section.ContentHolder
     
-    local tabsInterface = {
+    local tabsInter = {
         Instance = tabsContainer,
         GetSelected = function() 
             return selectedTab, tabs[selectedTab] 
@@ -762,8 +762,8 @@ function XoticUI:AddTabsElement(section, tabs, callback)
         end
     }
     
-    table.insert(section.Elements, tabsInterface)
-    return tabsInterface
+    table.insert(section.Elements, tabsInter)
+    return tabsInter
 end
 
 function XoticUI:AddTab(name, icon)
@@ -1229,7 +1229,7 @@ function XoticUI:AddToggle(section, name, defaultValue, callback)
         end
     end)
     
-    local toggleInterface = {
+    local toggleInter = {
         Instance = toggleContainer,
         GetValue = function() return isToggled end,
         SetValue = function(value)
@@ -1249,7 +1249,7 @@ function XoticUI:AddToggle(section, name, defaultValue, callback)
         end
     }
     
-    table.insert(section.Elements, toggleInterface)
+    table.insert(section.Elements, toggleInter)
 
     if isToggled and callback then
         callback(true)
@@ -4610,10 +4610,10 @@ ui:AddButton(sections.guisGui, "Xotic All Emotes", function()
 end)
 
 --[[ ABOUT TAB ]]--
-ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
-ui:AddLabel(sections.aboutInfo, "Code Credit: OFFYSSignal", UI_CONFIG.AccentColor)
+ui:AddLabel(sections.aboutInfo, "Made by Hayden & *******", UI_CONFIG.AccentColor)
+ui:AddLabel(sections.aboutInfo, "Code Credit (all emotes): OFFYSSignal", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
-ui:AddLabel(sections.aboutCredits, "• FaceFuck Speed/Distance Changer\n• Trip Force changer\n ", UI_CONFIG.TextColor)
+ui:AddLabel(sections.aboutCredits, "• Custom commands, !Headsit (sometimes needs to be undercase, its a bit buggy)\n ", UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n All Emotes in GUI tab Key (,)\n", UI_CONFIG.TextColor)
 
 --[[settings tab]]--
