@@ -48,7 +48,8 @@ end
 
 sep = string.rep("\n", 200)
 print("                             v LATEST LOGS OF Xotic ARE BELOW v"..sep.."            > Starting Xotic")
-if math.random() < 0.01 then print("[Xotic] -> Starting...")
+    if math.random() < 0.01 then print("[Xotic] -> Starting...")
+end
 
 local logging = true
 local function log(...)
