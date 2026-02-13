@@ -2860,97 +2860,129 @@ end
 --[[ REANIMATION TAB ]]--
 --[[ OPTIONS ]]--
 ui:AddToggle(sections.reanimOptions, "R15", false, function(value)
-    if value then
-        if isReanimated then
-            log("Already reanimated. Returning...")
-            return
-        end
-        
+
+    if value and not isReanimated then
         log("Reanimating...")
-        clone()
-        Player.Character = cloned()
-        Camera.CameraSubject = Player.Character.Humanoid
+
+        local newClone = clone()
+        Player.Character = newClone
+        Camera.CameraSubject = newClone:WaitForChild("Humanoid")
+
         animate()
 
         r15con = RunService.Heartbeat:Connect(function()
-            for _, part in pairs(getchar():GetChildren()) do
+            local original = getchar()
+            local cloneChar = newClone
+
+            if not original or not cloneChar then return end
+
+            for _, part in ipairs(original:GetChildren()) do
                 if part:IsA("BasePart") then
-                    task.spawn(function()
-                        clonepart = cloned():FindFirstChild(part.Name)
-                        part.CFrame = clonepart.CFrame
-                        part.Velocity = Vector3.new()
-                    end)
+                    local clonePart = cloneChar:FindFirstChild(part.Name)
+                    if clonePart and clonePart:IsA("BasePart") then
+                        part.CFrame = clonePart.CFrame
+                        part.AssemblyLinearVelocity = Vector3.zero
+                    end
                 end
             end
         end)
+
         ragdoll()
         isReanimated = true
-    else
+
+    elseif not value and isReanimated then
         log("Cleaning up reanimation...")
-        unragdoll()
-        unclone()
+
         if r15con then
             r15con:Disconnect()
             r15con = nil
         end
+
+        unragdoll()
+        unclone()
+
+        local char = getchar()
+        if char then
+            Player.Character = char
+            Camera.CameraSubject = char:WaitForChild("Humanoid")
+        end
+
         isReanimated = false
     end
+
 end)
 
 ui:AddToggle(sections.reanimOptions, "R6", false, function(value)
-    if value then
-        if isReanimated then
-            log("Already reanimated. Returning...")
-            return
-        end
+
+    if value and not isReanimated then
         log("Reanimating...")
-        ConvertToR6(clone())
-        Player.Character = cloned()
-        Camera.CameraSubject = Player.Character.Humanoid
+
+        local original = getchar()
+        local newClone = clone()
+
+        Player.Character = newClone
+        Camera.CameraSubject = newClone:WaitForChild("Humanoid")
+
         animate()
-        
+
+        -- Manual R15 limb mapping
         local parts = {
-            {orig = getchar().Head, clone = cloned().Head},
-            {orig = getchar().UpperTorso, clone = cloned().Torso["R15_UpperTorso"]},
-            {orig = getchar().LowerTorso, clone = cloned().Torso["R15_LowerTorso"]},
-            {orig = getchar().RightUpperArm, clone = cloned()["Right Arm"]["R15_RightUpperArm"]},
-            {orig = getchar().RightLowerArm, clone = cloned()["Right Arm"]["R15_RightLowerArm"]},
-            {orig = getchar().RightHand, clone = cloned()["Right Arm"]["R15_RightHand"]},
-            {orig = getchar().LeftUpperArm, clone = cloned()["Left Arm"]["R15_LeftUpperArm"]},
-            {orig = getchar().LeftLowerArm, clone = cloned()["Left Arm"]["R15_LeftLowerArm"]},
-            {orig = getchar().LeftHand, clone = cloned()["Left Arm"]["R15_LeftHand"]},
-            {orig = getchar().RightUpperLeg, clone = cloned()["Right Leg"]["R15_RightUpperLeg"]},
-            {orig = getchar().RightLowerLeg, clone = cloned()["Right Leg"]["R15_RightLowerLeg"]},
-            {orig = getchar().RightFoot, clone = cloned()["Right Leg"]["R15_RightFoot"]},
-            {orig = getchar().LeftUpperLeg, clone = cloned()["Left Leg"]["R15_LeftUpperLeg"]},
-            {orig = getchar().LeftLowerLeg, clone = cloned()["Left Leg"]["R15_LeftLowerLeg"]},
-            {orig = getchar().LeftFoot, clone = cloned()["Left Leg"]["R15_LeftFoot"]},
-            {orig = getchar().HumanoidRootPart, clone = cloned().HumanoidRootPart}
+            {orig = original:WaitForChild("Head"), clone = newClone:WaitForChild("R15_Head")},
+            {orig = original:WaitForChild("HumanoidRootPart"), clone = newClone:WaitForChild("R15_HumanoidRootPart")},
+            {orig = original:WaitForChild("UpperTorso"), clone = newClone:WaitForChild("R15_UpperTorso")},
+            {orig = original:WaitForChild("LowerTorso"), clone = newClone:WaitForChild("R15_LowerTorso")},
+            {orig = original:WaitForChild("RightUpperArm"), clone = newClone:WaitForChild("R15_RightUpperArm")},
+            {orig = original:WaitForChild("RightLowerArm"), clone = newClone:WaitForChild("R15_RightLowerArm")},
+            {orig = original:WaitForChild("RightHand"), clone = newClone:WaitForChild("R15_RightHand")},
+            {orig = original:WaitForChild("LeftUpperArm"), clone = newClone:WaitForChild("R15_LeftUpperArm")},
+            {orig = original:WaitForChild("LeftLowerArm"), clone = newClone:WaitForChild("R15_LeftLowerArm")},
+            {orig = original:WaitForChild("LeftHand"), clone = newClone:WaitForChild("R15_LeftHand")},
+            {orig = original:WaitForChild("RightUpperLeg"), clone = newClone:WaitForChild("R15_RightUpperLeg")},
+            {orig = original:WaitForChild("RightLowerLeg"), clone = newClone:WaitForChild("R15_RightLowerLeg")},
+            {orig = original:WaitForChild("RightFoot"), clone = newClone:WaitForChild("R15_RightFoot")},
+            {orig = original:WaitForChild("LeftUpperLeg"), clone = newClone:WaitForChild("R15_LeftUpperLeg")},
+            {orig = original:WaitForChild("LeftLowerLeg"), clone = newClone:WaitForChild("R15_LeftLowerLeg")},
+            {orig = original:WaitForChild("LeftFoot"), clone = newClone:WaitForChild("R15_LeftFoot")}
         }
 
         r6con = RunService.Heartbeat:Connect(function()
-            for _, part in ipairs(parts) do
-                if part.orig and part.clone then
-                    part.orig.CFrame = part.clone.CFrame
-                    part.orig.Velocity = Vector3.new()
+            if not original or not newClone then return end
+
+            for _, pair in ipairs(parts) do
+                if pair.orig and pair.clone then
+                    pair.orig.CFrame = pair.clone.CFrame
+                    pair.orig.AssemblyLinearVelocity = Vector3.zero
+                    pair.orig.AssemblyAngularVelocity = Vector3.zero
                 end
             end
         end)
 
         ragdoll()
         isReanimated = true
-    else
+
+    elseif not value and isReanimated then
         log("Cleaning up reanimation...")
-        unragdoll()
-        unclone()
+
         if r6con then
             r6con:Disconnect()
             r6con = nil
         end
-        isReanimated = false
+
+        unragdoll()
+        unclone()
+
+        local char = getchar()
+        if char then
+            Player.Character = char
+            Camera.CameraSubject = char:WaitForChild("Humanoid")
+        end
+
         isReanimated = false
     end
+
 end)
+
+
 
 --[[ SCALING ]]--
 ui:AddSlider(sections.reanimScaling, "Width", 0.5, 15, 1, function(value)
