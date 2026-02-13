@@ -11,18 +11,26 @@ local swing = workspace:WaitForChild("workplace")
 
 local part = swing:FindFirstChild("No", true)
 
-_G.FollowPart = true
-
 if part and torso then
-    part.Anchored = true
+    -- move it into you
+    part.CFrame = torso.CFrame
+    
+    part.Anchored = false
     part.CanCollide = false
     part.Massless = true
 
-    RunService.RenderStepped:Connect(function()
-        if _G.FollowPart then
-            part.Position = torso.Position
+    -- remove old welds if any
+    for _, v in pairs(part:GetChildren()) do
+        if v:IsA("Weld") or v:IsA("WeldConstraint") then
+            v:Destroy()
         end
-    end)
+    end
+
+    -- create new weld
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = part
+    weld.Part1 = torso
+    weld.Parent = part
 else
     warn("Part or torso missing")
 end
