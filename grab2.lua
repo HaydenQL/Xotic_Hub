@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local root = char:WaitForChild("HumanoidRootPart")
+local humanoid = char:WaitForChild("Humanoid")
 
 -- Path
 local playground = workspace:WaitForChild("map")
@@ -24,7 +25,7 @@ if not targetModel then
     return
 end
 
--- Collect parts and store relative offsets
+-- Store offsets
 local parts = {}
 local origin = targetModel:GetPivot()
 
@@ -32,13 +33,25 @@ for _, v in ipairs(targetModel:GetDescendants()) do
     if v:IsA("BasePart") then
         v.Anchored = true
         v.CanCollide = false
+        v.Massless = true
         parts[v] = origin:ToObjectSpace(v.CFrame)
+    end
+
+    if v:IsA("Seat") or v:IsA("VehicleSeat") then
+        v.Disabled = true
     end
 end
 
--- Follow player
+-- Keep you from being forced to sit
+humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
+    if humanoid.Sit then
+        humanoid.Sit = false
+    end
+end)
+
+-- Move model centered on you
 RunService.RenderStepped:Connect(function()
-    local newCFrame = root.CFrame * CFrame.new(0, 0, -6)
+    local newCFrame = root.CFrame
 
     for part, offset in pairs(parts) do
         part.CFrame = newCFrame * offset
