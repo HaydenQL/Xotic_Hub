@@ -2854,101 +2854,116 @@ function unanimate(char)
 end
 
 --[[ REANIMATION TAB ]]--
-ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(value)
-    print("Toggle fired:", value)
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
-    if value then
-        startReanimation()
-    else
-        stopReanimation()
-    end
-end)
-
---[[ REANIMATION FUNCTIONS ]]--
+local Player = Players.LocalPlayer
 local originalCharacter = nil
 local cloneCharacter = nil
 local reanimConnection = nil
+local isReanimated = false
 
-local function startReanimation()
-    if isReanimated then return end
+ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
-    originalCharacter = Player.Character
-    if not originalCharacter then return end
+    if state and not isReanimated then
 
-    originalCharacter.Archivable = true
-    cloneCharacter = originalCharacter:Clone()
-    originalCharacter.Archivable = false
+        local char = Player.Character or Player.CharacterAdded:Wait()
+        if not char then return end
 
-    cloneCharacter.Name = originalCharacter.Name .. "Celeste"
+        originalCharacter = char
 
-    for _, v in ipairs(cloneCharacter:GetDescendants()) do
-        if v:IsA("Sound") then
-            v:Destroy()
-        elseif v:IsA("BasePart") then
-            v.CanCollide = false
-            v.Anchored = false
+        originalCharacter.Archivable = true
+        cloneCharacter = originalCharacter:Clone()
+        originalCharacter.Archivable = false
+
+        if not cloneCharacter then
+            warn("Clone failed")
+            return
         end
-    end
 
-    cloneCharacter.Parent = workspace
+        cloneCharacter.Name = Player.Name .. "Xotic"
 
-    Player.Character = cloneCharacter
-    Camera.CameraSubject = cloneCharacter:WaitForChild("Humanoid")
-
-    ragdoll()
-
-    reanimConnection = RunService.Heartbeat:Connect(function()
-        if not originalCharacter or not cloneCharacter then return end
-
-        for _, part in ipairs(originalCharacter:GetChildren()) do
-            if part:IsA("BasePart") then
-                local clonePart = cloneCharacter:FindFirstChild(part.Name)
-                if clonePart then
-                    part.CFrame = clonePart.CFrame
-                    part.AssemblyLinearVelocity = Vector3.zero
-                    part.AssemblyAngularVelocity = Vector3.zero
-                end
+        for _, v in ipairs(cloneCharacter:GetDescendants()) do
+            if v:IsA("Sound") then
+                v:Destroy()
+            elseif v:IsA("BasePart") then
+                v.CanCollide = false
+                v.Anchored = false
             end
         end
-    end)
 
-    isReanimated = true
-end
+        cloneCharacter.Parent = workspace
 
+        -- force ensure it exists
+        task.wait()
 
-local function stopReanimation()
-    if not isReanimated then return end
+        Player.Character = cloneCharacter
 
-    if reanimConnection then
-        reanimConnection:Disconnect()
-        reanimConnection = nil
-    end
-
-    if originalCharacter and cloneCharacter then
-        local origRoot = originalCharacter:FindFirstChild("HumanoidRootPart")
-        local cloneRoot = cloneCharacter:FindFirstChild("HumanoidRootPart")
-
-        if origRoot and cloneRoot then
-            origRoot.CFrame = cloneRoot.CFrame
+        local cloneHum = cloneCharacter:FindFirstChildOfClass("Humanoid")
+        if cloneHum then
+            workspace.CurrentCamera.CameraSubject = cloneHum
         end
 
-        Player.Character = originalCharacter
-        Camera.CameraSubject = originalCharacter:FindFirstChildOfClass("Humanoid")
+        ragdoll()
+
+        reanimConnection = RunService.Heartbeat:Connect(function()
+
+            if not originalCharacter or not cloneCharacter then return end
+            if not originalCharacter.Parent then return end
+
+            for _, part in ipairs(originalCharacter:GetChildren()) do
+                if part:IsA("BasePart") then
+                    local clonePart = cloneCharacter:FindFirstChild(part.Name)
+                    if clonePart then
+                        part.CFrame = clonePart.CFrame
+                        part.AssemblyLinearVelocity = Vector3.zero
+                        part.AssemblyAngularVelocity = Vector3.zero
+                    end
+                end
+            end
+
+        end)
+
+        isReanimated = true
+
+    elseif not state and isReanimated then
+
+        if reanimConnection then
+            reanimConnection:Disconnect()
+            reanimConnection = nil
+        end
+
+        if originalCharacter and cloneCharacter then
+
+            local origRoot = originalCharacter:FindFirstChild("HumanoidRootPart")
+            local cloneRoot = cloneCharacter:FindFirstChild("HumanoidRootPart")
+
+            if origRoot and cloneRoot then
+                origRoot.CFrame = cloneRoot.CFrame
+            end
+
+            Player.Character = originalCharacter
+
+            local origHum = originalCharacter:FindFirstChildOfClass("Humanoid")
+            if origHum then
+                workspace.CurrentCamera.CameraSubject = origHum
+            end
+        end
+
+        if cloneCharacter then
+            cloneCharacter:Destroy()
+            cloneCharacter = nil
+        end
+
+        unragdoll()
+
+        originalCharacter = nil
+        isReanimated = false
     end
 
-    if cloneCharacter then
-        cloneCharacter:Destroy()
-        cloneCharacter = nil
-    end
+end)
 
-    unragdoll()
-
-    originalCharacter = nil
-    isReanimated = false
-end
-
-
-
+--[[ REANIMATION FUNCTIONS ]]--
 
 --[[ PRESETS ]]--
 ui:AddToggle(sections.reanimPresets, "Invisible", false, function(value)
