@@ -2701,7 +2701,7 @@ local function gp(parent, name, className)
     return nil
 end
 
-local function ConvertToR6(c)
+--[[local function ConvertToR6(c)
     local hum1 = c:FindFirstChildOfClass("Humanoid")
     if hum1 and hum1.RigType == Enum.HumanoidRigType.R15 then
         local part = gp(c, "HumanoidRootPart", "BasePart") or gp(c, "UpperTorso", "BasePart") or gp(c, "LowerTorso", "BasePart") or gp(c, "Head", "BasePart") or c:FindFirstChildWhichIsA("BasePart")
@@ -2852,6 +2852,7 @@ function unanimate(char)
     if cloned() then char = cloned() else char = getchar() end
     char:WaitForChild("Animate").Enabled = false
 end
+]]--
 
 --[[ REANIMATION TAB ]]--
 local Players = game:GetService("Players")
@@ -4551,13 +4552,13 @@ ui:AddSlider(sections.visualsTime, "Change Time [ Hours ]", 0, 24, 14.5, functio
 end)
 
 --[[ MISC TAB ]]--
-ui:AddToggle(sections.miscMap, "Void Walk", true, function()
+ui:AddToggle(sections.miscMap, "Void Walk", false, function()
     if not workspace:FindFirstChild("XoticVoid") then
         local void = Instance.new("Part", workspace)
         void.Anchored = true
-        void.Size = Vector3.new(5000, 16, 5000)
-        void.Position = Vector3.new(66, -8, 72.5)
-        void.Transparency = 1
+        void.Size = Vector3.new(20000, 16, 20000)
+        void.Position = Vector3.new(0, -8, 0)
+        void.Transparency = 0.8
     else
         workspace:FindFirstChild("XoticVoid"):Destroy()
     end
