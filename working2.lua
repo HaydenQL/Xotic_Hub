@@ -2528,62 +2528,13 @@ function XoticUI:CreateNotification(title, message, duration, notificationType)
     }
 end
 
---UI Table
+
 local uiTable = (function()
-
     local main = XoticUI:new("Xotic Hub", UDim2.new(0.5, 0, 0.5))
-
-    --// TAB SCROLL SYSTEM
-    task.spawn(function()
-        task.wait(0.5)
-
-        local gui = main.gui or main._gui or main.GUI or main.Container
-        if not gui then return end
-
-        local tabBar
-
-        -- Find the tab container automatically
-        for _, v in pairs(gui:GetDescendants()) do
-            if v:IsA("Frame") and v:FindFirstChildOfClass("UIListLayout") then
-                if v.Name:lower():find("tab") then
-                    tabBar = v
-                    break
-                end
-            end
-        end
-
-        if not tabBar then return end
-        if tabBar.Parent:IsA("ScrollingFrame") then return end
-
-        local scroll = Instance.new("ScrollingFrame")
-        scroll.Name = "TabScroller"
-        scroll.Size = tabBar.Size
-        scroll.Position = tabBar.Position
-        scroll.BackgroundTransparency = 1
-        scroll.BorderSizePixel = 0
-        scroll.ScrollBarThickness = 4
-        scroll.ScrollingDirection = Enum.ScrollingDirection.X
-        scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-        scroll.Parent = tabBar.Parent
-
-        tabBar.Parent = scroll
-        tabBar.Size = UDim2.new(0, tabBar.AbsoluteSize.X, 1, 0)
-
-        local layout = tabBar:FindFirstChildOfClass("UIListLayout")
-        if layout then
-            local function updateCanvas()
-                scroll.CanvasSize = UDim2.new(0, layout.AbsoluteContentSize.X + 10, 0, 0)
-            end
-
-            updateCanvas()
-            layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
-        end
-    end)
 
     return {
         main = main,
         tabs = {
-
             reanimation = (function()
                 local tab = main:AddTab("Reanimation")
                 return {
@@ -2631,6 +2582,8 @@ local uiTable = (function()
                 }
             end)(),
 
+
+                
             guis = (function()
                 local tab = main:AddTab("GUIs")
                 return {
@@ -2653,6 +2606,7 @@ local uiTable = (function()
                 }
             end)(),
 
+            --[[settings]]--
             settings = (function()
                 local tab = main:AddTab("Settings")
                 return {
@@ -2663,22 +2617,60 @@ local uiTable = (function()
                     }
                 }
             end)(),
-
+                
+             --[[admin]]--
             admin = (function()
                 local tab = main:AddTab("Admin")
                 return {
                     tab = tab,
                     sections = {
                         rep = main:AddSection(tab, "report", "left"),
+
                     }
                 }
             end)(),
-
         }
     }
 end)()
 
 local ui = uiTable.main
+local sections = {
+    --[[ REANIMATION ]]--
+    reanimOptions = uiTable.tabs.reanimation.sections.options,
+    reanimScaling = uiTable.tabs.reanimation.sections.scaling,
+    reanimMisc = uiTable.tabs.reanimation.sections.misc,
+    reanimPresets = uiTable.tabs.reanimation.sections.presets,
+    
+    --[[ VOICE ]]--
+    voiceSettings = uiTable.tabs.voice.sections.settings,
+    
+    --[[ VISUALS ]]--
+    visualsESP = uiTable.tabs.visuals.sections.esp,
+    visualsCamera = uiTable.tabs.visuals.sections.camera,
+    visualsRain = uiTable.tabs.visuals.sections.rain,
+    visualsTime = uiTable.tabs.visuals.sections.time,
+    
+    --[[ MISC ]]--
+    miscMap = uiTable.tabs.misc.sections.map,
+    miscRejoin = uiTable.tabs.misc.sections.rejoin,
+
+    --[[ GUIs ]]--
+    guisGui = uiTable.tabs.guis.sections.gui,
+    
+    --[[ ABOUT ]]--
+    aboutInfo = uiTable.tabs.about.sections.info,
+    aboutCredits = uiTable.tabs.about.sections.credits,
+    aboutKeybinds = uiTable.tabs.about.sections.keybinds,
+
+    --[[ SETTINGS ]]--
+    settingsKeys = uiTable.tabs.settings.sections.keys,
+    settingsTrip = uiTable.tabs.settings.sections.trip,
+    
+
+    
+
+    
+}
 
 --[[ VARIABLES ]]--
 local isReanimated = false
@@ -4621,7 +4613,7 @@ ui:AddToggle(sections.miscMap, "Void Walk", true, function()
     if not workspace:FindFirstChild("XoticVoid") then
         local void = Instance.new("Part", workspace)
         void.Anchored = true
-        void.Size = Vector3.new(2048, 16, 2048)
+        void.Size = Vector3.new(5000, 16, 5000)
         void.Position = Vector3.new(66, -8, 72.5)
         void.Transparency = 1
     else
@@ -4648,7 +4640,7 @@ ui:AddButton(sections.guisGui, "Xotic All Emotes", function()
 end)
 
 --[[ ABOUT TAB ]]--
-ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
+ui:AddLabel(sections.aboutInfo, "Made by Xotic", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutCredits, "• Added ! commands.\n !Headsit (username)\n Headsit is buggy (sometimes needs lowercase or uppercase) \n ", UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
@@ -6273,6 +6265,12 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/ma
 
 --Headsit
 loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main//Headsit5.lua"))()
+
+--JerkOff r15
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/refs/heads/main/Jerk_r15.lua"))()
+
+--JerkOff r6
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/refs/heads/main/Jerk_r6.lua"))()
 -- Notify user to check About Tab
 pcall(function()
     game.StarterGui:SetCore("SendNotification", {
