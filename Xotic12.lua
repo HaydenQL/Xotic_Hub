@@ -2529,6 +2529,9 @@ function XoticUI:CreateNotification(title, message, duration, notificationType)
 end
 
 --[[REANIMATION TOGGLE]]--
+local uiTable = (function()
+    local main = XoticUI:new("Xotic Hub", UDim2.new(0.5, 0, 0.5))
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
