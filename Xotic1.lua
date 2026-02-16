@@ -2541,8 +2541,6 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         options = main:AddSection(tab, "Reanimation Module", "left"),
-                        scaling = main:AddSection(tab, "Scaling Module", "left"),
-                        misc = main:AddSection(tab, "Misc Module", "left"),
                         presets = main:AddSection(tab, "Presets Module", "right")
                     }
                 }
@@ -2637,8 +2635,6 @@ local ui = uiTable.main
 local sections = {
     --[[ REANIMATION ]]--
     reanimOptions = uiTable.tabs.reanimation.sections.options,
-    reanimScaling = uiTable.tabs.reanimation.sections.scaling,
-    reanimMisc = uiTable.tabs.reanimation.sections.misc,
     reanimPresets = uiTable.tabs.reanimation.sections.presets,
     
     --[[ VOICE ]]--
@@ -2865,15 +2861,15 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(value)
         stopReanimation()
     end
 end)
---[[ OPTIONS ]]--
-local originalCharacter
-local cloneCharacter
-local reanimConnection
+--[[ REANIMATION FUNCTIONS ]]--
+local originalCharacter = nil
+local cloneCharacter = nil
+local reanimConnection = nil
 
 local function startReanimation()
     if isReanimated then return end
 
-    originalCharacter = getchar()
+    originalCharacter = Player.Character
     if not originalCharacter then return end
 
     originalCharacter.Archivable = true
@@ -2882,28 +2878,20 @@ local function startReanimation()
 
     cloneCharacter.Name = originalCharacter.Name .. "Celeste"
 
-    -- remove all sounds only
     for _, v in ipairs(cloneCharacter:GetDescendants()) do
         if v:IsA("Sound") then
             v:Destroy()
-        end
-    end
-
-    -- ensure clone physics clean
-    for _, v in ipairs(cloneCharacter:GetDescendants()) do
-        if v:IsA("BasePart") then
-            v.Anchored = false
+        elseif v:IsA("BasePart") then
             v.CanCollide = false
+            v.Anchored = false
         end
     end
 
     cloneCharacter.Parent = workspace
 
-    -- switch character
     Player.Character = cloneCharacter
     Camera.CameraSubject = cloneCharacter:WaitForChild("Humanoid")
 
-    animate()
     ragdoll()
 
     reanimConnection = RunService.Heartbeat:Connect(function()
@@ -2912,7 +2900,7 @@ local function startReanimation()
         for _, part in ipairs(originalCharacter:GetChildren()) do
             if part:IsA("BasePart") then
                 local clonePart = cloneCharacter:FindFirstChild(part.Name)
-                if clonePart and clonePart:IsA("BasePart") then
+                if clonePart then
                     part.CFrame = clonePart.CFrame
                     part.AssemblyLinearVelocity = Vector3.zero
                     part.AssemblyAngularVelocity = Vector3.zero
@@ -2924,6 +2912,7 @@ local function startReanimation()
     isReanimated = true
 end
 
+
 local function stopReanimation()
     if not isReanimated then return end
 
@@ -2931,8 +2920,6 @@ local function stopReanimation()
         reanimConnection:Disconnect()
         reanimConnection = nil
     end
-
-    unragdoll()
 
     if originalCharacter and cloneCharacter then
         local origRoot = originalCharacter:FindFirstChild("HumanoidRootPart")
@@ -2943,7 +2930,7 @@ local function stopReanimation()
         end
 
         Player.Character = originalCharacter
-        Camera.CameraSubject = originalCharacter:WaitForChild("Humanoid")
+        Camera.CameraSubject = originalCharacter:FindFirstChildOfClass("Humanoid")
     end
 
     if cloneCharacter then
@@ -2951,9 +2938,12 @@ local function stopReanimation()
         cloneCharacter = nil
     end
 
+    unragdoll()
+
     originalCharacter = nil
     isReanimated = false
 end
+
 
 
 
