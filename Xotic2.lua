@@ -2855,12 +2855,15 @@ end
 
 --[[ REANIMATION TAB ]]--
 ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(value)
+    print("Toggle fired:", value)
+
     if value then
         startReanimation()
     else
         stopReanimation()
     end
 end)
+
 --[[ REANIMATION FUNCTIONS ]]--
 local originalCharacter = nil
 local cloneCharacter = nil
