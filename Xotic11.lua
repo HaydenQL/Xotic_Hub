@@ -2539,7 +2539,7 @@ local cloneCharacter = nil
 local reanimConnection = nil
 local isReanimated = false
 
-ui:AddToggle(uiTable.tabs.reanimation.sections.options, "Reanimation", false, function(state)
+ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
     if state and not isReanimated then
 
