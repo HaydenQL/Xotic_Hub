@@ -4567,7 +4567,7 @@ ui:AddToggle(sections.miscMap, "Void Walk", false, function(state)
         void.CanCollide = true
         void.Transparency = 0.8
         void.Size = Vector3.new(1100000000, 16, 1100000000)
-        void.Position = Vector3.new(0, -8, 0)
+        void.Position = Vector3.new(2, -8, -482)
         void.Parent = workspace
 
     else
