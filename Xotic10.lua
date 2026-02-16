@@ -2528,112 +2528,140 @@ function XoticUI:CreateNotification(title, message, duration, notificationType)
     }
 end
 
+--[[REANIMATION TOGGLE]]--
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
-local uiTable = (function()
-    local main = XoticUI:new("Xotic Hub", UDim2.new(0.5, 0, 0.5))
+local Player = Players.LocalPlayer
 
-    return {
-        main = main,
-        tabs = {
-            reanimation = (function()
-                local tab = main:AddTab("Reanimation")
-                return {
-                    tab = tab,
-                    sections = {
-                        options = main:AddSection(tab, "Reanimation Module", "left"),
-                        presets = main:AddSection(tab, "Presets Module", "right")
-                    }
-                }
-            end)(),
+local originalCharacter = nil
+local cloneCharacter = nil
+local reanimConnection = nil
+local isReanimated = false
 
-            voice = (function()
-                local tab = main:AddTab("Voice")
-                return {
-                    tab = tab,
-                    sections = {
-                        settings = main:AddSection(tab, "Voice Module", "left"),
-                    }
-                }
-            end)(),
+ui:AddToggle(uiTable.tabs.reanimation.sections.options, "Reanimation", false, function(state)
 
-            visuals = (function()
-                local tab = main:AddTab("Visuals")
-                return {
-                    tab = tab,
-                    sections = {
-                        camera = main:AddSection(tab, "Camera Module", "left"),
-                        esp = main:AddSection(tab, "ESP Module", "left"),
-                        rain = main:AddSection(tab, "Rain Module", "right"),
-                        time = main:AddSection(tab, "Time Module", "right")
-                    }
-                }
-            end)(),
+    if state and not isReanimated then
 
-            misc = (function()
-                local tab = main:AddTab("Misc")
-                return {
-                    tab = tab,
-                    sections = {
-                        map = main:AddSection(tab, "Map Module", "left"),
-                        rejoin = main:AddSection(tab, "Server", "right"),
-                    }
-                }
-            end)(),
+        originalCharacter = Player.Character or Player.CharacterAdded:Wait()
+        if not originalCharacter then return end
 
+        local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
+        local originalRoot = originalCharacter:FindFirstChild("HumanoidRootPart")
+        if not originalHum or not originalRoot then return end
 
-                
-            guis = (function()
-                local tab = main:AddTab("GUIs")
-                return {
-                    tab = tab,
-                    sections = {
-                        gui = main:AddSection(tab, "GUI Module", "left"),
-                    }
-                }
-            end)(),
+        -- Clone full character
+        originalCharacter.Archivable = true
+        cloneCharacter = originalCharacter:Clone()
+        originalCharacter.Archivable = false
 
-            about = (function()
-                local tab = main:AddTab("About")
-                return {
-                    tab = tab,
-                    sections = {
-                        info = main:AddSection(tab, "Script Information", "left"),
-                        credits = main:AddSection(tab, "Update v1.0.2\n", "right"),
-                        keybinds = main:AddSection(tab, "Keybinds", "Left")
-                    }
-                }
-            end)(),
+        if not cloneCharacter then return end
 
-            --[[settings]]--
-            settings = (function()
-                local tab = main:AddTab("Settings")
-                return {
-                    tab = tab,
-                    sections = {
-                        keys = main:AddSection(tab, "Facefuck", "left"),
-                        trip = main:AddSection(tab, "Trip", "right"),
-                    }
-                }
-            end)(),
-                
-             --[[admin]]--
-            admin = (function()
-                local tab = main:AddTab("Admin")
-                return {
-                    tab = tab,
-                    sections = {
-                        rep = main:AddSection(tab, "report", "left"),
+        cloneCharacter.Name = Player.Name .. "Xotic"
 
-                    }
-                }
-            end)(),
-        }
-    }
-end)()
+        -- Remove sounds only
+        for _, v in ipairs(cloneCharacter:GetDescendants()) do
+            if v:IsA("Sound") then
+                v:Destroy()
+            elseif v:IsA("BasePart") then
+                v.Anchored = false
+                v.CanCollide = false
+            end
+        end
+
+        cloneCharacter.Parent = workspace
+
+        -- Fire ragdoll on ORIGINAL before switching
+        ragdoll()
+
+        -- Switch character
+        Player.Character = cloneCharacter
+
+        local cloneHum = cloneCharacter:FindFirstChildOfClass("Humanoid")
+        local cloneRoot = cloneCharacter:FindFirstChild("HumanoidRootPart")
+
+        if cloneHum then
+            workspace.CurrentCamera.CameraSubject = cloneHum
+            cloneHum:ChangeState(Enum.HumanoidStateType.Physics)
+            task.wait()
+            cloneHum:ChangeState(Enum.HumanoidStateType.GettingUp)
+        end
+
+        -- Completely replace Animate for clean bind
+        local oldAnimate = cloneCharacter:FindFirstChild("Animate")
+        if oldAnimate then
+            oldAnimate:Destroy()
+        end
+
+        local originalAnimate = originalCharacter:FindFirstChild("Animate")
+        if originalAnimate then
+            local newAnimate = originalAnimate:Clone()
+            newAnimate.Parent = cloneCharacter
+        end
+
+        -- Sync original body to clone every frame
+        reanimConnection = RunService.Heartbeat:Connect(function()
+
+            if not originalCharacter or not cloneCharacter then return end
+            if not originalCharacter.Parent then return end
+
+            for _, part in ipairs(originalCharacter:GetChildren()) do
+                if part:IsA("BasePart") then
+                    local clonePart = cloneCharacter:FindFirstChild(part.Name)
+                    if clonePart then
+                        part.CFrame = clonePart.CFrame
+                        part.AssemblyLinearVelocity = Vector3.zero
+                        part.AssemblyAngularVelocity = Vector3.zero
+                    end
+                end
+            end
+
+        end)
+
+        isReanimated = true
+
+    elseif not state and isReanimated then
+
+        if reanimConnection then
+            reanimConnection:Disconnect()
+            reanimConnection = nil
+        end
+
+        if originalCharacter and cloneCharacter then
+
+            local origRoot = originalCharacter:FindFirstChild("HumanoidRootPart")
+            local cloneRoot = cloneCharacter:FindFirstChild("HumanoidRootPart")
+
+            if origRoot and cloneRoot then
+                origRoot.CFrame = cloneRoot.CFrame
+            end
+
+            Player.Character = originalCharacter
+
+            local origHum = originalCharacter:FindFirstChildOfClass("Humanoid")
+            if origHum then
+                workspace.CurrentCamera.CameraSubject = origHum
+                origHum:ChangeState(Enum.HumanoidStateType.GettingUp)
+            end
+        end
+
+        if cloneCharacter then
+            cloneCharacter:Destroy()
+            cloneCharacter = nil
+        end
+
+        unragdoll()
+
+        originalCharacter = nil
+        isReanimated = false
+    end
+
+end)
+
 
 local ui = uiTable.main
 local sections = {
-    --[[ REANIMATION ]]--
+    --[[ REANIMATION TABS ]]--
     reanimOptions = uiTable.tabs.reanimation.sections.options,
     reanimPresets = uiTable.tabs.reanimation.sections.presets,
     
