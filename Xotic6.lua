@@ -4552,16 +4552,33 @@ ui:AddSlider(sections.visualsTime, "Change Time [ Hours ]", 0, 24, 14.5, functio
 end)
 
 --[[ MISC TAB ]]--
-ui:AddToggle(sections.miscMap, "Void Walk", false, function()
-    if not workspace:FindFirstChild("XoticVoid") then
-        local void = Instance.new("Part", workspace)
+ui:AddToggle(sections.miscMap, "Void Walk", false, function(state)
+
+    if state then
+
+        local existing = workspace:FindFirstChild("XoticVoid")
+        if existing then
+            existing:Destroy()
+        end
+
+        local void = Instance.new("Part")
+        void.Name = "XoticVoid"
         void.Anchored = true
+        void.CanCollide = true
+        void.Transparency = 0.8
         void.Size = Vector3.new(20000, 16, 20000)
         void.Position = Vector3.new(0, -8, 0)
-        void.Transparency = 0.8
+        void.Parent = workspace
+
     else
-        workspace:FindFirstChild("XoticVoid"):Destroy()
+
+        local existing = workspace:FindFirstChild("XoticVoid")
+        if existing then
+            existing:Destroy()
+        end
+
     end
+
 end)
 
 ui:AddButton(sections.miscRejoin, "Rejoin", function()
