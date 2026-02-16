@@ -4613,7 +4613,7 @@ ui:AddToggle(sections.miscMap, "Void Walk", true, function()
     if not workspace:FindFirstChild("XoticVoid") then
         local void = Instance.new("Part", workspace)
         void.Anchored = true
-        void.Size = Vector3.new(2048, 16, 2048)
+        void.Size = Vector3.new(5000, 16, 5000)
         void.Position = Vector3.new(66, -8, 72.5)
         void.Transparency = 1
     else
@@ -4640,7 +4640,7 @@ ui:AddButton(sections.guisGui, "Xotic All Emotes", function()
 end)
 
 --[[ ABOUT TAB ]]--
-ui:AddLabel(sections.aboutInfo, "Made by Hayden", UI_CONFIG.AccentColor)
+ui:AddLabel(sections.aboutInfo, "Made by Xotic", UI_CONFIG.AccentColor)
 ui:AddLabel(sections.aboutInfo, "Version: " .. UI_CONFIG.Version, UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutCredits, "• Added ! commands.\n !Headsit (username)\n Headsit is buggy (sometimes needs lowercase or uppercase) \n ", UI_CONFIG.TextColor)
 ui:AddLabel(sections.aboutKeybinds, "• FaceFuck Key (Z)\n• Rewind Key (X)\n• All Emotes in GUI tab Key (,) to open it\n• Trip Key (V)\n ", UI_CONFIG.TextColor)
@@ -6265,6 +6265,12 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/ma
 
 --Headsit
 loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main//Headsit5.lua"))()
+
+--JerkOff r15
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/refs/heads/main/Jerk_r15.lua"))()
+
+--JerkOff r6
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/refs/heads/main/Jerk_r6.lua"))()
 -- Notify user to check About Tab
 pcall(function()
     game.StarterGui:SetCore("SendNotification", {
