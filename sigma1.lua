@@ -2528,15 +2528,14 @@ function XoticUI:CreateNotification(title, message, duration, notificationType)
     }
 end
 
---[[REANIMATION TOGGLE]]--
---// Create UI
+--[[ CREATE TAB ]]--
 local uiTable = (function()
-
     local main = XoticUI:new("Xotic Hub", UDim2.new(0.5, 0, 0.5))
 
     return {
         main = main,
         tabs = {
+
             reanimation = (function()
                 local tab = main:AddTab("Reanimation")
                 return {
@@ -2547,11 +2546,89 @@ local uiTable = (function()
                     }
                 }
             end)(),
+
+            voice = (function()
+                local tab = main:AddTab("Voice")
+                return {
+                    tab = tab,
+                    sections = {
+                        settings = main:AddSection(tab, "Voice Module", "left"),
+                    }
+                }
+            end)(),
+
+            visuals = (function()
+                local tab = main:AddTab("Visuals")
+                return {
+                    tab = tab,
+                    sections = {
+                        camera = main:AddSection(tab, "Camera Module", "left"),
+                        esp = main:AddSection(tab, "ESP Module", "left"),
+                        rain = main:AddSection(tab, "Rain Module", "right"),
+                        time = main:AddSection(tab, "Time Module", "right")
+                    }
+                }
+            end)(),
+
+            misc = (function()
+                local tab = main:AddTab("Misc")
+                return {
+                    tab = tab,
+                    sections = {
+                        map = main:AddSection(tab, "Map Module", "left"),
+                        rejoin = main:AddSection(tab, "Server", "right"),
+                    }
+                }
+            end)(),
+
+            guis = (function()
+                local tab = main:AddTab("GUIs")
+                return {
+                    tab = tab,
+                    sections = {
+                        gui = main:AddSection(tab, "GUI Module", "left"),
+                    }
+                }
+            end)(),
+
+            about = (function()
+                local tab = main:AddTab("About")
+                return {
+                    tab = tab,
+                    sections = {
+                        info = main:AddSection(tab, "Script Information", "left"),
+                        credits = main:AddSection(tab, "Update v1.0.2\n", "right"),
+                        keybinds = main:AddSection(tab, "Keybinds", "Left")
+                    }
+                }
+            end)(),
+
+            settings = (function()
+                local tab = main:AddTab("Settings")
+                return {
+                    tab = tab,
+                    sections = {
+                        keys = main:AddSection(tab, "Facefuck", "left"),
+                        trip = main:AddSection(tab, "Trip", "right"),
+                    }
+                }
+            end)(),
+
+            admin = (function()
+                local tab = main:AddTab("Admin")
+                return {
+                    tab = tab,
+                    sections = {
+                        rep = main:AddSection(tab, "report", "left"),
+                    }
+                }
+            end)(),
+
         }
     }
-
 end)()
 
+--[[REANIMATION TOGGLE]]--
 --// Section references
 local sections = {
     reanimOptions = uiTable.tabs.reanimation.sections.options,
