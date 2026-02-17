@@ -2876,7 +2876,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
         local humanoid = originalCharacter:FindFirstChildOfClass("Humanoid")
         if not root or not humanoid then return end
 
-        -- Clone character
+        -- Clone
         originalCharacter.Archivable = true
         cloneCharacter = originalCharacter:Clone()
         originalCharacter.Archivable = false
@@ -2884,45 +2884,46 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
         cloneCharacter.Name = Player.Name .. "_Reanim"
         cloneCharacter.Parent = workspace
 
-        -- Position clone exactly where you are
         local cloneRoot = cloneCharacter:FindFirstChild("HumanoidRootPart")
         if cloneRoot then
             cloneRoot.CFrame = root.CFrame
         end
 
-        -- Remove sounds
+        -- Disable clone physics collisions
         for _, v in ipairs(cloneCharacter:GetDescendants()) do
-            if v:IsA("Sound") then
-                v:Destroy()
+            if v:IsA("BasePart") then
+                v.CanCollide = false
             end
         end
 
-        -- Hide original body completely
+        -- Disable original collisions
         for _, v in ipairs(originalCharacter:GetDescendants()) do
             if v:IsA("BasePart") then
-                v.Transparency = 1
                 v.CanCollide = false
-            elseif v:IsA("Decal") then
-                v.Transparency = 1
             end
         end
 
-        -- Make camera follow clone
+        -- Camera follow clone
         local cloneHum = cloneCharacter:FindFirstChildOfClass("Humanoid")
         if cloneHum then
             workspace.CurrentCamera.CameraSubject = cloneHum
         end
 
-        -- Sync original to clone
+        -- Disable clone Animate (so only original animates)
+        if cloneCharacter:FindFirstChild("Animate") then
+            cloneCharacter.Animate.Disabled = true
+        end
+
+        -- Sync clone to original (NOT original to clone)
         reanimConnection = RunService.Heartbeat:Connect(function()
 
-            if not cloneCharacter or not originalCharacter then return end
+            if not originalCharacter or not cloneCharacter then return end
 
-            for _, part in ipairs(originalCharacter:GetDescendants()) do
+            for _, part in ipairs(cloneCharacter:GetDescendants()) do
                 if part:IsA("BasePart") then
-                    local clonePart = cloneCharacter:FindFirstChild(part.Name, true)
-                    if clonePart then
-                        part.CFrame = clonePart.CFrame
+                    local originalPart = originalCharacter:FindFirstChild(part.Name, true)
+                    if originalPart then
+                        part.CFrame = originalPart.CFrame
                         part.AssemblyLinearVelocity = Vector3.zero
                         part.AssemblyAngularVelocity = Vector3.zero
                     end
@@ -2941,18 +2942,14 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             reanimConnection = nil
         end
 
+        -- Restore collisions
         if originalCharacter then
-            -- Restore visibility
             for _, v in ipairs(originalCharacter:GetDescendants()) do
                 if v:IsA("BasePart") then
-                    v.Transparency = 0
                     v.CanCollide = true
-                elseif v:IsA("Decal") then
-                    v.Transparency = 0
                 end
             end
 
-            -- Camera back to original
             local hum = originalCharacter:FindFirstChildOfClass("Humanoid")
             if hum then
                 workspace.CurrentCamera.CameraSubject = hum
@@ -2968,6 +2965,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
     end
 
 end)
+
 
 
 --[[ PRESETS ]]--
