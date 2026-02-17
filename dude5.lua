@@ -4721,7 +4721,7 @@ end)
 
 
 
---[[Gui tab functions]]--
+--[[GUI TAB FUNCTIONS]]--
 --AllEmotes button functions
 function osint()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HaydenQL/Xotic_Hub/main/AllEmotes.lua"))()
@@ -5207,21 +5207,62 @@ function r15Suite()
         return keyframeData
     end
 
-    function AnimationManager:loadAnimation(id)
-        if self.cache[id] then
-            return self.cache[id]
+   function AnimationManager:loadAnimation(id)
+
+    if self.cache[id] then
+        return self.cache[id]
+    end
+    
+    local cachedData = FileSystem:loadAnimation(id)
+    if cachedData then
+        local anim = AnimationComponent.new(cachedData)
+        self.cache[id] = anim
+        return anim
+    end
+    
+    local success, asset = pcall(function()
+        return game:GetObjects("rbxassetid://" .. tostring(id))[1]
+    end)
+
+    if not success or not asset then
+        ui:CreateNotification("Error", "Failed to load animation: " .. id, 5, "error")
+        return nil
+    end
+
+    -- OLD KEYFRAME ANIMATION SUPPORT
+    if asset:IsA("KeyframeSequence") then
+        local keyframeData = self:processKeyframes(asset)
+        FileSystem:saveAnimation(id, keyframeData)
+
+        local anim = AnimationComponent.new(keyframeData)
+        self.cache[id] = anim
+        return anim
+    end
+
+    -- MODERN ROBLOX ANIMATION SUPPORT
+    if asset:IsA("Animation") then
+        local character = Players.LocalPlayer.Character
+        if not character then return nil end
+
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if not humanoid then return nil end
+
+        local animator = humanoid:FindFirstChildOfClass("Animator")
+        if not animator then
+            animator = Instance.new("Animator")
+            animator.Parent = humanoid
         end
-        
-        local cachedData = FileSystem:loadAnimation(id)
-        if cachedData then
-            local anim = AnimationComponent.new(cachedData)
-            self.cache[id] = anim
-            return anim
-        end
-        
-        local success, asset = pcall(function()
-    return game:GetObjects("rbxassetid://" .. id)[1]
-end)
+
+        local track = animator:LoadAnimation(asset)
+        track:Play()
+
+        ui:CreateNotification("Success", "Playing modern animation", 3, "success")
+        return nil
+    end
+
+    ui:CreateNotification("Error", "Unsupported animation type", 5, "error")
+    return nil
+end
 
 if not success or not asset then
     ui:CreateNotification("Error", "Failed to load animation: " .. id, 5, "error")
@@ -5361,7 +5402,8 @@ end
 
         local function onCharacterAdded(char)
             local player = Players.LocalPlayer
-            local expectedCloneName = "Xotic"
+            local expectedCloneName = Players.LocalPlayer.Name .. "Xotic"
+
             
             if char.Name ~= expectedCloneName then
                 self:cleanupCharacter()
