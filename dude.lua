@@ -2541,8 +2541,6 @@ local uiTable = (function()
                     tab = tab,
                     sections = {
                         options = main:AddSection(tab, "Reanimation Module", "left"),
-                        scaling = main:AddSection(tab, "Scaling Module", "left"),
-                        misc = main:AddSection(tab, "Misc Module", "left"),
                         presets = main:AddSection(tab, "Presets Module", "right")
                     }
                 }
