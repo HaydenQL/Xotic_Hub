@@ -2875,7 +2875,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
         local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
         if not originalHum then return end
 
-        -- Clone
+        -- Clone full character
         originalCharacter.Archivable = true
         cloneCharacter = originalCharacter:Clone()
         originalCharacter.Archivable = false
@@ -2884,6 +2884,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
         cloneCharacter.Name = Player.Name .. "Xotic"
 
+        -- Clean clone physics + remove sounds
         for _, v in ipairs(cloneCharacter:GetDescendants()) do
             if v:IsA("Sound") then
                 v:Destroy()
@@ -2896,9 +2897,9 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
         cloneCharacter.Parent = workspace
 
         -- Freeze original humanoid completely
-        originalHum:ChangeState(Enum.HumanoidStateType.Physics)
-        originalHum.AutoRotate = false
         originalHum.PlatformStand = true
+        originalHum.AutoRotate = false
+        originalHum:ChangeState(Enum.HumanoidStateType.Physics)
 
         -- Switch to clone
         Player.Character = cloneCharacter
@@ -2909,27 +2910,29 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             cloneHum:ChangeState(Enum.HumanoidStateType.GettingUp)
         end
 
-        -- Proper Animate reset
+        -- Replace Animate cleanly
         local oldAnimate = cloneCharacter:FindFirstChild("Animate")
         if oldAnimate then
             oldAnimate:Destroy()
         end
 
-        local newAnimate = originalCharacter:FindFirstChild("Animate")
-        if newAnimate then
-            newAnimate:Clone().Parent = cloneCharacter
+        local originalAnimate = originalCharacter:FindFirstChild("Animate")
+        if originalAnimate then
+            originalAnimate:Clone().Parent = cloneCharacter
         end
 
-        -- Sync original to clone
+        -- 1:1 animation + movement sync
         reanimConnection = RunService.Heartbeat:Connect(function()
 
             if not originalCharacter or not cloneCharacter then return end
             if not originalCharacter.Parent then return end
 
-            for _, part in ipairs(originalCharacter:GetChildren()) do
+            for _, part in ipairs(originalCharacter:GetDescendants()) do
                 if part:IsA("BasePart") then
-                    local clonePart = cloneCharacter:FindFirstChild(part.Name)
-                    if clonePart then
+
+                    local clonePart = cloneCharacter:FindFirstChild(part.Name, true)
+
+                    if clonePart and clonePart:IsA("BasePart") then
                         part.CFrame = clonePart.CFrame
                         part.AssemblyLinearVelocity = Vector3.zero
                         part.AssemblyAngularVelocity = Vector3.zero
@@ -2940,7 +2943,6 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
         end)
 
         isReanimated = true
-
 
     elseif not state and isReanimated then
 
@@ -2984,6 +2986,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
     end
 
 end)
+
 
 --[[ PRESETS ]]--
 ui:AddToggle(sections.reanimPresets, "Invisible", false, function(value)
