@@ -2529,17 +2529,42 @@ function XoticUI:CreateNotification(title, message, duration, notificationType)
 end
 
 --[[REANIMATION TOGGLE]]--
+--// Create UI
 local uiTable = (function()
+
     local main = XoticUI:new("Xotic Hub", UDim2.new(0.5, 0, 0.5))
 
+    return {
+        main = main,
+        tabs = {
+            reanimation = (function()
+                local tab = main:AddTab("Reanimation")
+                return {
+                    tab = tab,
+                    sections = {
+                        options = main:AddSection(tab, "Reanimation Module", "left"),
+                        presets = main:AddSection(tab, "Presets Module", "right")
+                    }
+                }
+            end)(),
+        }
+    }
+
+end)()
+
+--// Section references
+local sections = {
+    reanimOptions = uiTable.tabs.reanimation.sections.options,
+}
+
+--// Reanimation Logic
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-
 local Player = Players.LocalPlayer
 
-local originalCharacter = nil
-local cloneCharacter = nil
-local reanimConnection = nil
+local originalCharacter
+local cloneCharacter
+local reanimConnection
 local isReanimated = false
 
 ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
@@ -2549,11 +2574,6 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
         originalCharacter = Player.Character or Player.CharacterAdded:Wait()
         if not originalCharacter then return end
 
-        local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
-        local originalRoot = originalCharacter:FindFirstChild("HumanoidRootPart")
-        if not originalHum or not originalRoot then return end
-
-        -- Clone full character
         originalCharacter.Archivable = true
         cloneCharacter = originalCharacter:Clone()
         originalCharacter.Archivable = false
@@ -2562,7 +2582,6 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
         cloneCharacter.Name = Player.Name .. "Xotic"
 
-        -- Remove sounds only
         for _, v in ipairs(cloneCharacter:GetDescendants()) do
             if v:IsA("Sound") then
                 v:Destroy()
@@ -2574,15 +2593,15 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
         cloneCharacter.Parent = workspace
 
-        -- Fire ragdoll on ORIGINAL before switching
-        ragdoll()
+        -- Fire ragdoll on original before swap
+        if typeof(ragdoll) == "function" then
+            ragdoll()
+        end
 
         -- Switch character
         Player.Character = cloneCharacter
 
         local cloneHum = cloneCharacter:FindFirstChildOfClass("Humanoid")
-        local cloneRoot = cloneCharacter:FindFirstChild("HumanoidRootPart")
-
         if cloneHum then
             workspace.CurrentCamera.CameraSubject = cloneHum
             cloneHum:ChangeState(Enum.HumanoidStateType.Physics)
@@ -2590,7 +2609,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             cloneHum:ChangeState(Enum.HumanoidStateType.GettingUp)
         end
 
-        -- Completely replace Animate for clean bind
+        -- Replace Animate properly
         local oldAnimate = cloneCharacter:FindFirstChild("Animate")
         if oldAnimate then
             oldAnimate:Destroy()
@@ -2602,7 +2621,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             newAnimate.Parent = cloneCharacter
         end
 
-        -- Sync original body to clone every frame
+        -- Sync original to clone
         reanimConnection = RunService.Heartbeat:Connect(function()
 
             if not originalCharacter or not cloneCharacter then return end
@@ -2653,7 +2672,9 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             cloneCharacter = nil
         end
 
-        unragdoll()
+        if typeof(unragdoll) == "function" then
+            unragdoll()
+        end
 
         originalCharacter = nil
         isReanimated = false
