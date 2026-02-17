@@ -2864,6 +2864,7 @@ local originalCharacter
 local cloneCharacter
 local reanimConnection
 local isReanimated = false
+local disabledMotors = {}
 
 ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
@@ -2872,10 +2873,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
         originalCharacter = Player.Character or Player.CharacterAdded:Wait()
         if not originalCharacter then return end
 
-        local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
-        if not originalHum then return end
-
-        -- Clone full character
+        -- Clone
         originalCharacter.Archivable = true
         cloneCharacter = originalCharacter:Clone()
         originalCharacter.Archivable = false
@@ -2884,7 +2882,6 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
         cloneCharacter.Name = Player.Name .. "Xotic"
 
-        -- Clean clone physics + remove sounds
         for _, v in ipairs(cloneCharacter:GetDescendants()) do
             if v:IsA("Sound") then
                 v:Destroy()
@@ -2896,10 +2893,21 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
         cloneCharacter.Parent = workspace
 
-        -- Freeze original humanoid completely
-        originalHum.PlatformStand = true
-        originalHum.AutoRotate = false
-        originalHum:ChangeState(Enum.HumanoidStateType.Physics)
+        -- Disable ALL Motor6Ds on original
+        for _, v in ipairs(originalCharacter:GetDescendants()) do
+            if v:IsA("Motor6D") then
+                v.Enabled = false
+                table.insert(disabledMotors, v)
+            end
+        end
+
+        -- Freeze original humanoid
+        local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
+        if originalHum then
+            originalHum.PlatformStand = true
+            originalHum.AutoRotate = false
+            originalHum:ChangeState(Enum.HumanoidStateType.Physics)
+        end
 
         -- Switch to clone
         Player.Character = cloneCharacter
@@ -2910,22 +2918,10 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             cloneHum:ChangeState(Enum.HumanoidStateType.GettingUp)
         end
 
-        -- Replace Animate cleanly
-        local oldAnimate = cloneCharacter:FindFirstChild("Animate")
-        if oldAnimate then
-            oldAnimate:Destroy()
-        end
-
-        local originalAnimate = originalCharacter:FindFirstChild("Animate")
-        if originalAnimate then
-            originalAnimate:Clone().Parent = cloneCharacter
-        end
-
-        -- 1:1 animation + movement sync
+        -- Sync original to clone (true 1:1)
         reanimConnection = RunService.Heartbeat:Connect(function()
 
             if not originalCharacter or not cloneCharacter then return end
-            if not originalCharacter.Parent then return end
 
             for _, part in ipairs(originalCharacter:GetDescendants()) do
                 if part:IsA("BasePart") then
@@ -2944,6 +2940,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
         isReanimated = true
 
+
     elseif not state and isReanimated then
 
         if reanimConnection then
@@ -2951,9 +2948,17 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             reanimConnection = nil
         end
 
+        -- Re-enable Motor6Ds
+        for _, motor in ipairs(disabledMotors) do
+            if motor then
+                motor.Enabled = true
+            end
+        end
+
+        disabledMotors = {}
+
         if originalCharacter and cloneCharacter then
 
-            local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
             local origRoot = originalCharacter:FindFirstChild("HumanoidRootPart")
             local cloneRoot = cloneCharacter:FindFirstChild("HumanoidRootPart")
 
@@ -2961,7 +2966,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
                 origRoot.CFrame = cloneRoot.CFrame
             end
 
-            -- Restore original humanoid
+            local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
             if originalHum then
                 originalHum.PlatformStand = false
                 originalHum.AutoRotate = true
@@ -2969,11 +2974,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             end
 
             Player.Character = originalCharacter
-
-            local origHum = originalCharacter:FindFirstChildOfClass("Humanoid")
-            if origHum then
-                workspace.CurrentCamera.CameraSubject = origHum
-            end
+            workspace.CurrentCamera.CameraSubject = originalHum
         end
 
         if cloneCharacter then
@@ -2986,6 +2987,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
     end
 
 end)
+
 
 
 --[[ PRESETS ]]--
