@@ -5219,16 +5219,36 @@ function r15Suite()
             return anim
         end
         
-        local success, animation = pcall(function()
-            return game:GetObjects("rbxassetid://" .. id)[1]
-        end)
+        local success, asset = pcall(function()
+    return game:GetObjects("rbxassetid://" .. id)[1]
+end)
+
+if not success or not asset then
+    ui:CreateNotification("Error", "Failed to load animation: " .. id, 5, "error")
+    return nil
+end
+
+local keyframeSequence
+
+if asset:IsA("KeyframeSequence") then
+    keyframeSequence = asset
+
+elseif asset:IsA("Animation") then
+    local animator = Instance.new("Animator")
+    local humanoid = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return nil end
+    animator.Parent = humanoid
+    
+    local track = animator:LoadAnimation(asset)
+    track:Play()
+    return nil -- bypass custom system for modern anims
+
+else
+    ui:CreateNotification("Error", "Unsupported animation type: " .. id, 5, "error")
+    return nil
+end
         
-        if not success or not animation or not animation:IsA('KeyframeSequence') then
-            ui:CreateNotification("Error", "Failed to load animation: " .. id, 5, "error")
-            return nil
-        end
-        
-        local keyframeData = self:processKeyframes(animation)
+        local keyframeData = self:processKeyframes(keyframeSequence)
         FileSystem:saveAnimation(id, keyframeData)
         
         local anim = AnimationComponent.new(keyframeData)
