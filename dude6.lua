@@ -2299,7 +2299,7 @@ function XoticUI:AddDropdown(section, name, options, default, callback)
     return dropdownInterface
 end
 
-function XoticUI:CreateNotification(title, message, duration, notificationType)
+function XoticNotificationSystem:push(title, message, duration, notificationType)
     duration = duration or 3
     notificationType = notificationType or "info"
     
@@ -3080,7 +3080,7 @@ ui:AddToggle(sections.reanimPresets, "Flood Map", false, function(value)
         
         local originalChar = getchar()
         if not originalChar then
-            ui:CreateNotification("Error", "Original character not found", 3, "error")
+            NotificationSystem:push("Error", "Original character not found", 3, "error")
             return
         end
         
@@ -3109,7 +3109,7 @@ ui:AddToggle(sections.reanimPresets, "Flood Map", false, function(value)
         
         local hrp = originalChar:FindFirstChild("HumanoidRootPart")
         if not hrp then
-            ui:CreateNotification("Error", "HumanoidRootPart not found", 3, "error")
+            NotificationSystem:push("Error", "HumanoidRootPart not found", 3, "error")
             return
         end
         
@@ -3234,7 +3234,7 @@ ui:AddToggle(sections.reanimPresets, "Grab", false, function(value)
 
         local originalChar = getchar()
         if not originalChar then
-            ui:CreateNotification("Error", "Original character not found", 3, "error")
+            NotificationSystem:push("Error", "Original character not found", 3, "error")
             return
         end
         
@@ -3260,7 +3260,7 @@ ui:AddToggle(sections.reanimPresets, "Grab", false, function(value)
         end
         
         if not (leftHand and rightHand and upperTorso) then
-            ui:CreateNotification("Error", "Required arm parts not found", 3, "error")
+            NotificationSystem:push("Error", "Required arm parts not found", 3, "error")
             return
         end
         
@@ -3562,7 +3562,7 @@ ui:AddToggle(sections.reanimPresets, "Orbit", false, function(value)
         
         local originalChar = getchar()
         if not originalChar then
-            ui:CreateNotification("Error", "Original character not found", 3, "error")
+            NotificationSystem:push("Error", "Original character not found", 3, "error")
             return
         end
         
@@ -3570,7 +3570,7 @@ ui:AddToggle(sections.reanimPresets, "Orbit", false, function(value)
         
         local head = originalChar:FindFirstChild("Head")
         if not head then
-            ui:CreateNotification("Error", "Head not found", 3, "error")
+            NotificationSystem:push("Error", "Head not found", 3, "error")
             return
         end
         
@@ -3673,7 +3673,7 @@ ui:AddToggle(sections.reanimPresets, "Noodle Arms", false, function(value)
 
         local originalChar = getchar()
         if not originalChar then
-            ui:CreateNotification("Error", "Original character not found", 3, "error")
+            NotificationSystem:push("Error", "Original character not found", 3, "error")
             return
         end
         
@@ -3704,7 +3704,7 @@ ui:AddToggle(sections.reanimPresets, "Noodle Arms", false, function(value)
         end
         
         if #armParts == 0 then
-            ui:CreateNotification("Error", "No arm parts found", 3, "error")
+            NotificationSystem:push("Error", "No arm parts found", 3, "error")
             return
         end
         
@@ -3834,7 +3834,7 @@ ui:AddToggle(sections.reanimPresets, "Snake", false, function(value)
 
         local originalChar = getchar()
         if not originalChar then
-            ui:CreateNotification("Error", "Original character not found", 3, "error")
+            NotificationSystem:push("Error", "Original character not found", 3, "error")
             return
         end
         
@@ -3843,7 +3843,7 @@ ui:AddToggle(sections.reanimPresets, "Snake", false, function(value)
         local head = originalChar:FindFirstChild("Head")
         local torso = originalChar:FindFirstChild("UpperTorso") or originalChar:FindFirstChild("Torso")
         if not head or not torso then
-            ui:CreateNotification("Error", "Required body parts not found", 3, "error")
+            NotificationSystem:push("Error", "Required body parts not found", 3, "error")
             return
         end
         
@@ -3976,7 +3976,7 @@ ui:AddToggle(sections.reanimPresets, "Annoy", false, function(value)
 
         local originalChar = getchar()
         if not originalChar then
-            ui:CreateNotification("Error", "Original character not found", 3, "error")
+            NotificationSystem:push("Error", "Original character not found", 3, "error")
             return
         end
         
@@ -4005,7 +4005,7 @@ ui:AddToggle(sections.reanimPresets, "Annoy", false, function(value)
             local assignments = {}
             
             if #otherPlayers < 1 then
-                ui:CreateNotification("Warning", "Not enough players to annoy!", 3, "warning")
+                NotificationSystem:push("Warning", "Not enough players to annoy!", 3, "warning")
                 return {}
             end
             
@@ -4113,7 +4113,7 @@ ui:AddToggle(sections.reanimPresets, "Pole", false, function(value)
 
         local originalChar = getchar()
         if not originalChar then
-            ui:CreateNotification("Error", "Original character not found", 3, "error")
+            NotificationSystem:push("Error", "Original character not found", 3, "error")
             return
         end
         
@@ -4122,7 +4122,7 @@ ui:AddToggle(sections.reanimPresets, "Pole", false, function(value)
         local head = originalChar:FindFirstChild("Head")
         local torso = originalChar:FindFirstChild("UpperTorso") or originalChar:FindFirstChild("Torso")
         if not head or not torso then
-            ui:CreateNotification("Error", "Required body parts not found", 3, "error")
+            NotificationSystem:push("Error", "Required body parts not found", 3, "error")
             return
         end
         
@@ -4255,7 +4255,7 @@ ui:AddToggle(sections.reanimPresets, "Circle", false, function(value)
 
         local originalChar = getchar()
         if not originalChar then
-            ui:CreateNotification("Error", "Original character not found", 3, "error")
+            NotificationSystem:push("Error", "Original character not found", 3, "error")
             return
         end
         
@@ -4271,7 +4271,7 @@ ui:AddToggle(sections.reanimPresets, "Circle", false, function(value)
         
         local cloneHRP = cloned():FindFirstChild("HumanoidRootPart")
         if not cloneHRP then
-            ui:CreateNotification("Error", "HumanoidRootPart not found on clone", 3, "error")
+            NotificationSystem:push("Error", "HumanoidRootPart not found on clone", 3, "error")
             return
         end
         
@@ -5207,7 +5207,7 @@ function r15Suite()
         return keyframeData
     end
 
-   function AnimationManager:loadAnimation(id)
+function AnimationManager:loadAnimation(id)
 
     if self.cache[id] then
         return self.cache[id]
@@ -5225,11 +5225,11 @@ function r15Suite()
     end)
 
     if not success or not asset then
-        ui:CreateNotification("Error", "Failed to load animation: " .. id, 5, "error")
+        NotificationSystem:push("Error", "Failed to load animation: " .. id, "error", 5)
         return nil
     end
 
-    -- OLD KEYFRAME ANIMATION SUPPORT
+    -- Old KeyframeSequence support
     if asset:IsA("KeyframeSequence") then
         local keyframeData = self:processKeyframes(asset)
         FileSystem:saveAnimation(id, keyframeData)
@@ -5239,7 +5239,7 @@ function r15Suite()
         return anim
     end
 
-    -- MODERN ROBLOX ANIMATION SUPPORT
+    -- Modern Animation support
     if asset:IsA("Animation") then
         local character = Players.LocalPlayer.Character
         if not character then return nil end
@@ -5256,18 +5256,14 @@ function r15Suite()
         local track = animator:LoadAnimation(asset)
         track:Play()
 
-        ui:CreateNotification("Success", "Playing modern animation", 3, "success")
+        NotificationSystem:push("Success", "Playing modern animation", "success", 3)
         return nil
     end
 
-    ui:CreateNotification("Error", "Unsupported animation type", 5, "error")
+    NotificationSystem:push("Error", "Unsupported animation type", "error", 5)
     return nil
 end
 
-if not success or not asset then
-    ui:CreateNotification("Error", "Failed to load animation: " .. id, 5, "error")
-    return nil
-end
 
 local keyframeSequence
 
@@ -5285,7 +5281,7 @@ elseif asset:IsA("Animation") then
     return nil -- bypass custom system for modern anims
 
 else
-    ui:CreateNotification("Error", "Unsupported animation type: " .. id, 5, "error")
+    NotificationSystem:push("Error", "Unsupported animation type: " .. id, 5, "error")
     return nil
 end
         
@@ -5316,7 +5312,7 @@ end
 
     function AnimationManager:toggleAnimation(id)
         if not self.character or not self.joints then
-            ui:CreateNotification("Error", "Character not loaded", 5, "error")
+            NotificationSystem:push("Error", "Character not loaded", 5, "error")
             return
         end
         
@@ -5407,7 +5403,7 @@ end
             
             if char.Name ~= expectedCloneName then
                 self:cleanupCharacter()
-                ui:CreateNotification("Warning", "Please reanimate first before using animations", 5, "warning")
+                NotificationSystem:push("Warning", "Please reanimate first before using animations", 5, "warning")
                 return
             end
             
@@ -5435,10 +5431,10 @@ end
             self.connections.nameChanged = char:GetPropertyChangedSignal("Name"):Connect(function()
                 if char.Name ~= expectedCloneName then
                     self:cleanupCharacter()
-                    ui:CreateNotification("Warning", "Reanimation status lost", 5, "warning")
+                    NotificationSystem:push("Warning", "Reanimation status lost", 5, "warning")
                 end
             end)
-            ui:CreateNotification("Success", "Animations ready", 5, "success")
+            NotificationSystem:push("Success", "Animations ready", 5, "success")
         end
         
         local player = Players.LocalPlayer
@@ -5554,7 +5550,7 @@ end
                     end
                 end)
                 self:refreshAnimationList(self.ui.searchBox.Text)
-                ui:CreateNotification("Success", "Animation removed", 5, "success")
+                NotificationSystem:push("Success", "Animation removed", 5, "success")
             end)
             
             button.KeybindButton.MouseButton1Click:Connect(function()
@@ -6139,19 +6135,19 @@ end
                         end  
                         self:refreshAnimationList()
                         addPrompt.promptBg:Destroy()
-                        ui:CreateNotification("Success", "Animation added", 5, "success")
+                        NotificationSystem:push("Success", "Animation added", 5, "success")
                     else
-                        ui:CreateNotification("Error", "Invalid animation ID", 5, "error")
+                        NotificationSystem:push("Error", "Invalid animation ID", 5, "error")
                     end
                 else
-                    ui:CreateNotification("Error", "Please fill all fields", 5, "error")
+                    NotificationSystem:push("Error", "Please fill all fields", 5, "error")
                 end
             end)
         end)
         
         self.ui.gui.Parent = gethui()
         
-        ui:CreateNotification("Welcome", "Animation system has loaded!", 5, "info")
+        NotificationSystem:push("Welcome", "Animation system has loaded!", 5, "info")
         log("UI Initialized")
         
         return self
@@ -6337,7 +6333,7 @@ task.wait(1)
 
 
 --[[ WELCOME ]]--
-ui:CreateNotification("Welcome", "Xotic has been loaded successfully", 5, "info")
+NotificationSystem:push("Welcome", "Xotic has been loaded successfully", 5, "info")
 seperate("Loaded!")
 
 return XoticUI
