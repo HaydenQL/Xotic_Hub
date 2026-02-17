@@ -2633,7 +2633,7 @@ end)()
 
 local ui = uiTable.main
 local sections = {
-    --[[ REANIMATION TABS ]]--
+    --[[ REANIMATION ]]--
     reanimOptions = uiTable.tabs.reanimation.sections.options,
     reanimPresets = uiTable.tabs.reanimation.sections.presets,
     
@@ -2854,33 +2854,31 @@ function unanimate(char)
 end
 ]]--
 
---[[ REANIMATION TAB 1 ]]--
+--[[ REANIMATION FUNC ]]--
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local Player = Players.LocalPlayer
-local originalCharacter = nil
-local cloneCharacter = nil
-local reanimConnection = nil
+
+local originalCharacter
+local cloneCharacter
+local reanimConnection
 local isReanimated = false
+local disabledMotors = {}
 
 ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
     if state and not isReanimated then
 
-        local char = Player.Character or Player.CharacterAdded:Wait()
-        if not char then return end
+        originalCharacter = Player.Character or Player.CharacterAdded:Wait()
+        if not originalCharacter then return end
 
-        originalCharacter = char
-
+        -- Clone
         originalCharacter.Archivable = true
         cloneCharacter = originalCharacter:Clone()
         originalCharacter.Archivable = false
 
-        if not cloneCharacter then
-            warn("Clone failed")
-            return
-        end
+        if not cloneCharacter then return end
 
         cloneCharacter.Name = Player.Name .. "Xotic"
 
@@ -2888,34 +2886,49 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             if v:IsA("Sound") then
                 v:Destroy()
             elseif v:IsA("BasePart") then
-                v.CanCollide = false
                 v.Anchored = false
+                v.CanCollide = false
             end
         end
 
         cloneCharacter.Parent = workspace
 
-        -- force ensure it exists
-        task.wait()
+        -- Disable ALL Motor6Ds on original
+        for _, v in ipairs(originalCharacter:GetDescendants()) do
+            if v:IsA("Motor6D") then
+                v.Enabled = false
+                table.insert(disabledMotors, v)
+            end
+        end
 
+        -- Freeze original humanoid
+        local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
+        if originalHum then
+            originalHum.PlatformStand = true
+            originalHum.AutoRotate = false
+            originalHum:ChangeState(Enum.HumanoidStateType.Physics)
+        end
+
+        -- Switch to clone
         Player.Character = cloneCharacter
 
         local cloneHum = cloneCharacter:FindFirstChildOfClass("Humanoid")
         if cloneHum then
             workspace.CurrentCamera.CameraSubject = cloneHum
+            cloneHum:ChangeState(Enum.HumanoidStateType.GettingUp)
         end
 
-        ragdoll()
-
+        -- Sync original to clone (true 1:1)
         reanimConnection = RunService.Heartbeat:Connect(function()
 
             if not originalCharacter or not cloneCharacter then return end
-            if not originalCharacter.Parent then return end
 
-            for _, part in ipairs(originalCharacter:GetChildren()) do
+            for _, part in ipairs(originalCharacter:GetDescendants()) do
                 if part:IsA("BasePart") then
-                    local clonePart = cloneCharacter:FindFirstChild(part.Name)
-                    if clonePart then
+
+                    local clonePart = cloneCharacter:FindFirstChild(part.Name, true)
+
+                    if clonePart and clonePart:IsA("BasePart") then
                         part.CFrame = clonePart.CFrame
                         part.AssemblyLinearVelocity = Vector3.zero
                         part.AssemblyAngularVelocity = Vector3.zero
@@ -2927,12 +2940,22 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
         isReanimated = true
 
+
     elseif not state and isReanimated then
 
         if reanimConnection then
             reanimConnection:Disconnect()
             reanimConnection = nil
         end
+
+        -- Re-enable Motor6Ds
+        for _, motor in ipairs(disabledMotors) do
+            if motor then
+                motor.Enabled = true
+            end
+        end
+
+        disabledMotors = {}
 
         if originalCharacter and cloneCharacter then
 
@@ -2943,12 +2966,15 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
                 origRoot.CFrame = cloneRoot.CFrame
             end
 
-            Player.Character = originalCharacter
-
-            local origHum = originalCharacter:FindFirstChildOfClass("Humanoid")
-            if origHum then
-                workspace.CurrentCamera.CameraSubject = origHum
+            local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
+            if originalHum then
+                originalHum.PlatformStand = false
+                originalHum.AutoRotate = true
+                originalHum:ChangeState(Enum.HumanoidStateType.GettingUp)
             end
+
+            Player.Character = originalCharacter
+            workspace.CurrentCamera.CameraSubject = originalHum
         end
 
         if cloneCharacter then
@@ -2956,15 +2982,13 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             cloneCharacter = nil
         end
 
-        unragdoll()
-
         originalCharacter = nil
         isReanimated = false
     end
 
 end)
 
---[[ REANIMATION FUNCTIONS ]]--
+
 
 --[[ PRESETS ]]--
 ui:AddToggle(sections.reanimPresets, "Invisible", false, function(value)
