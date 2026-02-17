@@ -2633,7 +2633,7 @@ end)()
 
 local ui = uiTable.main
 local sections = {
-    --[[ REANIMATION TABS ]]--
+    --[[ REANIMATION ]]--
     reanimOptions = uiTable.tabs.reanimation.sections.options,
     reanimPresets = uiTable.tabs.reanimation.sections.presets,
     
@@ -2854,33 +2854,33 @@ function unanimate(char)
 end
 ]]--
 
---[[ REANIMATION TAB 1 ]]--
+--[[ REANIMATION FUNC ]]--
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local Player = Players.LocalPlayer
-local originalCharacter = nil
-local cloneCharacter = nil
-local reanimConnection = nil
+
+local originalCharacter
+local cloneCharacter
+local reanimConnection
 local isReanimated = false
 
 ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
     if state and not isReanimated then
 
-        local char = Player.Character or Player.CharacterAdded:Wait()
-        if not char then return end
+        originalCharacter = Player.Character or Player.CharacterAdded:Wait()
+        if not originalCharacter then return end
 
-        originalCharacter = char
+        local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
+        if not originalHum then return end
 
+        -- Clone
         originalCharacter.Archivable = true
         cloneCharacter = originalCharacter:Clone()
         originalCharacter.Archivable = false
 
-        if not cloneCharacter then
-            warn("Clone failed")
-            return
-        end
+        if not cloneCharacter then return end
 
         cloneCharacter.Name = Player.Name .. "Xotic"
 
@@ -2888,25 +2888,39 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             if v:IsA("Sound") then
                 v:Destroy()
             elseif v:IsA("BasePart") then
-                v.CanCollide = false
                 v.Anchored = false
+                v.CanCollide = false
             end
         end
 
         cloneCharacter.Parent = workspace
 
-        -- force ensure it exists
-        task.wait()
+        -- Freeze original humanoid completely
+        originalHum:ChangeState(Enum.HumanoidStateType.Physics)
+        originalHum.AutoRotate = false
+        originalHum.PlatformStand = true
 
+        -- Switch to clone
         Player.Character = cloneCharacter
 
         local cloneHum = cloneCharacter:FindFirstChildOfClass("Humanoid")
         if cloneHum then
             workspace.CurrentCamera.CameraSubject = cloneHum
+            cloneHum:ChangeState(Enum.HumanoidStateType.GettingUp)
         end
 
-        ragdoll()
+        -- Proper Animate reset
+        local oldAnimate = cloneCharacter:FindFirstChild("Animate")
+        if oldAnimate then
+            oldAnimate:Destroy()
+        end
 
+        local newAnimate = originalCharacter:FindFirstChild("Animate")
+        if newAnimate then
+            newAnimate:Clone().Parent = cloneCharacter
+        end
+
+        -- Sync original to clone
         reanimConnection = RunService.Heartbeat:Connect(function()
 
             if not originalCharacter or not cloneCharacter then return end
@@ -2927,6 +2941,7 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
         isReanimated = true
 
+
     elseif not state and isReanimated then
 
         if reanimConnection then
@@ -2936,11 +2951,19 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
 
         if originalCharacter and cloneCharacter then
 
+            local originalHum = originalCharacter:FindFirstChildOfClass("Humanoid")
             local origRoot = originalCharacter:FindFirstChild("HumanoidRootPart")
             local cloneRoot = cloneCharacter:FindFirstChild("HumanoidRootPart")
 
             if origRoot and cloneRoot then
                 origRoot.CFrame = cloneRoot.CFrame
+            end
+
+            -- Restore original humanoid
+            if originalHum then
+                originalHum.PlatformStand = false
+                originalHum.AutoRotate = true
+                originalHum:ChangeState(Enum.HumanoidStateType.GettingUp)
             end
 
             Player.Character = originalCharacter
@@ -2956,15 +2979,11 @@ ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
             cloneCharacter = nil
         end
 
-        unragdoll()
-
         originalCharacter = nil
         isReanimated = false
     end
 
 end)
-
---[[ REANIMATION FUNCTIONS ]]--
 
 --[[ PRESETS ]]--
 ui:AddToggle(sections.reanimPresets, "Invisible", false, function(value)
