@@ -2535,13 +2535,14 @@ local uiTable = (function()
     return {
         main = main,
         tabs = {
-
             reanimation = (function()
                 local tab = main:AddTab("Reanimation")
                 return {
                     tab = tab,
                     sections = {
                         options = main:AddSection(tab, "Reanimation Module", "left"),
+                        scaling = main:AddSection(tab, "Scaling Module", "left"),
+                        misc = main:AddSection(tab, "Misc Module", "left"),
                         presets = main:AddSection(tab, "Presets Module", "right")
                     }
                 }
@@ -2581,6 +2582,8 @@ local uiTable = (function()
                 }
             end)(),
 
+
+                
             guis = (function()
                 local tab = main:AddTab("GUIs")
                 return {
@@ -2603,6 +2606,7 @@ local uiTable = (function()
                 }
             end)(),
 
+            --[[settings]]--
             settings = (function()
                 local tab = main:AddTab("Settings")
                 return {
@@ -2613,152 +2617,21 @@ local uiTable = (function()
                     }
                 }
             end)(),
-
+                
+             --[[admin]]--
             admin = (function()
                 local tab = main:AddTab("Admin")
                 return {
                     tab = tab,
                     sections = {
                         rep = main:AddSection(tab, "report", "left"),
+
                     }
                 }
             end)(),
-
         }
     }
 end)()
-
---[[REANIMATION TOGGLE]]--
---// Section references
-local sections = {
-    reanimOptions = uiTable.tabs.reanimation.sections.options,
-}
-
---// Reanimation Logic
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local Player = Players.LocalPlayer
-
-local originalCharacter
-local cloneCharacter
-local reanimConnection
-local isReanimated = false
-
-ui:AddToggle(sections.reanimOptions, "Reanimation", false, function(state)
-
-    if state and not isReanimated then
-
-        originalCharacter = Player.Character or Player.CharacterAdded:Wait()
-        if not originalCharacter then return end
-
-        originalCharacter.Archivable = true
-        cloneCharacter = originalCharacter:Clone()
-        originalCharacter.Archivable = false
-
-        if not cloneCharacter then return end
-
-        cloneCharacter.Name = Player.Name .. "Xotic"
-
-        for _, v in ipairs(cloneCharacter:GetDescendants()) do
-            if v:IsA("Sound") then
-                v:Destroy()
-            elseif v:IsA("BasePart") then
-                v.Anchored = false
-                v.CanCollide = false
-            end
-        end
-
-        cloneCharacter.Parent = workspace
-
-        -- Fire ragdoll on original before swap
-        if typeof(ragdoll) == "function" then
-            ragdoll()
-        end
-
-        -- Switch character
-        Player.Character = cloneCharacter
-
-        local cloneHum = cloneCharacter:FindFirstChildOfClass("Humanoid")
-        if cloneHum then
-            workspace.CurrentCamera.CameraSubject = cloneHum
-            cloneHum:ChangeState(Enum.HumanoidStateType.Physics)
-            task.wait()
-            cloneHum:ChangeState(Enum.HumanoidStateType.GettingUp)
-        end
-
-        -- Replace Animate properly
-        local oldAnimate = cloneCharacter:FindFirstChild("Animate")
-        if oldAnimate then
-            oldAnimate:Destroy()
-        end
-
-        local originalAnimate = originalCharacter:FindFirstChild("Animate")
-        if originalAnimate then
-            local newAnimate = originalAnimate:Clone()
-            newAnimate.Parent = cloneCharacter
-        end
-
-        -- Sync original to clone
-        reanimConnection = RunService.Heartbeat:Connect(function()
-
-            if not originalCharacter or not cloneCharacter then return end
-            if not originalCharacter.Parent then return end
-
-            for _, part in ipairs(originalCharacter:GetChildren()) do
-                if part:IsA("BasePart") then
-                    local clonePart = cloneCharacter:FindFirstChild(part.Name)
-                    if clonePart then
-                        part.CFrame = clonePart.CFrame
-                        part.AssemblyLinearVelocity = Vector3.zero
-                        part.AssemblyAngularVelocity = Vector3.zero
-                    end
-                end
-            end
-
-        end)
-
-        isReanimated = true
-
-    elseif not state and isReanimated then
-
-        if reanimConnection then
-            reanimConnection:Disconnect()
-            reanimConnection = nil
-        end
-
-        if originalCharacter and cloneCharacter then
-
-            local origRoot = originalCharacter:FindFirstChild("HumanoidRootPart")
-            local cloneRoot = cloneCharacter:FindFirstChild("HumanoidRootPart")
-
-            if origRoot and cloneRoot then
-                origRoot.CFrame = cloneRoot.CFrame
-            end
-
-            Player.Character = originalCharacter
-
-            local origHum = originalCharacter:FindFirstChildOfClass("Humanoid")
-            if origHum then
-                workspace.CurrentCamera.CameraSubject = origHum
-                origHum:ChangeState(Enum.HumanoidStateType.GettingUp)
-            end
-        end
-
-        if cloneCharacter then
-            cloneCharacter:Destroy()
-            cloneCharacter = nil
-        end
-
-        if typeof(unragdoll) == "function" then
-            unragdoll()
-        end
-
-        originalCharacter = nil
-        isReanimated = false
-    end
-
-end)
-
 
 local ui = uiTable.main
 local sections = {
@@ -2983,7 +2856,7 @@ function unanimate(char)
 end
 ]]--
 
---[[ REANIMATION TAB ]]--
+--[[ REANIMATION TAB 1 ]]--
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
